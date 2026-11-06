@@ -55,7 +55,9 @@ class SecurityConfig {
                 .requestMatchers("/api/public/**", "/api/docs/**", "/actuator/health/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/logout").permitAll()
                 .requestMatchers("/actuator/**").denyAll()
-                .anyRequest().authenticated())
+                .requestMatchers("/api/**").authenticated()
+                // Everything else is the temple's public website.
+                .anyRequest().permitAll())
             .oauth2ResourceServer(rs -> rs
                 .bearerTokenResolver(cookieOrHeaderResolver())
                 .jwt(jwt -> jwt.jwtAuthenticationConverter(new TenantBoundJwtConverter())));
@@ -89,6 +91,11 @@ class SecurityConfig {
     private static BearerTokenResolver cookieOrHeaderResolver() {
         var header = new DefaultBearerTokenResolver();
         return (HttpServletRequest request) -> {
+            // Only the API looks at the sign-in token; an expired cookie must never break the public website.
+            // Public endpoints and sign-in/out ignore it too, so a stale or other-temple cookie can't block them.
+            String uri = request.getRequestURI();
+            if (!uri.startsWith("/api/") || uri.startsWith("/api/public/")
+                    || uri.equals("/api/auth/login") || uri.equals("/api/auth/logout")) return null;
             String fromHeader = header.resolve(request);
             if (fromHeader != null) return fromHeader;
             if (request.getCookies() == null) return null;

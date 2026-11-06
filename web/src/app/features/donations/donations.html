@@ -83,7 +83,7 @@
   </form>
   <ng-template #footer>
     <p-button label="Cancel" [text]="true" severity="secondary" (onClick)="dialogOpen.set(false)" />
-    <p-button label="Save & issue receipt" type="submit" form="donation-form" [loading]="saving()" />
+    <p-button label="Save & issue receipt" (onClick)="save()" [loading]="saving()" />
   </ng-template>
 </p-dialog>
 

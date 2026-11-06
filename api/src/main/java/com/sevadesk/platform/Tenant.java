@@ -51,6 +51,9 @@ public class Tenant {
     @Column(name = "whatsapp_number")
     private String whatsappNumber;
     private boolean active;
+    /** Public website settings (menu, contact, pages). Read by the website module as SiteSettings. */
+    @JdbcTypeCode(SqlTypes.JSON)
+    private Map<String, Object> site;
 
     protected Tenant() {}
 
@@ -78,4 +81,5 @@ public class Tenant {
     public List<String> getEnabledModules() { return enabledModules; }
     public String getWhatsappNumber() { return whatsappNumber; }
     public boolean isActive() { return active; }
+    public Map<String, Object> getSite() { return site; }
 }

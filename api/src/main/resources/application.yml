@@ -11,6 +11,7 @@ spring:
     url: ${spring.datasource.url}
     user: ${DB_OWNER_USER:sevadesk}
     password: ${DB_OWNER_PASSWORD:owner_dev_password}
+    locations: classpath:db/migration,classpath:db/tenants
     placeholders:
       appRole: ${DB_APP_USER:sevadesk_app}
   jpa:
@@ -34,6 +35,11 @@ sevadesk:
     base-domains: ${BASE_DOMAINS:sevadesk.app,localhost}
     # Tenant used for a bare base domain such as "localhost" (dev only). Empty = none.
     default-slug: ${DEFAULT_TENANT_SLUG:}
+  bootstrap:
+    # Creates the first admin login for a temple on startup, only if that temple has no users yet.
+    tenant-slug: ${BOOTSTRAP_TENANT_SLUG:}
+    admin-email: ${BOOTSTRAP_ADMIN_EMAIL:}
+    admin-password: ${BOOTSTRAP_ADMIN_PASSWORD:}
   jwt:
     secret: ${JWT_SECRET}
     ttl: 8h

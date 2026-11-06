@@ -6,6 +6,9 @@ import com.sevadesk.donors.Donation;
 import com.sevadesk.donors.DonationService;
 import com.sevadesk.donors.Fund;
 import com.sevadesk.donors.FundRepository;
+import com.sevadesk.events.Event;
+import com.sevadesk.events.EventRepository;
+import com.sevadesk.events.EventService;
 import com.sevadesk.finance.Expense;
 import com.sevadesk.finance.ExpenseService;
 import com.sevadesk.platform.AppUser;
@@ -40,12 +43,15 @@ class DevDataSeeder implements ApplicationRunner {
     private final ContactRepository contacts;
     private final DonationService donations;
     private final ExpenseService expenses;
+    private final EventRepository events;
+    private final EventService eventService;
     private final PasswordEncoder passwordEncoder;
     private final String adminEmail;
     private final String adminPassword;
 
     DevDataSeeder(TenantRepository tenants, AppUserRepository users, FundRepository funds, ContactRepository contacts,
-                  DonationService donations, ExpenseService expenses, PasswordEncoder passwordEncoder,
+                  DonationService donations, ExpenseService expenses, EventRepository events,
+                  EventService eventService, PasswordEncoder passwordEncoder,
                   @Value("${sevadesk.dev.admin-email}") String adminEmail,
                   @Value("${sevadesk.dev.admin-password}") String adminPassword) {
         this.tenants = tenants;
@@ -54,6 +60,8 @@ class DevDataSeeder implements ApplicationRunner {
         this.contacts = contacts;
         this.donations = donations;
         this.expenses = expenses;
+        this.events = events;
+        this.eventService = eventService;
         this.passwordEncoder = passwordEncoder;
         this.adminEmail = adminEmail;
         this.adminPassword = adminPassword;
@@ -94,8 +102,32 @@ class DevDataSeeder implements ApplicationRunner {
                 LocalDate today = LocalDate.now(tenant.toRef().zone());
                 expenses.record(new Expense("Flowers & decoration", general.getId(), new BigDecimal("4200"), today, "Malli Florists", null));
                 expenses.record(new Expense("Groceries", food.getId(), new BigDecimal("12850"), today.withDayOfMonth(1), "Sri Balaji Stores", null));
+
+                var zone = tenant.toRef().zone();
+                event("Sunday Feast & Kirtan", "Kirtan, a short talk and a vegetarian feast. Everyone welcome.",
+                        today.plusDays(7 - today.getDayOfWeek().getValue() % 7), 17, 3, "Main hall", Event.Status.PUBLISHED, zone);
+                event("Bhagavad Gita Study Circle", "Chapter 2, verses 11–20, with open discussion.",
+                        today.plusDays(3), 19, 1, "Library room", Event.Status.PUBLISHED, zone);
+                event("Gita Jayanti Celebration", "Recitation of the full Bhagavad Gita, kirtan and prasadam.",
+                        today.plusDays(25), 10, 6, "Main hall", Event.Status.PUBLISHED, zone);
+                event("Volunteer Planning Meeting", "Draft: not shown on the website.",
+                        today.plusDays(5), 18, 1, "Office", Event.Status.DRAFT, zone);
             });
         }
+    }
+
+    private void event(String title, String summary, LocalDate day, int hour, int hours, String location,
+                       Event.Status status, java.time.ZoneId zone) {
+        Instant start = day.atTime(hour, 0).atZone(zone).toInstant();
+        var e = new Event(eventService.uniqueSlug(title, start));
+        e.setTitle(title);
+        e.setSummary(summary);
+        e.setDescription("<p>" + summary + "</p>");
+        e.setStartsAt(start);
+        e.setEndsAt(start.plus(hours, ChronoUnit.HOURS));
+        e.setLocation(location);
+        e.setStatus(status);
+        events.save(e);
     }
 
     private Contact contact(String first, String last, String city, String gotra, String nakshatra) {

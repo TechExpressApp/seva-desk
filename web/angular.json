@@ -32,7 +32,8 @@
             "styles": [
               "node_modules/primeicons/primeicons.css",
               "src/styles.scss"
-            ]
+            ],
+            "baseHref": "/admin/"
           },
           "configurations": {
             "production": {
@@ -74,7 +75,8 @@
             "host": "0.0.0.0",
             "allowedHosts": [
               ".localhost"
-            ]
+            ],
+            "servePath": "/admin/"
           }
         },
         "test": {

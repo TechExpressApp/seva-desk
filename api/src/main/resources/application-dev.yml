@@ -1,11 +1,13 @@
 # Local development: `mvn spring-boot:run -Dspring-boot.run.profiles=dev`
 spring:
   flyway:
-    locations: classpath:db/migration,classpath:db/dev
+    locations: classpath:db/migration,classpath:db/tenants,classpath:db/dev
+    # dev databases created before a newer V2 migration still pick it up
+    out-of-order: true
 
 sevadesk:
   tenancy:
-    default-slug: radhagovinda
+    default-slug: iskconsomerset
   jwt:
     secret: dev-only-secret-change-me-0123456789abcdef
   cookie:

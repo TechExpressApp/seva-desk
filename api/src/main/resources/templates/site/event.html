@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{site/layout :: head(${event.title}, ${event.summary} ?: ${event.title} + ' at ' + ${temple.name})}"></head>
+<body>
+<header th:replace="~{site/layout :: header}"></header>
+<main class="wrap section narrow">
+  <p class="crumbs"><a href="/events">← All events</a></p>
+  <article class="event-detail">
+    <img th:if="${event.imageUrl}" th:src="${event.imageUrl}" th:alt="${event.title}" class="event-image">
+    <h1 th:text="${event.title}">Event</h1>
+    <p class="when big" th:text="${fmt.when(event)}">When</p>
+    <p class="when" th:if="${event.location}" th:text="${event.location}">Where</p>
+    <p class="lead" th:if="${event.summary}" th:text="${event.summary}">Summary</p>
+    <!-- Description is HTML written by temple staff in SevaDesk -->
+    <div class="prose" th:if="${event.description}" th:utext="${event.description}"></div>
+    <p class="actions">
+      <a class="btn" th:if="${event.registrationUrl}" th:href="${event.registrationUrl}" target="_blank" rel="noopener">Register</a>
+      <a class="btn ghost" href="/donate" th:if="${site.pages.containsKey('donate')}">Sponsor or donate</a>
+    </p>
+  </article>
+</main>
+<footer th:replace="~{site/layout :: footer}"></footer>
+<script type="application/ld+json" th:utext="${jsonLd}"></script>
+</body>
+</html>

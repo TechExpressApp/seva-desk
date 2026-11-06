@@ -66,6 +66,6 @@
   </form>
   <ng-template #footer>
     <p-button label="Cancel" [text]="true" severity="secondary" (onClick)="editing.set(null)" />
-    <p-button label="Save" type="submit" form="contact-form" [loading]="saving()" />
+    <p-button label="Save" (onClick)="save()" [loading]="saving()" />
   </ng-template>
 </p-dialog>

@@ -9,22 +9,12 @@ import com.sevadesk.platform.TenantRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.RequestPostProcessor;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 
 import java.util.List;
 
@@ -38,25 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * End-to-end check of the white-label core against real PostgreSQL: tenant from host name, login,
  * gap-free receipt numbers, tokens bound to one temple, and row-level security between temples.
  */
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-@Testcontainers
-class TenantIsolationTests {
-
-    @Container
-    static PostgreSQLContainer<?> db = new PostgreSQLContainer<>(
-            DockerImageName.parse("pgvector/pgvector:pg16").asCompatibleSubstituteFor("postgres"))
-            .withInitScript("db/test-init.sql");
-
-    @DynamicPropertySource
-    static void dbProps(DynamicPropertyRegistry r) {
-        r.add("spring.datasource.url", db::getJdbcUrl);
-        r.add("spring.datasource.username", () -> "sevadesk_app");
-        r.add("spring.datasource.password", () -> "app_test_password");
-        r.add("spring.flyway.user", db::getUsername);
-        r.add("spring.flyway.password", db::getPassword);
-    }
+class TenantIsolationTests extends PostgresTestBase {
 
     static final String RG = "radhagovinda.localhost";
     static final String GN = "gurunanak.localhost";
@@ -163,12 +135,5 @@ class TenantIsolationTests {
 
     private JsonNode body(org.springframework.test.web.servlet.ResultActions r) throws Exception {
         return json.readTree(r.andReturn().getResponse().getContentAsString());
-    }
-
-    private static RequestPostProcessor host(String name) {
-        return req -> {
-            req.setServerName(name);
-            return req;
-        };
     }
 }

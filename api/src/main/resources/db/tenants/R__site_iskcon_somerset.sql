@@ -1,0 +1,177 @@
+-- Public website settings for ISKCON Somerset: menu (same pages and URLs as the previous site), contact details,
+-- home page text and page content. Edit this file and restart the app: Flyway re-applies it whenever it changes.
+-- Page text below is placeholder copy; replace it with the temple's own wording. Body values are HTML.
+update tenant set site = $json$
+{
+  "heroTitle": "Welcome to ISKCON Somerset",
+  "heroText": "A home for bhakti yoga in central New Jersey: kirtan, Bhagavad Gita study, festivals and prasadam, open to everyone.",
+  "mantra": "Hare Krishna Hare Krishna Krishna Krishna Hare Hare · Hare Rama Hare Rama Rama Rama Hare Hare ·",
+  "welcomeTitle": "Enhancing lives through bhakti yoga",
+  "welcomeText": "We share the teachings of the Bhagavad Gita and Sri Chaitanya Mahaprabhu through weekly programmes, home groups, classes and festivals. Whether you are new to bhakti or have practised for years, you are welcome to join us.",
+  "initiatives": [
+    {"title": "Bhakti Vriksha home programme", "text": "Small groups that meet weekly in devotees' homes for kirtan, discussion and friendship.", "href": "/bhakti-vriksha"},
+    {"title": "Scripture study groups", "text": "Read and discuss the Bhagavad Gita together, in person or online.", "href": "/bg-inperson"},
+    {"title": "New temple project", "text": "Help build a permanent home for the community in Somerset.", "href": "/new-temple-project"}
+  ],
+  "menu": [
+    {"label": "Home", "href": "/"},
+    {"label": "Bhakti Vriksha", "href": "/bhakti-vriksha"},
+    {"label": "Donate", "href": "/donate", "children": [
+      {"label": "Nitya Sevak", "href": "/nityasevak"},
+      {"label": "1000 Fortunate Souls", "href": "/1000fortunesouls"}
+    ]},
+    {"label": "Festivals", "href": "/events", "children": [
+      {"label": "Upcoming events", "href": "/events"},
+      {"label": "Janmastami", "href": "/janmastami"},
+      {"label": "Yogini Ekadasi", "href": "/yogini-ekadasi"},
+      {"label": "Sayana Ekadasi", "href": "/sayana-ekadasi"},
+      {"label": "Putrada Ekadasi", "href": "/putrada-ekadasi"},
+      {"label": "Pandava Nirjala Ekadasi", "href": "/pandava-nirjala-ekadasi"}
+    ]},
+    {"label": "Courses", "href": "/bg-inperson", "children": [
+      {"label": "Bhagavad Gita - In Person", "href": "/bg-inperson"},
+      {"label": "Bhagavad Gita Online", "href": "/bg-online"}
+    ]},
+    {"label": "Gift Shop", "href": "/category/all-products"},
+    {"label": "Vaishnava Songs", "href": "/vaishnav-songs", "children": [
+      {"label": "Guru Vandana", "href": "/guru-vandana"},
+      {"label": "Gaura Arati", "href": "/gaura-arati"},
+      {"label": "Narasimha Arati", "href": "/narasimha-arati"},
+      {"label": "Raj Bhog Arati", "href": "/raj-bhog-arati"},
+      {"label": "Tulasi Arati", "href": "/tulasi-arati"}
+    ]},
+    {"label": "Contact Us", "href": "/contact-us"},
+    {"label": "New Temple", "href": "/new-temple-project"}
+  ],
+  "contact": {
+    "phone": "+1-201-208-8976",
+    "email": "info@iskconsomerset.org",
+    "address": "Somerset, New Jersey, USA"
+  },
+  "social": [],
+  "calendarUrl": "https://1drv.ms/b/c/c1f56f15d95d5ae8/IQByoJPlg2PNT5RUURoBCqJ-AdzphP6dtkficmzRsx5_1EU?e=ObaeCx",
+  "pages": {
+    "bhakti-vriksha": {
+      "title": "Bhakti Vriksha",
+      "description": "Bhakti Vriksha home programmes: weekly kirtan, discussion and friendship in small groups.",
+      "heading": "Bhakti Vriksha – Home Programme",
+      "body": "<p>Bhakti Vriksha (\"the tree of devotion\") is a small-group programme that meets each week in a devotee's home. An evening usually includes kirtan, a short reading, open discussion and a shared meal.</p><h2>Join a group</h2><p>Groups meet in several towns around Somerset. <a href=\"/contact-us\">Contact us</a> and we will connect you with the one nearest you.</p>"
+    },
+    "donate": {
+      "title": "Donate",
+      "description": "Support ISKCON Somerset: temple services, festivals, prasadam distribution and the new temple project.",
+      "heading": "Support the temple",
+      "body": "<p>Your gifts keep the daily worship, festivals, classes and prasadam distribution going.</p><h2>Ways to give</h2><ul><li><a href=\"/nityasevak\">Nitya Sevak</a> – a monthly pledge</li><li><a href=\"/1000fortunesouls\">1000 Fortunate Souls</a> – the new temple appeal</li><li>In person at the temple</li></ul><p>For questions about donations or tax receipts, please <a href=\"/contact-us\">contact us</a>.</p>"
+    },
+    "nityasevak": {
+      "title": "Nitya Sevak",
+      "description": "Become a Nitya Sevak with a regular monthly offering to ISKCON Somerset.",
+      "heading": "Nitya Sevak – monthly offering",
+      "body": "<p>Nitya Sevaks support the temple with a regular monthly offering, so the community can plan worship and programmes with confidence.</p><p>To set up a monthly offering, please <a href=\"/contact-us\">contact us</a>.</p>"
+    },
+    "1000fortunesouls": {
+      "title": "1000 Fortunate Souls",
+      "description": "The 1000 Fortunate Souls appeal for the new ISKCON Somerset temple.",
+      "heading": "1000 Fortunate Souls",
+      "body": "<p>We are inviting 1000 families to each make a pledge towards building the new temple. Every pledge brings the community closer to a permanent home.</p><p><a href=\"/new-temple-project\">Read about the new temple project</a> or <a href=\"/contact-us\">contact us</a> to make a pledge.</p>"
+    },
+    "janmastami": {
+      "title": "Janmastami",
+      "description": "Celebrate Sri Krishna Janmastami, the appearance day of Lord Krishna, at ISKCON Somerset.",
+      "heading": "Sri Krishna Janmastami",
+      "body": "<p>Janmastami celebrates the appearance of Lord Krishna. The festival includes kirtan, abhishekam, a midnight arati and a feast for everyone.</p><p>See <a href=\"/events\">upcoming events</a> for this year's date and schedule.</p>"
+    },
+    "yogini-ekadasi": {
+      "title": "Yogini Ekadasi",
+      "description": "Yogini Ekadasi: fasting, chanting and hearing at ISKCON Somerset.",
+      "heading": "Yogini Ekadasi",
+      "body": "<p>Ekadasi, the eleventh day of each lunar fortnight, is a day for extra chanting and hearing. Devotees traditionally avoid grains and beans.</p><p>Check the <a href=\"/events\">events page</a> for the date and evening programme.</p>"
+    },
+    "sayana-ekadasi": {
+      "title": "Sayana Ekadasi",
+      "description": "Sayana (Devashayani) Ekadasi, the start of Chaturmasya, at ISKCON Somerset.",
+      "heading": "Sayana Ekadasi",
+      "body": "<p>Sayana Ekadasi begins the four months of Chaturmasya, a period many devotees observe with extra vows and study.</p><p>Check the <a href=\"/events\">events page</a> for the date and programme.</p>"
+    },
+    "putrada-ekadasi": {
+      "title": "Putrada Ekadasi",
+      "description": "Putrada Ekadasi at ISKCON Somerset.",
+      "heading": "Putrada Ekadasi",
+      "body": "<p>Putrada Ekadasi is observed with fasting from grains, kirtan and hearing about the Lord.</p><p>Check the <a href=\"/events\">events page</a> for the date and programme.</p>"
+    },
+    "pandava-nirjala-ekadasi": {
+      "title": "Pandava Nirjala Ekadasi",
+      "description": "Pandava Nirjala Ekadasi at ISKCON Somerset.",
+      "heading": "Pandava Nirjala Ekadasi",
+      "body": "<p>On Nirjala Ekadasi some devotees fast even from water, following the example of Bhima. Please fast only as your health allows.</p><p>Check the <a href=\"/events\">events page</a> for the date and programme.</p>"
+    },
+    "bg-inperson": {
+      "title": "Bhagavad Gita – In Person",
+      "description": "In-person Bhagavad Gita classes at ISKCON Somerset.",
+      "heading": "Bhagavad Gita – in person",
+      "body": "<p>A friendly weekly class that reads the Bhagavad Gita chapter by chapter, with time for questions. No background is needed.</p><p>See <a href=\"/events\">upcoming events</a> for the next session or <a href=\"/contact-us\">contact us</a> to register.</p>"
+    },
+    "bg-online": {
+      "title": "Bhagavad Gita Online",
+      "description": "Online Bhagavad Gita classes from ISKCON Somerset.",
+      "heading": "Bhagavad Gita online",
+      "body": "<p>Join the Bhagavad Gita study group online from anywhere. Sessions are live with time for discussion.</p><p><a href=\"/contact-us\">Contact us</a> for the joining link.</p>"
+    },
+    "category/all-products": {
+      "title": "Gift Shop",
+      "description": "Books, deity items and gifts from the ISKCON Somerset gift shop.",
+      "heading": "Gift Shop",
+      "body": "<p>Books, japa beads, deity paraphernalia and gifts are available at the temple. Online ordering is coming soon.</p><p>To ask about an item, please <a href=\"/contact-us\">contact us</a>.</p>"
+    },
+    "vaishnav-songs": {
+      "title": "Vaishnava Songs",
+      "description": "Words and meanings of the songs sung in daily programmes at ISKCON Somerset.",
+      "heading": "Vaishnava songs",
+      "body": "<p>The prayers and songs sung during the temple's daily programmes:</p><ul><li><a href=\"/guru-vandana\">Guru Vandana</a></li><li><a href=\"/gaura-arati\">Gaura Arati</a></li><li><a href=\"/narasimha-arati\">Narasimha Arati</a></li><li><a href=\"/raj-bhog-arati\">Raj Bhog Arati</a></li><li><a href=\"/tulasi-arati\">Tulasi Arati</a></li></ul>"
+    },
+    "guru-vandana": {
+      "title": "Guru Vandana",
+      "description": "Guru Vandana: prayers to the spiritual master sung in the morning programme.",
+      "heading": "Guru Vandana",
+      "body": "<p>Sung in the morning programme in glorification of the spiritual master.</p><p><em>The words and meaning will be added here.</em></p>"
+    },
+    "gaura-arati": {
+      "title": "Gaura Arati",
+      "description": "Gaura Arati: the evening song glorifying Sri Chaitanya Mahaprabhu.",
+      "heading": "Gaura Arati",
+      "body": "<p>Sung at the evening arati, describing the worship of Sri Chaitanya Mahaprabhu.</p><p><em>The words and meaning will be added here.</em></p>"
+    },
+    "narasimha-arati": {
+      "title": "Narasimha Arati",
+      "description": "Prayers to Lord Narasimha sung after arati.",
+      "heading": "Narasimha Arati",
+      "body": "<p>Prayers to Lord Narasimhadeva for protection, sung after the arati.</p><p><em>The words and meaning will be added here.</em></p>"
+    },
+    "raj-bhog-arati": {
+      "title": "Raj Bhog Arati",
+      "description": "The song sung during the midday Raj Bhog offering.",
+      "heading": "Raj Bhog Arati",
+      "body": "<p>Sung during the midday offering of food to the deities.</p><p><em>The words and meaning will be added here.</em></p>"
+    },
+    "tulasi-arati": {
+      "title": "Tulasi Arati",
+      "description": "Tulasi Arati: prayers to Srimati Tulasi Devi.",
+      "heading": "Tulasi Arati",
+      "body": "<p>Sung each morning while devotees offer worship to Srimati Tulasi Devi.</p><p><em>The words and meaning will be added here.</em></p>"
+    },
+    "contact-us": {
+      "title": "Contact Us",
+      "description": "Contact ISKCON Somerset and subscribe for event notifications.",
+      "heading": "Contact us",
+      "body": "<p>We'd love to hear from you. Call or email us, or subscribe to get festival and programme announcements.</p>"
+    },
+    "new-temple-project": {
+      "title": "New Temple",
+      "description": "The new ISKCON Somerset temple project: plans, progress and how to help.",
+      "heading": "New temple project",
+      "body": "<p>The community is working towards a permanent temple in Somerset with space for worship, classes, festivals and prasadam.</p><h2>How you can help</h2><ul><li>Pledge through <a href=\"/1000fortunesouls\">1000 Fortunate Souls</a></li><li>Become a <a href=\"/nityasevak\">Nitya Sevak</a></li><li>Volunteer your skills: <a href=\"/contact-us\">contact us</a></li></ul>"
+    }
+  }
+}
+$json$::jsonb
+where slug = 'iskconsomerset';

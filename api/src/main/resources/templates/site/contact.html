@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{site/layout :: head('Contact Us', 'Contact ' + ${temple.name} + ' and subscribe for event notifications.')}"></head>
+<body>
+<header th:replace="~{site/layout :: header}"></header>
+<main class="wrap section">
+  <h1 th:text="${page?.heading} ?: 'Contact Us'">Contact Us</h1>
+  <div class="contact-grid">
+    <div>
+      <div class="prose" th:if="${page?.body}" th:utext="${page.body}"></div>
+      <ul class="contact-list">
+        <li th:if="${site.contact.phone}"><span>Phone</span><a th:href="'tel:' + ${#strings.replace(site.contact.phone, ' ', '')}" th:text="${site.contact.phone}">Phone</a></li>
+        <li th:if="${site.contact.email}"><span>Email</span><a th:href="'mailto:' + ${site.contact.email}" th:text="${site.contact.email}">Email</a></li>
+        <li th:if="${site.contact.address}"><span>Address</span><span th:text="${site.contact.address}">Address</span></li>
+      </ul>
+    </div>
+
+    <form class="card form" method="post" action="/subscribe">
+      <h2>Subscribe for event notifications</h2>
+      <p class="ok" th:if="${subscribed}" role="status">Thank you! You'll receive our event announcements.</p>
+      <p class="err" th:if="${invalid}" role="alert">Please enter your first name and a valid email address.</p>
+      <div class="row">
+        <label>First name <input name="firstName" required maxlength="100" autocomplete="given-name"></label>
+        <label>Last name <input name="lastName" maxlength="100" autocomplete="family-name"></label>
+      </div>
+      <label>Email <input name="email" type="email" required maxlength="200" autocomplete="email"></label>
+      <label>WhatsApp number (with country code) <input name="whatsapp" type="tel" maxlength="30" autocomplete="tel" placeholder="+1 201 555 0100"></label>
+      <div class="row">
+        <label>Initiated name <input name="initiatedName" maxlength="100"></label>
+        <label>Spiritual master <input name="spiritualMaster" maxlength="100"></label>
+      </div>
+      <label>Your birth date <input name="birthDate" type="date"></label>
+      <label>Family members (spouse, children, birthdays) <textarea name="family" rows="3" maxlength="1000"></textarea></label>
+      <!-- Spam trap: hidden from people, filled in by bots -->
+      <label class="hp" aria-hidden="true">Website <input name="website" tabindex="-1" autocomplete="off"></label>
+      <button class="btn" type="submit">Subscribe</button>
+      <p class="muted small">We use your details only to send temple news and greetings. Ask us any time to remove them.</p>
+    </form>
+  </div>
+</main>
+<footer th:replace="~{site/layout :: footer}"></footer>
+</body>
+</html>

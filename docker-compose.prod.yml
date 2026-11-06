@@ -30,6 +30,10 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       BASE_DOMAINS: ${BASE_DOMAINS}
       TZ: ${TZ}
+      # First admin login, created only while the temple has no users. Remove the password after first sign-in.
+      BOOTSTRAP_TENANT_SLUG: ${BOOTSTRAP_TENANT_SLUG:-}
+      BOOTSTRAP_ADMIN_EMAIL: ${BOOTSTRAP_ADMIN_EMAIL:-}
+      BOOTSTRAP_ADMIN_PASSWORD: ${BOOTSTRAP_ADMIN_PASSWORD:-}
     depends_on:
       db:
         condition: service_healthy

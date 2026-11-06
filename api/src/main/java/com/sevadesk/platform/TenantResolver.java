@@ -44,6 +44,11 @@ public class TenantResolver {
                 return tenants.findBySlugAndActiveTrue(label);
             }
         }
-        return tenants.findByCustomDomainAndActiveTrue(h);
+        // www.iskconsomerset.org and iskconsomerset.org are the same temple
+        var byDomain = tenants.findByCustomDomainAndActiveTrue(h);
+        if (byDomain.isEmpty() && h.startsWith("www.")) {
+            return tenants.findByCustomDomainAndActiveTrue(h.substring(4));
+        }
+        return byDomain;
     }
 }

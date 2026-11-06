@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{site/layout :: head('Upcoming Events', 'Festivals, programmes and classes coming up at ' + ${temple.name} + '.')}"></head>
+<body>
+<header th:replace="~{site/layout :: header}"></header>
+<main class="wrap section">
+  <h1>Upcoming Events</h1>
+  <p class="lead muted">Festivals, programmes and classes. Everyone is welcome.</p>
+  <div class="event-list" th:unless="${events.isEmpty()}">
+    <a class="event-card wide" th:each="e : ${events}" th:href="@{/events/{s}(s=${e.slug})}">
+      <div class="date"><b th:text="${fmt.day(e.startsAt)}">8</b><span th:text="${fmt.month(e.startsAt)}">Nov</span></div>
+      <div>
+        <h3 th:text="${e.title}">Event</h3>
+        <p class="when" th:text="${fmt.when(e)}">When</p>
+        <p class="when" th:if="${e.location}" th:text="${e.location}">Where</p>
+        <p th:if="${e.summary}" th:text="${e.summary}">Summary</p>
+      </div>
+    </a>
+  </div>
+  <p class="muted" th:if="${events.isEmpty()}">No events are scheduled right now. Subscribe on the <a href="/contact-us">contact page</a> to be told about the next one.</p>
+</main>
+<footer th:replace="~{site/layout :: footer}"></footer>
+</body>
+</html>

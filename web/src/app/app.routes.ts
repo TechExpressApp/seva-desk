@@ -11,6 +11,7 @@ export const routes: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       { path: 'dashboard', loadComponent: () => import('./features/dashboard/dashboard').then((m) => m.Dashboard) },
       { path: 'contacts', loadComponent: () => import('./features/contacts/contacts').then((m) => m.Contacts) },
+      { path: 'events', loadComponent: () => import('./features/events/events').then((m) => m.Events) },
       { path: 'donations', loadComponent: () => import('./features/donations/donations').then((m) => m.Donations) },
       {
         path: 'soon/:module',

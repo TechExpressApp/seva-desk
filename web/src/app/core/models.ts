@@ -84,3 +84,20 @@ export interface DonationTick {
   mode: string;
   voided: boolean;
 }
+
+export type EventStatus = 'DRAFT' | 'PUBLISHED' | 'CANCELLED';
+
+export interface TempleEvent {
+  id: string;
+  slug: string;
+  title: string;
+  summary: string | null;
+  description: string | null;
+  startsAt: string;
+  endsAt: string | null;
+  location: string | null;
+  imageUrl: string | null;
+  registrationUrl: string | null;
+  status: EventStatus;
+  publicUrl: string;
+}

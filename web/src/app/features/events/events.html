@@ -1,0 +1,89 @@
+<div class="sd-page-head">
+  <div>
+    <h1>Events</h1>
+    <p>Published events appear on the public website straight away.</p>
+  </div>
+  <div style="display: flex; gap: 10px; flex-wrap: wrap">
+    <a href="/events" target="_blank" rel="noopener" class="p-button p-button-text" style="text-decoration: none">
+      <i class="pi pi-external-link"></i>&nbsp; View website
+    </a>
+    <p-button label="New event" icon="pi pi-plus" (onClick)="open('new')" />
+  </div>
+</div>
+
+<div class="sd-card" style="padding: 0; overflow: hidden">
+  <p-table [value]="rows()" [lazy]="true" (onLazyLoad)="load($event)" [paginator]="true" [rows]="25"
+           [totalRecords]="total()" [loading]="loading()" dataKey="id" [tableStyle]="{ 'min-width': '720px' }">
+    <ng-template #header>
+      <tr>
+        <th>Date</th>
+        <th>Event</th>
+        <th>Location</th>
+        <th>Status</th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-e>
+      <tr>
+        <td style="white-space: nowrap">{{ e.startsAt | date: 'EEE d MMM y, h:mm a' }}</td>
+        <td>
+          <b>{{ e.title }}</b>
+          @if (e.summary) {
+            <div class="sd-muted" style="font-size: 0.85rem">{{ e.summary }}</div>
+          }
+        </td>
+        <td>{{ e.location }}</td>
+        <td><p-tag [severity]="severity(e.status)" [value]="e.status.toLowerCase()" /></td>
+        <td style="text-align: right; white-space: nowrap">
+          @if (e.status === 'PUBLISHED') {
+            <a [href]="e.publicUrl" target="_blank" rel="noopener" class="p-button p-button-text p-button-secondary" aria-label="Open on website">
+              <i class="pi pi-external-link"></i>
+            </a>
+          }
+          <p-button icon="pi pi-pencil" [text]="true" severity="secondary" ariaLabel="Edit event" (onClick)="open(e)" />
+          <p-button icon="pi pi-trash" [text]="true" severity="danger" ariaLabel="Delete event" (onClick)="deleting.set(e)" />
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template #emptymessage>
+      <tr><td colspan="5" class="sd-muted">No events yet. Add the next festival or class with “New event”.</td></tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog [header]="editing() === 'new' ? 'New event' : 'Edit event'" [visible]="!!editing()"
+          (visibleChange)="!$event && editing.set(null)" [modal]="true" [style]="{ width: 'min(720px, 96vw)' }">
+  <form [formGroup]="form" (ngSubmit)="save()" class="sd-form" id="event-form">
+    <label class="full">Title <input pInputText formControlName="title" placeholder="e.g. Govardhan Puja & Annakut" fluid /></label>
+    <label>Starts <input pInputText type="datetime-local" formControlName="startsAt" fluid /></label>
+    <label>Ends (optional) <input pInputText type="datetime-local" formControlName="endsAt" fluid /></label>
+    <label>Location <input pInputText formControlName="location" placeholder="Main hall" fluid /></label>
+    <label>
+      Status
+      <p-select formControlName="status" [options]="statuses" optionLabel="label" optionValue="value" appendTo="body" fluid />
+    </label>
+    <label class="full">Short summary (shown on the home page and in Google) <input pInputText formControlName="summary" maxlength="400" fluid /></label>
+    <label class="full">
+      Full description (simple HTML allowed, e.g. &lt;p&gt;, &lt;b&gt;, &lt;ul&gt;)
+      <textarea pTextarea formControlName="description" rows="5" fluid></textarea>
+    </label>
+    <label>Image URL (optional) <input pInputText formControlName="imageUrl" placeholder="https://…" fluid /></label>
+    <label>Registration link (optional) <input pInputText formControlName="registrationUrl" placeholder="https://…" fluid /></label>
+    @if (error()) {
+      <p class="sd-error full" role="alert">{{ error() }}</p>
+    }
+  </form>
+  <ng-template #footer>
+    <p-button label="Cancel" [text]="true" severity="secondary" (onClick)="editing.set(null)" />
+    <p-button label="Save" (onClick)="save()" [loading]="saving()" />
+  </ng-template>
+</p-dialog>
+
+<p-dialog header="Delete event" [visible]="!!deleting()" (visibleChange)="!$event && deleting.set(null)" [modal]="true"
+          [style]="{ width: 'min(440px, 96vw)' }">
+  <p><b>{{ deleting()?.title }}</b> will be removed from SevaDesk and the website.</p>
+  <ng-template #footer>
+    <p-button label="Keep it" [text]="true" severity="secondary" (onClick)="deleting.set(null)" />
+    <p-button label="Delete event" severity="danger" (onClick)="confirmDelete()" />
+  </ng-template>
+</p-dialog>

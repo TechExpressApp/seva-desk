@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!-- Shared fragments for every public page: <head>, header with menu, footer. -->
+<head th:fragment="head(title, description)">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="${title == temple.name} ? ${title} : ${title} + ' | ' + ${temple.name}">Page | Temple</title>
+  <meta name="description" th:content="${description}">
+  <link rel="canonical" th:href="${baseUrl} + ${path}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" th:content="${temple.name}">
+  <meta property="og:title" th:content="${title}">
+  <meta property="og:description" th:content="${description}">
+  <meta property="og:url" th:href="${baseUrl} + ${path}" th:content="${baseUrl} + ${path}">
+  <meta name="theme-color" th:content="${temple.primaryColor}">
+  <link rel="icon" th:href="${temple.logoUrl} ?: '/site/lotus.svg'">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Montserrat:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/site/site.css">
+  <style th:inline="css">
+    :root { --brand: [(${colors.brand})]; --accent: [(${colors.accent})]; --soft: [(${colors.soft})]; }
+  </style>
+</head>
+<body>
+
+<header th:fragment="header" class="top">
+  <div class="wrap bar">
+    <a class="brand" href="/">
+      <img th:if="${temple.logoUrl}" th:src="${temple.logoUrl}" alt="" width="44" height="44">
+      <img th:unless="${temple.logoUrl}" src="/site/lotus.svg" alt="" width="44" height="44">
+      <span th:text="${temple.name}">Temple</span>
+    </a>
+
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" aria-hidden="true">
+    <label for="nav-toggle" class="burger" aria-label="Menu"><span></span><span></span><span></span></label>
+
+    <nav class="menu" aria-label="Main">
+      <ul>
+        <li th:each="item : ${site.menu}" th:classappend="${item.hasChildren()} ? 'has-sub'">
+          <a th:href="${item.href}" th:text="${item.label}"
+             th:classappend="${path == item.href} ? 'on'">Item</a>
+          <ul th:if="${item.hasChildren()}" class="sub">
+            <li th:each="child : ${item.children}">
+              <a th:href="${child.href}" th:text="${child.label}"
+                 th:classappend="${path == child.href} ? 'on'">Child</a>
+            </li>
+          </ul>
+        </li>
+        <li th:if="${site.calendarUrl}"><a th:href="${site.calendarUrl}" target="_blank" rel="noopener">Calendar</a></li>
+      </ul>
+      <a class="btn admin" href="/admin/">Admin login</a>
+    </nav>
+  </div>
+</header>
+
+<footer th:fragment="footer" class="foot">
+  <div class="wrap cols">
+    <div>
+      <div class="brand light">
+        <img src="/site/lotus.svg" alt="" width="36" height="36">
+        <span th:text="${temple.name}">Temple</span>
+      </div>
+      <p th:if="${temple.tagline}" th:text="${temple.tagline}" class="muted">Tagline</p>
+    </div>
+    <div>
+      <h3>Contact</h3>
+      <p th:if="${site.contact.address}" th:text="${site.contact.address}">Address</p>
+      <p th:if="${site.contact.phone}"><a th:href="'tel:' + ${#strings.replace(site.contact.phone, ' ', '')}" th:text="${site.contact.phone}">Phone</a></p>
+      <p th:if="${site.contact.email}"><a th:href="'mailto:' + ${site.contact.email}" th:text="${site.contact.email}">Email</a></p>
+    </div>
+    <div>
+      <h3>Visit</h3>
+      <p><a href="/events">Upcoming events</a></p>
+      <p><a href="/contact-us">Get event updates</a></p>
+      <p th:each="s : ${site.social}"><a th:href="${s.url}" th:text="${s.label}" target="_blank" rel="noopener">Social</a></p>
+    </div>
+  </div>
+  <div class="wrap legal">
+    <span>© <span th:text="${year}">2026</span> <span th:text="${temple.name}">Temple</span></span>
+    <a href="/admin/">Admin login</a>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{site/layout :: head(${page.title}, ${page.description} ?: ${page.title} + ' – ' + ${temple.name})}"></head>
+<body>
+<header th:replace="~{site/layout :: header}"></header>
+<main class="wrap section narrow">
+  <h1 th:text="${page.heading} ?: ${page.title}">Page</h1>
+  <!-- Body is HTML from the temple's website settings (tenant.site.pages) -->
+  <div class="prose" th:utext="${page.body}"></div>
+</main>
+<footer th:replace="~{site/layout :: footer}"></footer>
+</body>
+</html>

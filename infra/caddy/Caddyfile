@@ -6,7 +6,7 @@
 	}
 }
 
-# Every host name: radhagovinda.sevadesk.app, admin.mytemple.org, ...
+# Every registered temple host name, e.g. www.iskconsomerset.org and iskconsomerset.org
 https:// {
 	tls {
 		on_demand
@@ -26,6 +26,15 @@ https:// {
 		respond 404
 	}
 
+	# Admin app (SevaDesk): https://www.iskconsomerset.org/admin
+	redir /admin /admin/ 308
+	handle /admin/* {
+		root * /srv
+		try_files {path} /admin/index.html
+		file_server
+	}
+
+	# API and the public website are both served by the Spring Boot app.
 	handle /api/* {
 		reverse_proxy api:8080 {
 			# Server-Sent Events for the live dashboard: send each event immediately
@@ -34,9 +43,7 @@ https:// {
 	}
 
 	handle {
-		root * /srv
-		try_files {path} /index.html
-		file_server
+		reverse_proxy api:8080
 	}
 }
 

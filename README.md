@@ -10,6 +10,21 @@ each gets its own address, name, logo, colours, greeting and vocabulary ("Priest
 | Web | Angular 21, PrimeNG 21, ngx-translate (runtime vocabulary + languages) |
 | Hosting | One VM, Docker Compose, Caddy (automatic HTTPS incl. custom domains), Cloudflare R2 backups |
 
+## Two modules, one address
+
+| URL | What |
+|---|---|
+| `https://www.iskconsomerset.org/` | **Public website**: server-rendered pages (good for Google), same menu and page URLs as the old Wix site, live events, subscribe form |
+| `https://www.iskconsomerset.org/admin` | **SevaDesk admin**: Angular app for staff (events, donations, contacts, dashboard) |
+| `https://www.iskconsomerset.org/api` | API used by the admin |
+
+An event saved as **Published** in the admin appears on the public website on the next page load; drafts and
+cancelled events stay hidden. The website's **Subscribe** form creates a contact in SevaDesk with email consent.
+
+The website's menu, contact details, home page text and page content are per temple, in
+[`R__site_iskcon_somerset.sql`](api/src/main/resources/db/tenants/R__site_iskcon_somerset.sql). Edit it and restart:
+Flyway re-applies it. The page text there is placeholder copy written for this project; replace it with your own.
+
 ## What works today
 
 - **Multi-tenancy**: the temple is resolved from the host name (`radhagovinda.sevadesk.app`, or a custom domain).
@@ -41,8 +56,8 @@ cd web && npm install && npm start        # in another terminal
 If port 5432 is already used by a local PostgreSQL, start the database with `DB_PORT=55432 docker compose up -d`
 and run the API with `DB_URL=jdbc:postgresql://localhost:55432/sevadesk` in front of the `mvn` command.
 
-Open **http://radhagovinda.localhost:4200** (Hindu temple demo) or **http://gurunanak.localhost:4200**
-(gurdwara demo) in Chrome, Edge or Firefox. Bare `http://localhost:4200` opens Radha Govinda.
+Open **http://localhost:4200** for the ISKCON Somerset public website and **http://localhost:4200/admin** for
+SevaDesk. The other demo temples are at **http://radhagovinda.localhost:4200** and **http://gurunanak.localhost:4200**.
 Sign in with the demo admin from [`application-dev.yml`](api/src/main/resources/application-dev.yml).
 
 API docs: http://localhost:8080/api/docs (OpenAPI at `/api/docs/openapi`).
@@ -77,6 +92,12 @@ docker-compose.prod.yml   production / staging stack
 .github/workflows/ci.yml  CI/CD
 ```
 
+## First admin login in production
+
+Set `BOOTSTRAP_TENANT_SLUG=iskconsomerset`, `BOOTSTRAP_ADMIN_EMAIL` and `BOOTSTRAP_ADMIN_PASSWORD` (12+ characters)
+in the server's `.env`. On start, the API creates that admin only if the temple has no users yet. Sign in at
+`/admin`, then delete the password line from `.env`.
+
 ## Adding a temple
 
 Until the onboarding wizard exists, insert a row into `tenant` (see `db/dev/V1000__demo_tenants.sql` for the
@@ -87,7 +108,8 @@ domain at the server; Caddy fetches the certificate on the first visit after che
 ## Deploy (first time)
 
 1. VM with Docker (4 vCPU / 8 GB is plenty for the first 20+ temples). Open ports 80 and 443 only.
-2. DNS: `*.sevadesk.app` → VM. With Cloudflare proxying, use SSL mode **Full (strict)**.
+2. DNS: point `iskconsomerset.org` and `www.iskconsomerset.org` (A records) at the VM. Caddy gets the HTTPS
+   certificates automatically. With Cloudflare proxying, use SSL mode **Full (strict)**.
 3. `git clone` to `/opt/sevadesk`, `cp .env.example .env`, fill it in, `chmod 600 .env`.
 4. Backups: `age-keygen -o backup.agekey`; put the public key in `.env`, store `backup.agekey` **off the server**.
    Create the R2 bucket with lifecycle rules (weekly/ 84 days, nightly/ 7 days).

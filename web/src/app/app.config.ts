@@ -23,7 +23,7 @@ export const appConfig: ApplicationConfig = {
     // Kumkum default; BrandingService replaces it with the temple's colour at startup.
     providePrimeNG({ theme: sevaTheme('#8A1C2B') }),
     provideTranslateService({
-      loader: provideTranslateHttpLoader({ prefix: '/i18n/', suffix: '.json' }),
+      loader: provideTranslateHttpLoader({ prefix: 'i18n/', suffix: '.json' }),
       fallbackLang: 'en',
     }),
     MessageService,

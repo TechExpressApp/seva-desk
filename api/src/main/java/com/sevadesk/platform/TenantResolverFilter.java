@@ -28,9 +28,14 @@ public class TenantResolverFilter extends OncePerRequestFilter {
         var tenant = resolver.resolve(request.getServerName());
         if (tenant.isEmpty() && needsTenant(request)) {
             response.setStatus(HttpStatus.NOT_FOUND.value());
-            response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
-            response.getWriter().write("""
-                {"title":"Unknown temple","status":404,"detail":"No temple is registered for this address."}""");
+            if (request.getRequestURI().startsWith("/api/")) {
+                response.setContentType(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
+                response.getWriter().write("""
+                    {"title":"Unknown temple","status":404,"detail":"No temple is registered for this address."}""");
+            } else {
+                response.setContentType(MediaType.TEXT_HTML_VALUE + ";charset=UTF-8");
+                response.getWriter().write("<!doctype html><title>Not found</title><p>No temple website is registered for this address.</p>");
+            }
             return;
         }
         try {
@@ -43,6 +48,8 @@ public class TenantResolverFilter extends OncePerRequestFilter {
 
     private boolean needsTenant(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.startsWith("/api/") && !path.startsWith("/api/docs") && !path.equals("/api/public/domain-allowed");
+        // Everything is per temple (API and public website) except ops endpoints.
+        return !path.startsWith("/actuator") && !path.startsWith("/api/docs") && !path.equals("/error")
+                && !path.equals("/api/public/domain-allowed");
     }
 }
