@@ -1,0 +1,122 @@
+<div class="sd-page-head">
+  <div>
+    <h1>Expenses by Person</h1>
+    <p>
+      Total paid per person: <b>{{ total() }}</b> people, <b>{{ branding.money(grandTotal()) }}</b> in all.
+      Expenses not linked to a person are not counted.
+    </p>
+  </div>
+  <p-iconfield>
+    <p-inputicon styleClass="pi pi-search" />
+    <input pInputText type="search" placeholder="Search name, email or phone" aria-label="Search people"
+           (input)="onSearch($any($event.target).value)" />
+  </p-iconfield>
+</div>
+
+<p class="sd-muted sort-hint">
+  Sorted by {{ sortedBy() }}. Click a column heading to sort by it; click again to reverse.
+  <button type="button" class="link" (click)="resetSort(dt)">Reset</button>
+</p>
+
+<div class="sd-card" style="padding: 0; overflow: hidden">
+  <p-table #dt [value]="rows()" [lazy]="true" (onLazyLoad)="load($event)" [paginator]="true" [rows]="25"
+           [totalRecords]="total()" [loading]="loading()" dataKey="contactId"
+           sortField="total" [sortOrder]="-1" [tableStyle]="{ 'min-width': '820px' }">
+    <ng-template #header>
+      <tr>
+        <th pSortableColumn="name">Name <p-sortIcon field="name" /></th>
+        <th pSortableColumn="email">Email / phone <p-sortIcon field="email" /></th>
+        <th pSortableColumn="expenses" class="num">Expenses <p-sortIcon field="expenses" /></th>
+        <th pSortableColumn="thisYear" class="num">This year <p-sortIcon field="thisYear" /></th>
+        <th pSortableColumn="total" class="num">Total paid <p-sortIcon field="total" /></th>
+        <th pSortableColumn="lastExpense">Last expense <p-sortIcon field="lastExpense" /></th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-p>
+      <tr>
+        <td>
+          <button type="button" class="name-link" (click)="openProfile(p)" [attr.aria-label]="'Contact details of ' + p.name"
+                  title="Show contact details">{{ p.name }}</button>
+        </td>
+        <td class="sd-muted" style="font-size: 0.88rem">
+          {{ p.email }}
+          @if (p.email && p.phone) { <br /> }
+          {{ p.phone }}
+        </td>
+        <td class="sd-num num">
+          <button type="button" class="count-link" (click)="openExpenses(p)"
+                  [attr.aria-label]="'Show ' + p.expenses + ' expenses of ' + p.name" title="Show these expenses">
+            {{ p.expenses }}
+          </button>
+        </td>
+        <td class="sd-num num">{{ branding.money(p.thisYear) }}</td>
+        <td class="sd-num num" style="font-weight: 600">{{ branding.money(p.total) }}</td>
+        <td style="white-space: nowrap">{{ p.lastExpense | date: 'd MMM y' }}</td>
+      </tr>
+    </ng-template>
+    <ng-template #emptymessage>
+      <tr><td colspan="6" class="sd-muted">No one found. Expenses paid to a contact appear here.</td></tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- Contact details -->
+<p-dialog [header]="profileOf()?.name ?? ''" [visible]="!!profileOf()" (visibleChange)="!$event && profileOf.set(null)"
+          [modal]="true" [dismissableMask]="true" [style]="{ width: 'min(760px, 96vw)' }">
+  @if (profileOf(); as p) {
+    <div class="giving">
+      <div><span>Total paid</span><b>{{ branding.money(p.total) }}</b></div>
+      <div><span>Expenses</span><b>{{ p.expenses }}</b></div>
+      <div><span>This year</span><b>{{ branding.money(p.thisYear) }}</b></div>
+      <div><span>Last expense</span><b>{{ p.lastExpense ? (p.lastExpense | date: 'd MMM y') : '—' }}</b></div>
+    </div>
+    <sd-contact-details [contactId]="p.contactId" />
+  }
+  <ng-template #footer>
+    @if (profileOf(); as p) {
+      <p-button label="Edit contact" icon="pi pi-pencil" [text]="true" (onClick)="editContact(p)" />
+      <p-button [label]="'View ' + p.expenses + (p.expenses === 1 ? ' expense' : ' expenses')" icon="pi pi-list"
+                (onClick)="openExpenses(p)" />
+    }
+  </ng-template>
+</p-dialog>
+
+<!-- Expenses paid to one person -->
+<p-dialog [header]="'Expenses – ' + (selected()?.name ?? '')" [visible]="!!selected()"
+          (visibleChange)="!$event && selected.set(null)" [modal]="true" [dismissableMask]="true"
+          [style]="{ width: 'min(960px, 96vw)' }">
+  @if (selected(); as p) {
+    <div class="giving">
+      <div><span>Total paid</span><b>{{ branding.money(p.total) }}</b></div>
+      <div><span>Expenses</span><b>{{ p.expenses }}</b></div>
+      <div><span>This year</span><b>{{ branding.money(p.thisYear) }}</b></div>
+      <div><span>First – last expense</span><b>{{ p.firstExpense | date: 'd MMM y' }} – {{ p.lastExpense | date: 'd MMM y' }}</b></div>
+    </div>
+    @if (p.email || p.phone) {
+      <p class="sd-muted contact-line">{{ p.email }}@if (p.email && p.phone) { · }{{ p.phone }}</p>
+    }
+    <p-table [value]="expenses()" [lazy]="true" (onLazyLoad)="loadExpenses($event)" [paginator]="expensesTotal() > 10"
+             [rows]="10" [totalRecords]="expensesTotal()" [loading]="expensesLoading()" dataKey="id"
+             [tableStyle]="{ 'min-width': '640px' }">
+      <ng-template #header>
+        <tr>
+          <th>Expense date</th>
+          <th>Purpose</th>
+          <th>Notes</th>
+          <th class="num">Amount</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-e>
+        <tr>
+          <td style="white-space: nowrap">{{ e.spentOn | date: 'd MMM y' }}</td>
+          <td>{{ e.purposeLabel }}</td>
+          <td class="notes">{{ e.notes || '' }}</td>
+          <td class="sd-num num" style="font-weight: 600; white-space: nowrap">{{ branding.money(e.amount) }}</td>
+        </tr>
+      </ng-template>
+      <ng-template #emptymessage>
+        <tr><td colspan="4" class="sd-muted">No expenses found.</td></tr>
+      </ng-template>
+    </p-table>
+  }
+</p-dialog>

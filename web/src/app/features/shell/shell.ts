@@ -24,7 +24,8 @@ const NAV: NavItem[] = [
   { label: 'nav.guesthouse', icon: 'pi pi-building', link: '/soon/guesthouse', module: 'guesthouse', access: 'guesthouse' },
   { label: 'nav.members', icon: 'pi pi-id-card', link: '/soon/members', module: 'members', access: 'members' },
   { label: 'nav.volunteers', icon: 'pi pi-sparkles', link: '/soon/volunteers', module: 'volunteers', access: 'volunteers' },
-  { label: 'nav.finance', icon: 'pi pi-wallet', link: '/soon/finance', module: 'finance', access: 'finance' },
+  { label: 'nav.expenses', icon: 'pi pi-wallet', link: '/expenses', module: 'finance', access: 'finance' },
+  { label: 'nav.payees', icon: 'pi pi-briefcase', link: '/payees', module: 'finance', access: 'finance' },
   { label: 'nav.users', icon: 'pi pi-shield', link: '/users', access: 'users' },
 ];
 

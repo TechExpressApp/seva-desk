@@ -168,3 +168,41 @@ export interface PasswordIssued {
   emailSent: boolean;
   temporaryPassword: string | null;
 }
+
+export type ExpensePurpose =
+  | 'BUILDING_MAINTENANCE' | 'CONSTRUCTION' | 'DEITY_WORSHIP' | 'GROCERY' | 'MONK_DONATION' | 'BOOKS' | 'OTHER';
+
+export interface Expense {
+  id: string;
+  contactId: string | null;
+  name: string;
+  spentOn: string;
+  amount: number;
+  purpose: ExpensePurpose;
+  purposeLabel: string;
+  notes: string | null;
+}
+
+export interface ExpenseSummary {
+  thisMonth: number;
+  thisYear: number;
+  thisMonthByPurpose: { purpose: ExpensePurpose; label: string; amount: number }[];
+}
+
+export interface PayeeTotal {
+  contactId: string;
+  name: string | null;
+  email: string | null;
+  phone: string | null;
+  expenses: number;
+  total: number;
+  thisYear: number;
+  firstExpense: string | null;
+  lastExpense: string | null;
+}
+
+export interface PayeePage {
+  content: PayeeTotal[];
+  totalPeople: number;
+  grandTotal: number;
+}

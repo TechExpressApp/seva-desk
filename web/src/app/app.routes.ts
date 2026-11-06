@@ -45,6 +45,16 @@ export const routes: Routes = [
         loadComponent: () => import('./features/donations/donations').then((m) => m.Donations),
       },
       {
+        path: 'expenses',
+        data: { module: 'finance' },
+        loadComponent: () => import('./features/expenses/expenses').then((m) => m.Expenses),
+      },
+      {
+        path: 'payees',
+        data: { module: 'finance' },
+        loadComponent: () => import('./features/payees/payees').then((m) => m.Payees),
+      },
+      {
         path: 'users',
         data: { module: 'users' },
         loadComponent: () => import('./features/users/users').then((m) => m.Users),

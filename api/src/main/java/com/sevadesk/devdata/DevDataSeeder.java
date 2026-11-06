@@ -100,8 +100,12 @@ class DevDataSeeder implements ApplicationRunner {
                 }
 
                 LocalDate today = LocalDate.now(tenant.toRef().zone());
-                expenses.record(new Expense("Flowers & decoration", general.getId(), new BigDecimal("4200"), today, "Malli Florists", null));
-                expenses.record(new Expense("Groceries", food.getId(), new BigDecimal("12850"), today.withDayOfMonth(1), "Sri Balaji Stores", null));
+                var florist = contacts.save(new Contact("Malli", "Florists"));
+                var grocer = contacts.save(new Contact("Sri Balaji", "Stores"));
+                expenses.record(new Expense(florist.getId(), com.sevadesk.finance.ExpensePurpose.DEITY_WORSHIP,
+                        new BigDecimal("4200"), today, "Flowers & decoration"));
+                expenses.record(new Expense(grocer.getId(), com.sevadesk.finance.ExpensePurpose.GROCERY,
+                        new BigDecimal("12850"), today.withDayOfMonth(1), null));
 
                 var zone = tenant.toRef().zone();
                 event("Sunday Feast & Kirtan", "Kirtan, a short talk and a vegetarian feast. Everyone welcome.",

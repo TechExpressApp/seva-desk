@@ -21,13 +21,15 @@ export class BrandingService {
 
   readonly monogram = computed(() => this.branding()?.shortName ?? '');
 
-  private readonly moneyFormat = computed(() => {
+  /** Whole amounts without decimals ($4,200); amounts with cents show them ($85.40). */
+  private readonly moneyFormats = computed(() => {
     const b = this.branding();
-    return new Intl.NumberFormat(b?.currency === 'INR' ? 'en-IN' : undefined, {
-      style: 'currency',
-      currency: b?.currency ?? 'INR',
-      maximumFractionDigits: 0,
-    });
+    const locale = b?.currency === 'INR' ? 'en-IN' : undefined;
+    const currency = b?.currency ?? 'INR';
+    return {
+      whole: new Intl.NumberFormat(locale, { style: 'currency', currency, maximumFractionDigits: 0 }),
+      cents: new Intl.NumberFormat(locale, { style: 'currency', currency, minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+    };
   });
 
   async load(): Promise<void> {
@@ -43,7 +45,9 @@ export class BrandingService {
   }
 
   money(amount: number | null | undefined): string {
-    return this.moneyFormat().format(amount ?? 0);
+    const value = Number(amount ?? 0);
+    const f = this.moneyFormats();
+    return Math.round(value * 100) % 100 === 0 ? f.whole.format(value) : f.cents.format(value);
   }
 
   isEnabled(module: string): boolean {

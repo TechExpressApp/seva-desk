@@ -19,7 +19,9 @@
     "volunteers": "स्वयंसेवक",
     "signOut": "साइन आउट",
     "users": "उपयोगकर्ता",
-    "changePassword": "पासवर्ड बदलें"
+    "changePassword": "पासवर्ड बदलें",
+    "expenses": "खर्च",
+    "payees": "व्यक्तिवार खर्च"
   },
   "login": {
     "welcome": "{{greeting}}, स्वागत है",

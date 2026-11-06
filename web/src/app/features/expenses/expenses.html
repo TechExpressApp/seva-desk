@@ -1,0 +1,122 @@
+<div class="sd-page-head">
+  <div>
+    <h1>Expenses</h1>
+    <p>Money paid out: who was paid, when, how much and for what.</p>
+  </div>
+  <p-button label="Add expense" icon="pi pi-plus" (onClick)="open('new')" />
+</div>
+
+@if (summary(); as s) {
+  <div class="giving totals">
+    <div><span>This month</span><b>{{ branding.money(s.thisMonth) }}</b></div>
+    <div><span>This year</span><b>{{ branding.money(s.thisYear) }}</b></div>
+    <div class="wide">
+      <span>This month by purpose</span>
+      <b class="by-purpose">
+        @for (p of s.thisMonthByPurpose; track p.purpose) {
+          <em>{{ p.label }} {{ branding.money(p.amount) }}</em>
+        } @empty {
+          <em class="sd-muted">No expenses yet this month</em>
+        }
+      </b>
+    </div>
+  </div>
+}
+
+<div class="filters">
+  <p-select [options]="purposes()" optionLabel="label" optionValue="value" [(ngModel)]="filterPurpose"
+            (onChange)="applyFilters()" [showClear]="true" placeholder="All purposes" ariaLabel="Filter by purpose" />
+  <label>From <input pInputText type="date" [(ngModel)]="filterFrom" (change)="applyFilters()" /></label>
+  <label>To <input pInputText type="date" [(ngModel)]="filterTo" (change)="applyFilters()" /></label>
+  @if (filterPurpose || filterFrom || filterTo) {
+    <button type="button" class="link" (click)="clearFilters()">Clear filters</button>
+  }
+</div>
+
+<div class="sd-card" style="padding: 0; overflow: hidden">
+  <p-table [value]="rows()" [lazy]="true" (onLazyLoad)="load($event)" [paginator]="true" [rows]="25"
+           [totalRecords]="total()" [loading]="loading()" dataKey="id" [tableStyle]="{ 'min-width': '760px' }">
+    <ng-template #header>
+      <tr>
+        <th>Expense date</th>
+        <th>Name</th>
+        <th>Purpose</th>
+        <th>Notes</th>
+        <th class="num">Amount</th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-e>
+      <tr>
+        <td style="white-space: nowrap">{{ e.spentOn | date: 'd MMM y' }}</td>
+        <td><b>{{ e.name }}</b></td>
+        <td><span class="purpose">{{ e.purposeLabel }}</span></td>
+        <td class="sd-muted notes">{{ e.notes }}</td>
+        <td class="sd-num num" style="font-weight: 600; white-space: nowrap">{{ branding.money(e.amount) }}</td>
+        <td style="text-align: right; white-space: nowrap">
+          <p-button icon="pi pi-pencil" [text]="true" severity="secondary" ariaLabel="Edit expense" (onClick)="open(e)" />
+          <p-button icon="pi pi-trash" [text]="true" severity="danger" ariaLabel="Delete expense" (onClick)="deleting.set(e)" />
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template #emptymessage>
+      <tr><td colspan="6" class="sd-muted">No expenses found. Record one with “Add expense”.</td></tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- Add / edit -->
+<p-dialog [header]="editing() === 'new' ? 'Add expense' : 'Edit expense'" [visible]="!!editing()"
+          (visibleChange)="!$event && editing.set(null)" [modal]="true" [style]="{ width: 'min(620px, 96vw)' }">
+  <form [formGroup]="form" (ngSubmit)="save()" class="sd-form" id="expense-form">
+    <label class="full">
+      Name (who was paid)
+      <p-autocomplete #ac formControlName="payee" [suggestions]="suggestions()" (completeMethod)="searchContacts($event)"
+                      optionLabel="fullName" [forceSelection]="true" [minQueryLength]="1" [delay]="250"
+                      placeholder="Type to search your contacts" appendTo="body" [showEmptyMessage]="true"
+                      emptyMessage="No matching contact" inputId="payee" fluid>
+        <ng-template #item let-p>
+          <div class="payee"><b>{{ p.fullName }}</b>@if (p.hint) { <small>{{ p.hint }}</small> }</div>
+        </ng-template>
+        <!-- Last line of the suggestions list: add the typed name as a contact (mousedown keeps the input focused) -->
+        <ng-template #footer>
+          @if (canAddTyped()) {
+            <button type="button" class="add-in-list" (mousedown)="$event.preventDefault(); addAsContact(); ac.hide()">
+              <i class="pi pi-user-plus" aria-hidden="true"></i> Add “{{ lastQuery() }}” as a new contact
+            </button>
+          }
+        </ng-template>
+      </p-autocomplete>
+    </label>
+    <label>Expense date <input pInputText type="date" formControlName="spentOn" fluid /></label>
+    <label>
+      Expense amount ({{ branding.branding()?.currency }})
+      <p-inputnumber formControlName="amount" [min]="0" [minFractionDigits]="0" [maxFractionDigits]="2" inputId="amount" fluid />
+    </label>
+    <label class="full">
+      Purpose
+      <p-select formControlName="purpose" [options]="purposes()" optionLabel="label" optionValue="value"
+                placeholder="Choose a purpose" appendTo="body" fluid />
+    </label>
+    <label class="full">Notes (optional) <input pInputText formControlName="notes" maxlength="500"
+           placeholder="e.g. invoice no., what was bought" fluid /></label>
+    @if (error()) {
+      <p class="sd-error full" role="alert">{{ error() }}</p>
+    }
+  </form>
+  <ng-template #footer>
+    <p-button label="Cancel" [text]="true" severity="secondary" (onClick)="editing.set(null)" />
+    <p-button [label]="editing() === 'new' ? 'Add expense' : 'Save'" (onClick)="save()" [loading]="saving()" />
+  </ng-template>
+</p-dialog>
+
+<!-- Delete -->
+<p-dialog header="Delete expense" [visible]="!!deleting()" (visibleChange)="!$event && deleting.set(null)" [modal]="true"
+          [style]="{ width: 'min(440px, 96vw)' }">
+  <p>Delete the expense of <b>{{ deleting() ? branding.money(deleting()!.amount) : '' }}</b> paid to
+    <b>{{ deleting()?.name }}</b> on {{ deleting()?.spentOn | date: 'd MMM y' }}?</p>
+  <ng-template #footer>
+    <p-button label="Keep it" [text]="true" severity="secondary" (onClick)="deleting.set(null)" />
+    <p-button label="Delete expense" severity="danger" (onClick)="confirmDelete()" />
+  </ng-template>
+</p-dialog>

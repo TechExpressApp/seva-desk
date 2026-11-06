@@ -19,7 +19,9 @@
     "volunteers": "Volunteers",
     "signOut": "Sign out",
     "users": "Users",
-    "changePassword": "Change password"
+    "changePassword": "Change password",
+    "expenses": "Expenses",
+    "payees": "Expenses by Person"
   },
   "login": {
     "welcome": "{{greeting}}, welcome back",

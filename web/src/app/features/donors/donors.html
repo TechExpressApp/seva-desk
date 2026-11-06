@@ -130,56 +130,7 @@
       <div><span>Last donation</span><b>{{ d.lastGift ? (d.lastGift | date: 'd MMM y') : '—' }}</b></div>
     </div>
 
-    @if (profileError()) {
-      <p class="sd-error">{{ profileError() }}</p>
-    } @else if (!profile()) {
-      <p class="sd-muted">Loading…</p>
-    } @else {
-      @let c = profile()!;
-      <h3 class="pf-h">Contact</h3>
-      <dl class="pf">
-        <div><dt>Name</dt><dd>{{ c.fullName }}</dd></div>
-        <div><dt>Email</dt><dd>{{ c.email || '—' }}</dd></div>
-        <div><dt>Phone / WhatsApp</dt><dd>{{ c.phone || '—' }}</dd></div>
-        <div><dt>City</dt><dd>{{ c.city || '—' }}</dd></div>
-        <div><dt>Date of birth</dt><dd>{{ c.birthDate ? (c.birthDate | date: 'd MMMM y') : '—' }}</dd></div>
-        <div><dt>Initiated name</dt><dd>{{ c.initiatedName || '—' }}</dd></div>
-        <div><dt>Spiritual master</dt><dd>{{ c.spiritualMaster || '—' }}</dd></div>
-        <div><dt>Status</dt><dd>{{ statusLabel(c.devoteeStatus) || '—' }}</dd></div>
-        <div><dt>Gotra</dt><dd>{{ c.gotra || '—' }}</dd></div>
-        <div><dt>Nakshatra</dt><dd>{{ c.nakshatra || '—' }}</dd></div>
-        <div>
-          <dt>May contact by</dt>
-          <dd>
-            @if (c.consentEmail || c.consentWhatsapp) {
-              @if (c.consentEmail) { <p-tag value="Email" severity="success" /> }
-              @if (c.consentWhatsapp) { <p-tag value="WhatsApp" severity="success" /> }
-            } @else {
-              <span class="sd-muted">No consent recorded</span>
-            }
-          </dd>
-        </div>
-        @for (x of extraDetails(c); track x.label) {
-          <div><dt>{{ x.label }}</dt><dd>{{ x.value }}</dd></div>
-        }
-      </dl>
-
-      <h3 class="pf-h">Family birthdays</h3>
-      @if (c.family?.spouse || c.family?.children?.length) {
-        <table class="pf-family">
-          <tbody>
-            @if (c.family?.spouse; as s) {
-              <tr><th>Spouse</th><td>{{ s.name || '—' }}</td><td>{{ s.birthDate ? (s.birthDate | date: 'd MMMM y') : '—' }}</td></tr>
-            }
-            @for (k of c.family?.children ?? []; track $index) {
-              <tr><th>Child {{ $index + 1 }}</th><td>{{ k.name || '—' }}</td><td>{{ k.birthDate ? (k.birthDate | date: 'd MMMM y') : '—' }}</td></tr>
-            }
-          </tbody>
-        </table>
-      } @else {
-        <p class="sd-muted">None recorded.</p>
-      }
-    }
+    <sd-contact-details [contactId]="d.contactId" />
   }
   <ng-template #footer>
     @if (profileOf(); as d) {
