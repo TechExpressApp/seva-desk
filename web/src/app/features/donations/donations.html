@@ -1,0 +1,101 @@
+<div class="sd-page-head">
+  <div>
+    <h1>Donations</h1>
+    <p>Every donation gets a gap-free receipt number. Mistakes are voided, never deleted.</p>
+  </div>
+  @if (auth.hasAnyRole('ADMIN', 'TREASURER', 'FRONT_DESK')) {
+    <p-button label="New donation" icon="pi pi-plus" (onClick)="openNew()" />
+  }
+</div>
+
+<div class="sd-card" style="padding: 0; overflow: hidden">
+  <p-table [value]="rows()" [lazy]="true" (onLazyLoad)="load($event)" [paginator]="true" [rows]="25"
+           [totalRecords]="total()" [loading]="loading()" dataKey="id" [tableStyle]="{ 'min-width': '720px' }">
+    <ng-template #header>
+      <tr>
+        <th>Receipt</th>
+        <th>Date</th>
+        <th>Donor</th>
+        <th>Fund</th>
+        <th>Mode</th>
+        <th style="text-align: right">Amount</th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-d>
+      <tr>
+        <td class="sd-num">{{ d.receiptNo }}</td>
+        <td>{{ d.donatedAt | date: 'd MMM y, h:mm a' }}</td>
+        <td>{{ contactName(d.contactId) }}</td>
+        <td>{{ d.fundName }}</td>
+        <td>{{ modeLabel(d.paymentMode) }}</td>
+        <td class="sd-num" style="text-align: right; font-weight: 600">
+          @if (d.status === 'VOIDED') {
+            <p-tag severity="secondary" value="Voided" [title]="d.voidReason" />
+          } @else {
+            {{ branding.money(d.amount) }}
+          }
+        </td>
+        <td style="text-align: right">
+          @if (d.status === 'RECORDED' && auth.hasAnyRole('ADMIN', 'TREASURER')) {
+            <p-button icon="pi pi-ban" [text]="true" severity="secondary" ariaLabel="Void donation" (onClick)="voiding.set(d)" />
+          }
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template #emptymessage>
+      <tr><td colspan="7" class="sd-muted">No donations yet. Record the first one with “New donation”.</td></tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog header="New donation" [visible]="dialogOpen()" (visibleChange)="dialogOpen.set($event)" [modal]="true"
+          [style]="{ width: 'min(640px, 96vw)' }">
+  <form [formGroup]="form" (ngSubmit)="save()" class="sd-form" id="donation-form">
+    <label class="full">
+      Donor
+      <p-select formControlName="contactId" [options]="contacts()" optionLabel="fullName" optionValue="id"
+                [filter]="true" filterBy="fullName,phone" [showClear]="true" placeholder="Anonymous" appendTo="body" fluid />
+    </label>
+    <label>
+      Amount ({{ branding.branding()?.currency }})
+      <p-inputnumber formControlName="amount" [min]="1" [maxFractionDigits]="2" inputId="amount" fluid />
+    </label>
+    <label>
+      Fund
+      <p-select formControlName="fundId" [options]="funds()" optionLabel="name" optionValue="id" appendTo="body" fluid />
+    </label>
+    <label>
+      Payment mode
+      <p-select formControlName="paymentMode" [options]="modes" optionLabel="label" optionValue="value" appendTo="body" fluid />
+    </label>
+    <label>
+      Reference (UPI / cheque no.)
+      <input pInputText formControlName="reference" fluid />
+    </label>
+    <label class="full">
+      Notes / occasion
+      <input pInputText formControlName="notes" placeholder="e.g. Son's birthday, Rohini nakshatra" fluid />
+    </label>
+    @if (error()) {
+      <p class="sd-error full" role="alert">{{ error() }}</p>
+    }
+  </form>
+  <ng-template #footer>
+    <p-button label="Cancel" [text]="true" severity="secondary" (onClick)="dialogOpen.set(false)" />
+    <p-button label="Save & issue receipt" type="submit" form="donation-form" [loading]="saving()" />
+  </ng-template>
+</p-dialog>
+
+<p-dialog header="Void donation" [visible]="!!voiding()" (visibleChange)="!$event && voiding.set(null)" [modal]="true"
+          [style]="{ width: 'min(440px, 96vw)' }">
+  <p>Receipt <b>{{ voiding()?.receiptNo }}</b> will be marked void. The number is kept so receipts stay continuous.</p>
+  <label class="sd-form" style="display: block">
+    Reason
+    <input pInputText [formControl]="voidReason" placeholder="e.g. Entered twice" fluid />
+  </label>
+  <ng-template #footer>
+    <p-button label="Keep it" [text]="true" severity="secondary" (onClick)="voiding.set(null)" />
+    <p-button label="Void donation" severity="danger" [disabled]="voidReason.invalid" (onClick)="confirmVoid()" />
+  </ng-template>
+</p-dialog>

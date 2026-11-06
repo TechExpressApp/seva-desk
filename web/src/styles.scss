@@ -1,0 +1,98 @@
+/*
+ * SevaDesk design tokens. --sd-primary / --sd-accent / --sd-soft are overwritten at startup
+ * from the temple's branding (BrandingService), so every screen re-colours per tenant.
+ */
+:root {
+  --sd-primary: #8a1c2b;      // kumkum
+  --sd-accent: #e8890c;       // marigold
+  --sd-soft: #fff4e3;
+  --sd-deep: color-mix(in srgb, var(--sd-primary) 70%, black);
+
+  --sd-bg: #fbf6ee;           // sandalwood paper
+  --sd-surface: #ffffff;
+  --sd-ink: #2a1a14;
+  --sd-ink-soft: #6b564a;
+  --sd-line: #eadcc8;
+  --sd-good: #2f7a45;
+  --sd-warn: #9a5a08;
+
+  --sd-font-display: 'Marcellus', 'Cormorant Garamond', Georgia, serif;
+  --sd-font-body: 'Mukta', 'Segoe UI', system-ui, sans-serif;
+  --sd-radius: 12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--sd-bg);
+  color: var(--sd-ink);
+  font-family: var(--sd-font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, .sd-display {
+  font-family: var(--sd-font-display);
+  font-weight: 400;
+  margin: 0;
+  text-wrap: balance;
+}
+
+.sd-card {
+  background: var(--sd-surface);
+  border: 1px solid var(--sd-line);
+  border-radius: var(--sd-radius);
+  padding: 16px 18px;
+}
+
+.sd-card h2 {
+  font-size: 1.15rem;
+  color: var(--sd-primary);
+  margin-bottom: 10px;
+}
+
+.sd-muted { color: var(--sd-ink-soft); }
+.sd-num { font-variant-numeric: tabular-nums; }
+
+.sd-page-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 18px;
+
+  h1 { font-size: 1.7rem; color: var(--sd-primary); }
+  p { margin: 2px 0 0; color: var(--sd-ink-soft); }
+}
+
+.sd-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 16px;
+
+  label { display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; color: var(--sd-ink-soft); }
+  .full { grid-column: 1 / -1; }
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
+}
+
+.sd-error { color: #b42318; font-size: 0.85rem; }
+
+/* PrimeNG fine-tuning so components pick up the devotional type and paper background */
+.p-component { font-family: var(--sd-font-body); }
+.p-datatable .p-datatable-thead > tr > th {
+  background: color-mix(in srgb, var(--sd-soft) 60%, white);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--sd-ink-soft);
+}
+.p-dialog .p-dialog-title { font-family: var(--sd-font-display); font-weight: 400; color: var(--sd-primary); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

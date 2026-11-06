@@ -1,0 +1,43 @@
+{
+	email {$ACME_EMAIL}
+	# Before issuing a certificate for a new host name, Caddy asks the API whether it belongs to a registered temple.
+	on_demand_tls {
+		ask http://api:8080/api/public/domain-allowed
+	}
+}
+
+# Every host name: radhagovinda.sevadesk.app, admin.mytemple.org, ...
+https:// {
+	tls {
+		on_demand
+	}
+
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	handle /actuator/* {
+		respond 404
+	}
+
+	handle /api/* {
+		reverse_proxy api:8080 {
+			# Server-Sent Events for the live dashboard: send each event immediately
+			flush_interval -1
+		}
+	}
+
+	handle {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+}
+
+# Plain HTTP only redirects (Caddy does this automatically for the https:// site above).

@@ -1,0 +1,64 @@
+@let s = summary();
+<div class="sd-page-head">
+  <div>
+    <h1>{{ 'nav.dashboard' | translate }}</h1>
+  </div>
+  <p-button [label]="'dashboard.newDonation' | translate" icon="pi pi-plus" routerLink="/donations" [queryParams]="{ new: 1 }" />
+</div>
+
+<section class="kpis">
+  <div class="kpi hl">
+    <span class="l">
+      {{ 'dashboard.today' | translate }}
+      <span class="live" [class.off]="!connected()">LIVE</span>
+    </span>
+    <span class="v sd-num">{{ branding.money(s?.todayDonations) }}</span>
+    <span class="d">{{ 'dashboard.count' | translate: { count: s?.todayCount ?? 0 } }}</span>
+  </div>
+  <div class="kpi">
+    <span class="l">{{ 'dashboard.month' | translate }}</span>
+    <span class="v sd-num">{{ branding.money(s?.monthDonations) }}</span>
+  </div>
+  <div class="kpi">
+    <span class="l">{{ 'dashboard.expenses' | translate }}</span>
+    <span class="v sd-num">{{ branding.money(s?.monthExpenses) }}</span>
+  </div>
+  <div class="kpi">
+    <span class="l">{{ 'dashboard.net' | translate }}</span>
+    <span class="v sd-num" [class.neg]="(s?.monthNet ?? 0) < 0">{{ branding.money(s?.monthNet) }}</span>
+  </div>
+</section>
+
+<section class="row">
+  <div class="sd-card">
+    <h2>{{ 'dashboard.byFund' | translate }}</h2>
+    <div class="funds">
+      @for (f of s?.monthByFund ?? []; track f.fund) {
+        <div class="fund">
+          <span class="name">{{ f.fund }}</span>
+          <span class="bar"><span [style.width.%]="(f.amount / fundMax()) * 100"></span></span>
+          <span class="amt sd-num">{{ branding.money(f.amount) }}</span>
+        </div>
+      } @empty {
+        <p class="sd-muted">No donations yet this month.</p>
+      }
+    </div>
+  </div>
+
+  <div class="sd-card">
+    <h2>{{ 'dashboard.live' | translate }}</h2>
+    <ul class="feed">
+      @for (t of feed(); track t.receiptNo) {
+        <li [class.fresh]="t.fresh">
+          <span>
+            <b>{{ t.donor ?? t.fund }}</b>
+            <small class="sd-muted">{{ t.receiptNo }} · {{ modeLabel(t.mode) }}@if (t.donor) { · {{ t.fund }} }</small>
+          </span>
+          <span class="sd-num amt">{{ branding.money(t.amount) }}</span>
+        </li>
+      } @empty {
+        <li class="sd-muted">{{ 'dashboard.liveEmpty' | translate }}</li>
+      }
+    </ul>
+  </div>
+</section>

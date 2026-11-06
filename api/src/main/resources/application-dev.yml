@@ -1,0 +1,20 @@
+# Local development: `mvn spring-boot:run -Dspring-boot.run.profiles=dev`
+spring:
+  flyway:
+    locations: classpath:db/migration,classpath:db/dev
+
+sevadesk:
+  tenancy:
+    default-slug: radhagovinda
+  jwt:
+    secret: dev-only-secret-change-me-0123456789abcdef
+  cookie:
+    secure: false
+  dev:
+    # Seeded for every demo tenant by DevDataSeeder. Development only.
+    admin-email: admin@demo.local
+    admin-password: ChangeMe-dev-only
+
+logging:
+  level:
+    com.sevadesk: debug

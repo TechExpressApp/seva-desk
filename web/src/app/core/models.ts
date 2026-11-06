@@ -1,0 +1,86 @@
+export interface Branding {
+  slug: string;
+  name: string;
+  shortName: string;
+  greeting: string;
+  tagline: string | null;
+  primaryColor: string;
+  accentColor: string;
+  softColor: string;
+  logoUrl: string | null;
+  currency: string;
+  locale: string;
+  timeZone: string;
+  terms: Record<string, string>;
+  enabledModules: string[];
+  whatsappNumber: string | null;
+}
+
+export interface Me {
+  email: string;
+  displayName: string;
+  roles: string[];
+}
+
+export interface Page<T> {
+  content: T[];
+  page: { size: number; number: number; totalElements: number; totalPages: number };
+}
+
+export interface Contact {
+  id: string;
+  firstName: string;
+  lastName: string | null;
+  fullName: string;
+  email: string | null;
+  phone: string | null;
+  city: string | null;
+  gotra: string | null;
+  nakshatra: string | null;
+  birthDate: string | null;
+  consentEmail: boolean;
+  consentWhatsapp: boolean;
+}
+
+export type PaymentMode = 'CASH' | 'CHEQUE' | 'UPI' | 'CARD' | 'BANK_TRANSFER' | 'ONLINE' | 'IN_KIND';
+
+export interface Donation {
+  id: string;
+  receiptNo: string;
+  contactId: string | null;
+  fundId: string;
+  fundName: string;
+  amount: number;
+  currency: string;
+  paymentMode: PaymentMode;
+  reference: string | null;
+  donatedAt: string;
+  status: 'RECORDED' | 'VOIDED';
+  voidReason: string | null;
+  notes: string | null;
+}
+
+export interface Fund {
+  id: string;
+  name: string;
+  taxDeductible: boolean;
+}
+
+export interface DashboardSummary {
+  currency: string;
+  todayDonations: number;
+  todayCount: number;
+  monthDonations: number;
+  monthExpenses: number;
+  monthNet: number;
+  monthByFund: { fund: string; amount: number }[];
+}
+
+export interface DonationTick {
+  receiptNo: string;
+  amount: number;
+  fund: string | null;
+  donor: string | null;
+  mode: string;
+  voided: boolean;
+}

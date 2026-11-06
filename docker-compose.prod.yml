@@ -1,0 +1,66 @@
+# Production (and staging) on one VM:  TAG=v0.1.0 docker compose -f docker-compose.prod.yml --env-file .env up -d
+services:
+  web:
+    image: ghcr.io/${GITHUB_OWNER}/sevadesk-web:${TAG:-latest}
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      ACME_EMAIL: ${ACME_EMAIL}
+    volumes:
+      - ./infra/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      api:
+        condition: service_healthy
+
+  api:
+    image: ghcr.io/${GITHUB_OWNER}/sevadesk-api:${TAG:-latest}
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
+      DB_OWNER_USER: ${POSTGRES_USER}
+      DB_OWNER_PASSWORD: ${POSTGRES_PASSWORD}
+      DB_APP_USER: ${APP_DB_USER}
+      DB_APP_PASSWORD: ${APP_DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      BASE_DOMAINS: ${BASE_DOMAINS}
+      TZ: ${TZ}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      APP_DB_USER: ${APP_DB_USER}
+      APP_DB_PASSWORD: ${APP_DB_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      retries: 10
+    # not published to the internet
+
+  backup:
+    image: ghcr.io/${GITHUB_OWNER}/sevadesk-backup:${TAG:-latest}
+    restart: unless-stopped
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata: {}
+  caddy_data: {}
+  caddy_config: {}

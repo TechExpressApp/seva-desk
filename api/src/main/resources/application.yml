@@ -1,0 +1,57 @@
+spring:
+  application:
+    name: sevadesk-api
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/sevadesk}
+    # The app connects as a non-owner role so PostgreSQL row-level security always applies.
+    username: ${DB_APP_USER:sevadesk_app}
+    password: ${DB_APP_PASSWORD:app_dev_password}
+  flyway:
+    # Migrations run as the schema owner, on their own connection.
+    url: ${spring.datasource.url}
+    user: ${DB_OWNER_USER:sevadesk}
+    password: ${DB_OWNER_PASSWORD:owner_dev_password}
+    placeholders:
+      appRole: ${DB_APP_USER:sevadesk_app}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  mvc:
+    problemdetails:
+      enabled: true
+  threads:
+    virtual:
+      enabled: true
+
+server:
+  forward-headers-strategy: framework
+  shutdown: graceful
+
+sevadesk:
+  tenancy:
+    # Hosts under these domains resolve the tenant from the first label: radhagovinda.sevadesk.app
+    base-domains: ${BASE_DOMAINS:sevadesk.app,localhost}
+    # Tenant used for a bare base domain such as "localhost" (dev only). Empty = none.
+    default-slug: ${DEFAULT_TENANT_SLUG:}
+  jwt:
+    secret: ${JWT_SECRET}
+    ttl: 8h
+  cookie:
+    secure: ${COOKIE_SECURE:true}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+springdoc:
+  swagger-ui:
+    path: /api/docs
+  api-docs:
+    path: /api/docs/openapi

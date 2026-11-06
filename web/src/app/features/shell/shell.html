@@ -1,0 +1,41 @@
+@let b = branding.branding();
+<div class="shell">
+  <aside class="side">
+    <a class="brand" routerLink="/dashboard">
+      <span class="logo">
+        @if (b?.logoUrl) {
+          <img [src]="b?.logoUrl" alt="" />
+        } @else {
+          {{ b?.shortName }}
+        }
+      </span>
+      <span class="name">{{ b?.name }}</span>
+    </a>
+
+    <nav aria-label="Main">
+      @for (item of nav(); track item.link) {
+        <a [routerLink]="item.link" routerLinkActive="on">
+          <i [class]="item.icon" aria-hidden="true"></i>
+          <span>{{ item.label | translate: terms() }}</span>
+        </a>
+      }
+    </nav>
+
+    <button type="button" class="signout" (click)="auth.logout()">
+      <i class="pi pi-sign-out" aria-hidden="true"></i> {{ 'nav.signOut' | translate }}
+    </button>
+  </aside>
+
+  <div class="main">
+    <header class="top">
+      <div>
+        <div class="greet">{{ b?.greeting }}, {{ auth.firstName() }}</div>
+        <div class="sd-muted date">{{ today }}</div>
+      </div>
+      <div class="who sd-muted">{{ auth.user()?.email }}</div>
+    </header>
+    <main class="content">
+      <router-outlet />
+    </main>
+  </div>
+</div>

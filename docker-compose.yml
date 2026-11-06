@@ -1,0 +1,24 @@
+# Local development: just the database. Run the API and web app from your IDE / terminal (see README).
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: sevadesk
+      POSTGRES_USER: sevadesk
+      POSTGRES_PASSWORD: owner_dev_password
+      APP_DB_USER: sevadesk_app
+      APP_DB_PASSWORD: app_dev_password
+    ports:
+      # If 5432 is taken by a local PostgreSQL: DB_PORT=55432 docker compose up -d
+      # and run the API with DB_URL=jdbc:postgresql://localhost:55432/sevadesk
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - pgdata-dev:/var/lib/postgresql/data
+      - ./infra/db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sevadesk -d sevadesk"]
+      interval: 5s
+      retries: 10
+
+volumes:
+  pgdata-dev: {}

@@ -1,0 +1,10 @@
+.env
+*.agekey
+*.age
+.DS_Store
+.idea/
+.vscode/
+api/target/
+web/node_modules/
+web/dist/
+web/.angular/

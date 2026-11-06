@@ -1,0 +1,39 @@
+{
+  "term": {
+    "priest": "पुजारी",
+    "priests": "पुजारी",
+    "seva": "सेवा",
+    "donation": "दान",
+    "donations": "दान"
+  },
+  "nav": {
+    "dashboard": "डैशबोर्ड",
+    "contacts": "संपर्क",
+    "donations": "दान",
+    "finance": "वित्त",
+    "events": "उत्सव",
+    "seva": "{{seva}} व {{priest}} सेवाएँ",
+    "guesthouse": "अतिथि गृह",
+    "members": "आजीवन सदस्य",
+    "volunteers": "स्वयंसेवक",
+    "signOut": "साइन आउट"
+  },
+  "login": {
+    "welcome": "{{greeting}}, स्वागत है",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "submit": "साइन इन",
+    "failed": "ईमेल या पासवर्ड गलत है।"
+  },
+  "dashboard": {
+    "today": "आज का दान",
+    "month": "इस माह",
+    "expenses": "इस माह का खर्च",
+    "net": "इस माह शेष",
+    "count": "{{count}} दान",
+    "byFund": "इस माह निधि अनुसार",
+    "live": "लाइव दान",
+    "liveEmpty": "नया दान सहेजते ही यहाँ दिखेगा।",
+    "newDonation": "नया दान"
+  }
+}

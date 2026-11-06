@@ -1,0 +1,39 @@
+@let b = branding.branding();
+<div class="login">
+  <section class="art">
+    <div class="mandala" aria-hidden="true"></div>
+    <sd-lotus class="mark" [size]="132" />
+    <div class="words">
+      <h1>{{ b?.name }}</h1>
+      @if (b?.tagline) {
+        <p>{{ b?.tagline }}</p>
+      }
+    </div>
+  </section>
+
+  <section class="panel">
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="monogram">
+        @if (b?.logoUrl) {
+          <img [src]="b?.logoUrl" alt="" />
+        } @else {
+          {{ b?.shortName }}
+        }
+      </div>
+      <h2>{{ 'login.welcome' | translate: { greeting: b?.greeting } }}</h2>
+
+      <label for="email">{{ 'login.email' | translate }}</label>
+      <input pInputText id="email" type="email" formControlName="email" autocomplete="username" fluid />
+
+      <label for="password">{{ 'login.password' | translate }}</label>
+      <p-password inputId="password" formControlName="password" [feedback]="false" [toggleMask]="true"
+                  autocomplete="current-password" fluid />
+
+      @if (failed()) {
+        <p class="sd-error" role="alert">{{ 'login.failed' | translate }}</p>
+      }
+
+      <p-button type="submit" [label]="'login.submit' | translate" [loading]="busy()" styleClass="w-full" fluid />
+    </form>
+  </section>
+</div>

@@ -1,0 +1,39 @@
+{
+  "term": {
+    "priest": "Priest",
+    "priests": "Priests",
+    "seva": "Seva",
+    "donation": "Donation",
+    "donations": "Donations"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "contacts": "Contacts",
+    "donations": "Donations",
+    "finance": "Finance",
+    "events": "Events",
+    "seva": "{{seva}} & {{priest}} services",
+    "guesthouse": "Guest house",
+    "members": "Life members",
+    "volunteers": "Volunteers",
+    "signOut": "Sign out"
+  },
+  "login": {
+    "welcome": "{{greeting}}, welcome back",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "failed": "Email or password is incorrect."
+  },
+  "dashboard": {
+    "today": "Today's donations",
+    "month": "This month",
+    "expenses": "Expenses this month",
+    "net": "Net this month",
+    "count": "{{count}} donations",
+    "byFund": "This month by fund",
+    "live": "Live donations",
+    "liveEmpty": "New donations appear here the moment they are saved.",
+    "newDonation": "New donation"
+  }
+}

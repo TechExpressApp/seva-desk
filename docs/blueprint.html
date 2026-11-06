@@ -1,0 +1,992 @@
+<title>SevaDesk Blueprint</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Mukta:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a sandalwood-paper reading column with a sticky section rail; the "Screens" chapter breaks out wide as a product showcase. */
+:root{
+  --bg:#FBF6EE;          /* sandalwood paper */
+  --surface:#FFFFFF;
+  --surface-2:#F5ECDD;
+  --ink:#2A1A14;
+  --ink-soft:#6B564A;
+  --line:#E6D6C0;
+  --kumkum:#8A1C2B;      /* primary accent */
+  --marigold:#D97A06;    /* secondary */
+  --tulsi:#3E6B48;       /* good */
+  --warn:#B4610A;
+  --code-bg:#2A1A14; --code-fg:#F7E9D4;
+  --f-display:"Marcellus", "Cormorant Garamond", Georgia, serif;
+  --f-body:"Mukta", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#17100D; --surface:#21170F; --surface-2:#2B1E15; --ink:#F3E6D5; --ink-soft:#BFA893; --line:#3E2D21;
+  --kumkum:#E0707D; --marigold:#F2A440; --tulsi:#7FB58A; --warn:#F2A440; --code-bg:#0E0907; --code-fg:#F3E6D5; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#17100D; --surface:#21170F; --surface-2:#2B1E15; --ink:#F3E6D5; --ink-soft:#BFA893; --line:#3E2D21;
+  --kumkum:#E0707D; --marigold:#F2A440; --tulsi:#7FB58A; --warn:#F2A440; --code-bg:#0E0907; --code-fg:#F3E6D5; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;text-wrap:balance;line-height:1.2;margin:0}
+h1{font-size:clamp(2.2rem,5vw,3.4rem)}
+h2{font-size:clamp(1.6rem,3.2vw,2.1rem);color:var(--kumkum)}
+h3{font-size:1.25rem}
+p{margin:0}
+a{color:var(--kumkum)}
+code{font-family:var(--f-mono);font-size:.85em;background:var(--surface-2);padding:.08em .35em;border-radius:4px}
+pre.code{font-family:var(--f-mono);font-size:.8rem;line-height:1.55;background:var(--code-bg);color:var(--code-fg);padding:16px 18px;border-radius:10px;overflow-x:auto;margin:0}
+.eyebrow{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--marigold);font-weight:600}
+.muted{color:var(--ink-soft)}
+.wrap{max-width:1120px;margin:0 auto}
+
+/* hero */
+.hero{padding-block:56px 36px;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center;border-bottom:1px solid var(--line)}
+.hero p.lede{font-size:1.15rem;max-width:62ch;margin-top:14px;color:var(--ink-soft)}
+.hero .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.chip{font-size:.8rem;border:1px solid var(--line);background:var(--surface);padding:3px 10px;border-radius:999px}
+.lotus-mark{width:150px;height:150px;color:var(--kumkum)}
+@media (max-width:700px){.hero{grid-template-columns:1fr}.lotus-mark{display:none}}
+
+/* rail layout */
+.layout{display:grid;grid-template-columns:200px minmax(0,1fr);gap:48px;padding-block:32px 80px}
+nav.rail{position:sticky;top:calc(env(safe-area-inset-top,0px) + 20px);align-self:start;display:flex;flex-direction:column;gap:2px;font-size:.92rem}
+nav.rail a{color:var(--ink-soft);text-decoration:none;padding:5px 10px;border-left:2px solid var(--line)}
+nav.rail a:hover,nav.rail a:focus-visible{color:var(--kumkum);border-left-color:var(--marigold);outline:none}
+@media (max-width:900px){.layout{grid-template-columns:1fr}nav.rail{position:static;flex-direction:row;flex-wrap:wrap;gap:6px}nav.rail a{border:1px solid var(--line);border-radius:999px;padding:2px 10px}}
+main{min-width:0;display:flex;flex-direction:column;gap:64px}
+section{display:flex;flex-direction:column;gap:18px;min-width:0;scroll-margin-top:24px}
+section > p{max-width:70ch}
+
+/* tables */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;background:var(--surface-2);font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+tr:last-child td{border-bottom:0}
+td.num{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+td strong{color:var(--kumkum);font-weight:600}
+
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
+.note{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:6px}
+.note h3{font-size:1.08rem;color:var(--ink)}
+.note ul{margin:0;padding-left:18px;font-size:.95rem}
+.callout{border-left:3px solid var(--marigold);background:var(--surface-2);padding:12px 16px;border-radius:0 8px 8px 0;font-size:.95rem;max-width:80ch}
+.callout.red{border-left-color:var(--kumkum)}
+ul.tight{margin:0;padding-left:20px}
+ul.tight li{margin-bottom:4px}
+
+/* module cards */
+.mods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:760px){.mods{grid-template-columns:1fr}}
+.mod{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.mod header{display:flex;gap:10px;align-items:baseline}
+.mod .n{font-family:var(--f-display);color:var(--marigold);font-size:1.3rem}
+.mod ul{margin:0;padding-left:18px;font-size:.93rem}
+.mod .tables{font-family:var(--f-mono);font-size:.74rem;color:var(--ink-soft)}
+
+/* timeline */
+.tl{display:flex;flex-direction:column;border-left:2px solid var(--line);margin-left:6px}
+.tl .ph{position:relative;padding:4px 0 18px 22px}
+.tl .ph::before{content:"";position:absolute;left:-7px;top:10px;width:12px;height:12px;border-radius:50%;background:var(--bg);border:2px solid var(--marigold)}
+.tl .ph.go::before{background:var(--kumkum);border-color:var(--kumkum)}
+.tl .wk{font-family:var(--f-mono);font-size:.78rem;color:var(--marigold)}
+.tl h3{font-size:1.12rem}
+.tl ul{margin:4px 0 0;padding-left:18px;font-size:.93rem;max-width:72ch}
+.pill{display:inline-block;font-size:.72rem;padding:1px 8px;border-radius:999px;background:var(--kumkum);color:var(--surface);margin-left:6px;vertical-align:middle;font-family:var(--f-body)}
+
+/* mermaid */
+pre.mermaid{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;overflow-x:auto;margin:0}
+
+/* ==== SCREENS showcase ==== */
+.showcase{display:flex;flex-direction:column;gap:14px}
+.controls{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{font:inherit;font-size:.86rem;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:5px 12px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--kumkum);border-color:var(--kumkum);color:var(--surface)}
+.seg button:focus-visible{outline:2px solid var(--marigold);outline-offset:2px}
+.seg-label{font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-soft);margin-right:4px;align-self:center}
+
+/* the mock is a product screenshot; it keeps its own light, tenant-branded palette in both page themes */
+.mock{
+  --t1:#8A1C2B; --t2:#E8890C; --tsoft:#FFF4E3; --tdeep:#5A0F1A;
+  --m-bg:#FCF8F2; --m-card:#FFFFFF; --m-ink:#2A1A14; --m-soft:#7A6658; --m-line:#EEDFCB; --m-good:#2F7A45;
+  color:var(--m-ink);background:var(--m-bg);border-radius:14px;overflow:hidden;border:1px solid var(--line);
+  box-shadow:0 18px 40px -24px rgba(60,20,10,.45);font-size:14px;line-height:1.45;color-scheme:light}
+.mock[data-tenant="balaji"]{--t1:#7A2E0E;--t2:#C9A227;--tsoft:#FFF8E2;--tdeep:#4A1A06}
+.mock[data-tenant="gurdwara"]{--t1:#1F3A93;--t2:#F28C28;--tsoft:#EEF2FF;--tdeep:#14265F}
+.mock[data-tenant="church"]{--t1:#4B2E83;--t2:#C9A227;--tsoft:#F4EFFB;--tdeep:#2E1B55}
+.mock .chrome{display:flex;align-items:center;gap:6px;padding:8px 12px;background:#EFE6DA;border-bottom:1px solid var(--m-line)}
+.mock .chrome i{width:10px;height:10px;border-radius:50%;background:#D9C8B4;display:block}
+.mock .chrome span{margin-left:10px;font-family:var(--f-mono);font-size:11px;color:#7A6658;background:#FFFFFF;padding:2px 10px;border-radius:6px;flex:1;max-width:340px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.app{display:grid;grid-template-columns:190px minmax(0,1fr);min-height:520px}
+.side{background:linear-gradient(180deg,var(--t1),var(--tdeep));color:#FFF7EC;padding:16px 12px;display:flex;flex-direction:column;gap:4px;position:relative;overflow:hidden}
+.side::after{content:"";position:absolute;right:-70px;bottom:-70px;width:220px;height:220px;opacity:.12;
+  background:repeating-conic-gradient(from 0deg,#FFF7EC 0 6deg,transparent 6deg 15deg);border-radius:50%;
+  -webkit-mask:radial-gradient(circle,transparent 30%,#000 31%,#000 70%,transparent 71%);mask:radial-gradient(circle,transparent 30%,#000 31%,#000 70%,transparent 71%)}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.logo{width:40px;height:40px;border-radius:50%;background:#FFF7EC;color:var(--t1);display:grid;place-items:center;font-family:var(--f-display);font-size:15px;box-shadow:0 0 0 2px var(--t2);flex:none}
+.brand b{font-family:var(--f-display);font-weight:400;font-size:14px;line-height:1.2}
+.side a{color:#FFF7EC;opacity:.82;text-decoration:none;padding:6px 10px;border-radius:8px;font-size:13px;display:flex;gap:8px;align-items:center;position:relative;z-index:1}
+.side a.on{background:rgba(255,247,236,.16);opacity:1}
+.side a .dot{width:6px;height:6px;border-radius:50%;background:var(--t2)}
+.content{padding:18px 20px;display:flex;flex-direction:column;gap:14px;min-width:0;position:relative}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.greet{font-family:var(--f-display);font-size:20px;color:var(--t1)}
+.greet small{display:block;font-family:var(--f-body);font-size:12px;color:var(--m-soft)}
+.btn{font:inherit;font-size:13px;border:0;background:var(--t1);color:#FFF;padding:7px 14px;border-radius:8px;cursor:default}
+.btn.ghost{background:transparent;color:var(--t1);border:1px solid var(--t1)}
+.btn.gold{background:var(--t2);color:#2A1A14}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.kpi{background:var(--m-card);border:1px solid var(--m-line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.kpi .l{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--m-soft)}
+.kpi .v{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.kpi .d{font-size:11px;color:var(--m-good)}
+.kpi.hl{background:var(--tsoft);border-color:var(--t2)}
+.live{display:inline-flex;align-items:center;gap:5px;font-size:10px;color:var(--m-good);font-weight:600;letter-spacing:.06em}
+.live::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--m-good);animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.live::before{animation:none}}
+.row2{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:12px}
+.card{background:var(--m-card);border:1px solid var(--m-line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card h4{margin:0;font-family:var(--f-display);font-weight:400;font-size:15px;color:var(--t1);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.feed{display:flex;flex-direction:column;gap:6px;font-size:12.5px}
+.feed div{display:flex;justify-content:space-between;gap:8px;border-bottom:1px dashed var(--m-line);padding-bottom:5px}
+.feed div:last-child{border-bottom:0}
+.feed b{font-variant-numeric:tabular-nums;font-weight:600}
+.feed .new{animation:flash 1.2s ease-out}
+@keyframes flash{from{background:var(--tsoft)}to{background:transparent}}
+.legend{display:flex;gap:12px;font-size:11px;color:var(--m-soft)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.ev{display:flex;gap:10px;align-items:center;font-size:12.5px}
+.ev .date{flex:none;width:42px;text-align:center;border-radius:8px;background:var(--tsoft);color:var(--t1);line-height:1.1;padding:4px 0;font-weight:600}
+.ev .date small{display:block;font-size:9px;font-weight:500;text-transform:uppercase}
+.tag{font-size:10.5px;padding:1px 7px;border-radius:999px;background:var(--tsoft);color:var(--t1);border:1px solid var(--m-line);white-space:nowrap}
+.tag.ok{background:#E8F4EC;color:#2F7A45;border-color:#CDE6D5}
+.tag.wait{background:#FFF1DE;color:#9A5A08;border-color:#F3D9B2}
+.mtable{width:100%;border-collapse:collapse;font-size:12.5px}
+.mtable th{background:transparent;font-size:10.5px;color:var(--m-soft);padding:6px 8px;border-bottom:1px solid var(--m-line)}
+.mtable td{padding:7px 8px;border-bottom:1px solid var(--m-line)}
+.form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px}
+.fld{display:flex;flex-direction:column;gap:3px;font-size:11.5px;color:var(--m-soft)}
+.fld .in{background:#FFF;border:1px solid var(--m-line);border-radius:8px;padding:7px 10px;color:var(--m-ink);font-size:13px;min-height:33px}
+.fld.full{grid-column:1/-1}
+.toggles{display:flex;flex-wrap:wrap;gap:8px}
+.tg{display:flex;align-items:center;gap:6px;border:1px solid var(--m-line);border-radius:8px;padding:6px 10px;font-size:12.5px;background:#FFF}
+.tg .sw{width:26px;height:15px;border-radius:999px;background:var(--m-good);position:relative;flex:none}
+.tg .sw::after{content:"";position:absolute;right:2px;top:2px;width:11px;height:11px;border-radius:50%;background:#FFF}
+.tg.off .sw{background:#CDBFAF}.tg.off .sw::after{right:auto;left:2px}
+.postprev{border:1px solid var(--m-line);border-radius:10px;overflow:hidden;background:#FFF;font-size:12.5px}
+.postprev .img{height:120px;background:
+  radial-gradient(circle at 50% 120%,var(--t2) 0 30%,transparent 31%),
+  radial-gradient(circle at 50% 110%,rgba(255,255,255,.35) 0 45%,transparent 46%),
+  linear-gradient(160deg,var(--t1),var(--tdeep));display:grid;place-items:center;color:#FFF7EC;font-family:var(--f-display);font-size:20px;text-align:center;padding:10px}
+.postprev p{padding:8px 10px}
+.rooms{display:grid;grid-template-columns:110px repeat(7,minmax(34px,1fr));font-size:11.5px;min-width:440px}
+.rooms div{border-bottom:1px solid var(--m-line);border-right:1px solid var(--m-line);padding:6px 4px;min-height:30px}
+.rooms .h{font-weight:600;color:var(--m-soft);text-align:center;font-size:10.5px}
+.rooms .r{font-weight:600}
+.bk{border-radius:5px;color:#FFF;font-size:10px;padding:2px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bk.a{background:var(--t1)}.bk.b{background:var(--t2);color:#2A1A14}.bk.c{background:#2F7A45}
+.slots{display:flex;flex-wrap:wrap;gap:6px}
+.slot{font-size:12px;border:1px solid var(--m-line);border-radius:8px;padding:5px 10px;background:#FFF}
+.slot.sel{background:var(--t1);color:#FFF;border-color:var(--t1)}
+.slot.x{opacity:.4;text-decoration:line-through}
+.sevas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.seva{border:1px solid var(--m-line);border-radius:10px;padding:10px;background:#FFF;display:flex;flex-direction:column;gap:2px;font-size:12px}
+.seva b{font-size:13px}
+.seva.sel{border-color:var(--t1);box-shadow:0 0 0 2px var(--tsoft)}
+/* login */
+.login{min-height:520px;display:grid;grid-template-columns:1.1fr 1fr}
+.login .art{background:radial-gradient(circle at 50% 38%,rgba(255,247,236,.18) 0 22%,transparent 23%),
+  repeating-conic-gradient(from 0deg at 50% 38%,rgba(255,247,236,.07) 0 7.5deg,transparent 7.5deg 15deg),
+  linear-gradient(170deg,var(--t1),var(--tdeep));color:#FFF7EC;display:flex;flex-direction:column;justify-content:flex-end;padding:28px;gap:8px;position:relative}
+.login .art .bigmark{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);width:120px;height:120px;color:var(--t2)}
+.login .art h3{font-size:26px}
+.login .art p{opacity:.85;font-size:13px;max-width:36ch}
+.login .panel{padding:36px 32px;display:flex;flex-direction:column;gap:12px;justify-content:center}
+.login .panel h3{font-size:22px;color:var(--t1)}
+/* mobile + chat */
+.mobilewrap{display:flex;flex-wrap:wrap;gap:24px;justify-content:center;padding:22px;background:var(--m-bg)}
+.phone{width:290px;max-width:100%;border:9px solid #241813;border-radius:34px;overflow:hidden;background:var(--m-bg);box-shadow:0 18px 30px -18px rgba(0,0,0,.5);display:flex;flex-direction:column;min-height:560px}
+.phone .ptop{background:linear-gradient(170deg,var(--t1),var(--tdeep));color:#FFF7EC;padding:14px 14px 18px;display:flex;flex-direction:column;gap:8px}
+.phone .pbody{padding:12px;display:flex;flex-direction:column;gap:10px;flex:1}
+.chat{display:flex;flex-direction:column;flex:1;background:#FFF}
+.chat .ch{background:var(--t1);color:#FFF;padding:12px 14px;display:flex;gap:10px;align-items:center}
+.chat .msgs{padding:12px;display:flex;flex-direction:column;gap:8px;flex:1;background:var(--tsoft)}
+.b{max-width:85%;padding:8px 11px;border-radius:12px;font-size:12.5px;line-height:1.4}
+.b.bot{background:#FFF;border:1px solid var(--m-line);align-self:flex-start;border-bottom-left-radius:3px}
+.b.me{background:var(--t1);color:#FFF;align-self:flex-end;border-bottom-right-radius:3px}
+.b .src{display:block;font-size:10.5px;color:var(--m-soft);margin-top:4px}
+.wa{display:flex;align-items:center;gap:8px;background:#1F8F4E;color:#FFF;border-radius:10px;padding:8px 10px;font-size:12.5px;font-weight:600;align-self:flex-start}
+.chat .inp{display:flex;gap:6px;padding:10px;border-top:1px solid var(--m-line)}
+.chat .inp div{flex:1;border:1px solid var(--m-line);border-radius:999px;padding:6px 12px;font-size:12px;color:var(--m-soft)}
+.fab{position:absolute;right:16px;bottom:16px;width:48px;height:48px;border-radius:50%;background:var(--t1);color:#FFF;display:grid;place-items:center;box-shadow:0 0 0 4px var(--tsoft),0 8px 18px -6px rgba(0,0,0,.4)}
+@media (max-width:820px){.app{grid-template-columns:1fr}.side{flex-direction:row;flex-wrap:wrap;gap:4px}.side .brand{width:100%;margin-bottom:4px}.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.row2{grid-template-columns:1fr}.login{grid-template-columns:1fr}.login .art{min-height:240px}.sevas{grid-template-columns:1fr 1fr}.form{grid-template-columns:1fr}}
+.capt{font-size:.9rem;color:var(--ink-soft);max-width:80ch}
+.screen[hidden]{display:none!important}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="lotus" viewBox="0 0 100 100">
+    <g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round">
+      <path d="M50 18 C60 34 60 54 50 72 C40 54 40 34 50 18Z"/>
+      <path d="M50 72 C38 62 28 48 26 32 C40 36 48 50 50 72Z"/>
+      <path d="M50 72 C62 62 72 48 74 32 C60 36 52 50 50 72Z"/>
+      <path d="M50 72 C34 70 20 60 12 46 C28 46 42 56 50 72Z"/>
+      <path d="M50 72 C66 70 80 60 88 46 C72 46 58 56 50 72Z"/>
+      <path d="M22 80 Q50 70 78 80"/>
+      <path d="M30 87 Q50 80 70 87"/>
+    </g>
+  </symbol>
+</svg>
+
+<div class="wrap">
+  <header class="hero">
+    <div>
+      <div class="eyebrow">Architecture · Development plan · Deployment plan · Screens</div>
+      <h1>SevaDesk: a white‑label temple administration platform</h1>
+      <p class="lede">One codebase that any temple, gurdwara, church or place of worship can run under its own name, logo, colours and vocabulary. Built on the Java and Spring skills you already have, hosted for about the cost of a monthly flower offering.</p>
+      <div class="chips">
+        <span class="chip">Java 21 · Spring Boot 3</span><span class="chip">Angular + PrimeNG (PWA)</span><span class="chip">PostgreSQL 16 + pgvector</span><span class="chip">Docker on one VM</span><span class="chip">Cloudflare R2 backups</span><span class="chip">~US$15–30 / month to start</span>
+      </div>
+    </div>
+    <svg class="lotus-mark" aria-hidden="true"><use href="#lotus"/></svg>
+  </header>
+
+  <div class="layout">
+    <nav class="rail" aria-label="Sections">
+      <a href="#decisions">Stack decisions</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#whitelabel">White‑labelling</a>
+      <a href="#modules">Modules</a>
+      <a href="#integrations">Social, chat, payments</a>
+      <a href="#security">Roles &amp; security</a>
+      <a href="#devplan">Development plan</a>
+      <a href="#deploy">Deployment plan</a>
+      <a href="#backups">Backups &amp; recovery</a>
+      <a href="#cost">Running cost</a>
+      <a href="#screens">Screens</a>
+      <a href="#risks">Watch‑outs</a>
+    </nav>
+
+    <main>
+      <!-- DECISIONS -->
+      <section id="decisions">
+        <div class="eyebrow">Architect's choices</div>
+        <h2>Tech stack, and why each piece won</h2>
+        <p>The guiding rule: <strong>one developer must be able to build, run and sell this</strong>. That favours a modular monolith over microservices, open‑source over licensed, and one cheap VM over a managed‑everything bill.</p>
+        <div class="tbl"><table>
+          <thead><tr><th>Layer</th><th>Choice</th><th>Why</th><th>Considered, not chosen</th></tr></thead>
+          <tbody>
+            <tr><td>Backend</td><td><strong>Java 21, Spring Boot 3.x, Spring Modulith</strong></td><td>Your strongest skill. Modulith gives each module (Donors, Events…) its own package boundary and internal events, so it can be split later without a rewrite.</td><td>Microservices: too much ops for one person.</td></tr>
+            <tr><td>Persistence</td><td><strong>Spring Data JPA, Flyway, MapStruct</strong></td><td>Versioned SQL migrations per release; DTO mapping without boilerplate.</td><td>jOOQ: good, but JPA is faster for CRUD‑heavy modules.</td></tr>
+            <tr><td>Database</td><td><strong>PostgreSQL 16 + pgvector</strong></td><td>Free, row‑level security for multi‑tenancy, JSONB for per‑temple custom fields, pgvector for chatbot search. Same DB does everything.</td><td>Oracle: licence cost kills the low‑price SaaS model.</td></tr>
+            <tr><td>Frontend</td><td><strong>Angular 18+ with PrimeNG, installable PWA</strong></td><td>TypeScript + dependency injection feels familiar to a Spring developer. PrimeNG ships data tables, calendars, charts and a token‑based theme engine, which is exactly what white‑labelling needs.</td><td>React: equally fine, but more choices to make and maintain.</td></tr>
+            <tr><td>Labels &amp; languages</td><td><strong>ngx‑translate</strong> (runtime)</td><td>Loads each temple's vocabulary and language at runtime ("Priest" → "Archaka", "Granthi", "Pastor"; English, Hindi, Telugu, Tamil…). Angular's built‑in i18n is build‑time only.</td><td>Separate builds per tenant.</td></tr>
+            <tr><td>Auth</td><td><strong>Spring Security, JWT in httpOnly cookies, TOTP 2FA</strong></td><td>No extra server to run. Google sign‑in can be added as an OAuth2 client later.</td><td>Keycloak: powerful, but ~1 GB RAM and another system to patch.</td></tr>
+            <tr><td>Real‑time</td><td><strong>Server‑Sent Events</strong></td><td>Dashboard only needs server → browser pushes. SSE is plain HTTP, works through Cloudflare, simpler than WebSockets.</td><td>WebSocket/STOMP.</td></tr>
+            <tr><td>Jobs</td><td><strong>Spring @Scheduled + ShedLock</strong></td><td>Social posting queue, reminders, receipts emails. ShedLock keeps jobs single‑run if you add a second server.</td><td>Quartz, Kafka: overkill.</td></tr>
+            <tr><td>PDFs</td><td><strong>OpenPDF or JasperReports</strong></td><td>Donation receipts, tax certificates, membership cards with QR.</td><td></td></tr>
+            <tr><td>Files</td><td><strong>Cloudflare R2</strong> (S3 API)</td><td>Logos, event photos, receipts and backups. No egress fees.</td><td>AWS S3: egress costs add up for photos.</td></tr>
+            <tr><td>Hosting</td><td><strong>One VM + Docker Compose + Caddy</strong> (Hetzner, DigitalOcean or AWS Lightsail)</td><td>Caddy gives free automatic HTTPS, including each temple's custom domain. Cloudflare in front for DNS, CDN and DDoS protection, free.</td><td>Kubernetes: not needed below a few hundred temples.</td></tr>
+            <tr><td>Chat AI</td><td><strong>Spring AI + Claude Haiku</strong> (<code>claude-haiku-5-5</code>)</td><td>Fast, low‑cost model; answers only from the temple's own content. Falls back to WhatsApp.</td><td></td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <!-- ARCHITECTURE -->
+      <section id="architecture">
+        <div class="eyebrow">How the pieces fit</div>
+        <h2>System architecture</h2>
+        <p>Every request carries the temple's domain or subdomain. A tenant filter resolves it to a <code>tenant_id</code>, and PostgreSQL row‑level security makes sure one temple can never read another's rows, even if a query forgets a <code>WHERE</code> clause.</p>
+<pre class="mermaid">
+flowchart LR
+  subgraph Users
+    A[Admin staff<br/>Chrome / Edge / Safari]
+    M[Mobile web PWA]
+    D[Devotees on temple website]
+  end
+  CF[Cloudflare<br/>DNS · CDN · WAF]
+  subgraph VM[Cloud VM · Docker Compose]
+    C[Caddy<br/>HTTPS + custom domains]
+    UI[Angular static build]
+    API[Spring Boot modular monolith<br/>Contacts · Donors · Events · Seva<br/>Guest house · Members · Volunteers<br/>Finance · Social · Chat · Tenancy]
+    PG[(PostgreSQL 16<br/>+ pgvector)]
+  end
+  R2[(Cloudflare R2<br/>files + backups)]
+  subgraph External
+    MAIL[Email: Brevo / Amazon SES]
+    META[Facebook + Instagram<br/>Graph API]
+    X[X / Twitter API]
+    PAY[Razorpay / Stripe]
+    LLM[Claude API]
+    WA[WhatsApp click‑to‑chat]
+  end
+  A --> CF
+  M --> CF
+  D --> CF
+  CF --> C
+  C --> UI
+  C --> API
+  API --> PG
+  API --> R2
+  API --> MAIL
+  API --> META
+  API --> X
+  API --> PAY
+  API --> LLM
+  D -. chat hand‑off .-> WA
+</pre>
+        <div class="grid2">
+          <div class="note"><h3>Backend package layout</h3>
+<pre class="code">sevadesk-api/
+ ├─ platform/      tenancy, branding, users, audit
+ ├─ contacts/      people, households, consent
+ ├─ donors/        donations, pledges, receipts
+ ├─ finance/       expenses, funds, bank deposits
+ ├─ events/        festivals, registrations
+ ├─ seva/          priest services &amp; bookings
+ ├─ guesthouse/    rooms, stays, invoices
+ ├─ members/       life &amp; annual membership
+ ├─ volunteers/    skills, shifts, hours
+ ├─ social/        channel adapters + outbox
+ ├─ chat/          knowledge base, RAG, hand‑off
+ └─ reporting/     dashboards, SSE, exports</pre></div>
+          <div class="note"><h3>Rules that keep it maintainable</h3>
+            <ul>
+              <li>Modules talk through published events (<code>DonationRecorded</code>, <code>EventPublished</code>), never through each other's repositories. Spring Modulith tests enforce this.</li>
+              <li>Every table has <code>tenant_id</code>, <code>created_at/by</code>, <code>updated_at/by</code>, soft‑delete flag.</li>
+              <li>One <code>custom_fields JSONB</code> column on Contact, Donation, Booking so temples can add fields without code changes.</li>
+              <li>OpenAPI spec generated by springdoc; the Angular client is generated from it.</li>
+              <li>Testcontainers for real PostgreSQL in integration tests.</li>
+            </ul></div>
+        </div>
+      </section>
+
+      <!-- WHITE LABEL -->
+      <section id="whitelabel">
+        <div class="eyebrow">The product you can sell</div>
+        <h2>Multi‑tenancy and white‑labelling</h2>
+        <p>A new temple is a row in the <code>tenant</code> table plus a logo upload. No new deployment, no code change. This is what lets you sell to the tenth temple at almost zero extra cost.</p>
+        <div class="grid3">
+          <div class="note"><h3>Branding (per tenant)</h3><ul>
+            <li>Name, short name, logo, favicon, deity or hero image</li>
+            <li>Primary, accent and soft colours → PrimeNG design tokens</li>
+            <li>Greeting line ("Hare Krishna", "Waheguru Ji Ka Khalsa")</li>
+            <li>Receipt header, signature, tax registration number</li>
+            <li>Email sender name and reply‑to</li></ul></div>
+          <div class="note"><h3>Vocabulary &amp; locale</h3><ul>
+            <li>Term overrides: Priest, Seva, Prasadam, Hall, Donation</li>
+            <li>Languages enabled, default language</li>
+            <li>Currency, time zone, date format</li>
+            <li>Fund names (Annadanam, Gau Seva, Building Fund…)</li>
+            <li>Tax rules: 80G (India), 501(c)(3) (US), Gift Aid (UK)</li></ul></div>
+          <div class="note"><h3>Plan &amp; feature flags</h3><ul>
+            <li>Modules switched on per subscription tier</li>
+            <li>Limits: users, contacts, storage, AI chat messages</li>
+            <li>Domain: <code>radhagovinda.sevadesk.app</code> or the temple's own <code>admin.mytemple.org</code></li>
+            <li>Their own social, email, payment and WhatsApp credentials, encrypted</li></ul></div>
+        </div>
+        <div class="callout">At startup the Angular app calls <code>GET /api/public/branding</code>. The server resolves the tenant from the <code>Host</code> header and returns colours, logo URL, vocabulary and enabled modules. The app writes the colours into CSS variables and loads the vocabulary into ngx‑translate before the first screen paints. Try the tenant switcher in the <a href="#screens">Screens</a> section to see the effect.</div>
+      </section>
+
+      <!-- MODULES -->
+      <section id="modules">
+        <div class="eyebrow">Scope</div>
+        <h2>Modules and their core features</h2>
+        <p>Your seven modules, plus two I recommend adding: <strong>Finance</strong> (you need expenses to report "donations vs expenses") and <strong>Platform</strong> (tenants, users, audit). Main tables are listed under each module.</p>
+        <div class="mods">
+          <div class="mod"><header><span class="n">1</span><h3>Contact management</h3></header><ul>
+            <li>People grouped into households/families; one devotee, many roles (donor, member, volunteer)</li>
+            <li>Gotra, nakshatra, rashi, birthdays and anniversaries for sankalpam and greetings</li>
+            <li>Tags, segments, CSV/Excel import with duplicate detection</li>
+            <li>Communication consent per channel (email, SMS, WhatsApp)</li></ul>
+            <div class="tables">contact · household · contact_tag · consent</div></div>
+          <div class="mod"><header><span class="n">2</span><h3>Donor management</h3></header><ul>
+            <li>Cash, cheque, UPI, card, bank transfer, online gateway, in‑kind</li>
+            <li>Funds and purposes; pledges and recurring donations</li>
+            <li>Instant PDF receipt by email/WhatsApp; annual tax statement</li>
+            <li>Donor history, lifetime value, lapsed‑donor list</li></ul>
+            <div class="tables">donation · fund · pledge · receipt · payment_txn</div></div>
+          <div class="mod"><header><span class="n">3</span><h3>Event management</h3></header><ul>
+            <li>Festival calendar (Janmashtami, Diwali, Brahmotsavam…), recurring programmes</li>
+            <li>Registrations, sponsorship tiers, prasadam counts</li>
+            <li>One‑click publish to email, Facebook, Instagram, X</li>
+            <li>Volunteer needs per event, photo gallery after the event</li></ul>
+            <div class="tables">event · event_registration · sponsorship · social_post</div></div>
+          <div class="mod"><header><span class="n">4</span><h3>Priest service management</h3></header><ul>
+            <li>Seva catalogue: archana, abhishekam, homam, wedding, griha pravesh, namakaranam</li>
+            <li>In‑temple or at devotee's home; duration, fee, dakshina guidance</li>
+            <li>Priest availability calendar and slot booking, travel buffer</li>
+            <li>Sankalpam sheet printed with names, gotra and nakshatra</li></ul>
+            <div class="tables">seva_type · priest · priest_schedule · seva_booking</div></div>
+          <div class="mod"><header><span class="n">5</span><h3>Guest house management</h3></header><ul>
+            <li>Rooms, room types, tariffs, seasonal blocks for festivals</li>
+            <li>Availability grid, booking, check‑in/out, ID capture</li>
+            <li>Deposits, invoices, housekeeping status</li>
+            <li>Online booking request from the temple website (phase 2)</li></ul>
+            <div class="tables">room · room_type · stay · stay_guest · invoice</div></div>
+          <div class="mod"><header><span class="n">6</span><h3>Life member management</h3></header><ul>
+            <li>Plans: life, patron, annual; one‑time or instalments</li>
+            <li>Membership card with QR code, member number</li>
+            <li>Benefits tracking (annual puja in member's name, priority darshan)</li>
+            <li>Renewal and instalment reminders</li></ul>
+            <div class="tables">membership_plan · membership · instalment · benefit_log</div></div>
+          <div class="mod"><header><span class="n">7</span><h3>Volunteer management</h3></header><ul>
+            <li>Skills (kitchen, decoration, parking, audio, teaching), availability</li>
+            <li>Shifts per event or weekly seva; self sign‑up link</li>
+            <li>Hours log, certificates, recognition</li>
+            <li>Shift reminders by email or WhatsApp</li></ul>
+            <div class="tables">volunteer · skill · shift · shift_assignment · hours</div></div>
+          <div class="mod"><header><span class="n">+</span><h3>Finance (recommended)</h3></header><ul>
+            <li>Expenses by category with bill photo and approval</li>
+            <li>Hundi/cash counting and bank deposits</li>
+            <li>Real‑time donations vs expenses by fund</li>
+            <li>Export to Tally, QuickBooks or Excel for the accountant</li></ul>
+            <div class="tables">expense · expense_category · bank_deposit · hundi_count</div></div>
+        </div>
+      </section>
+
+      <!-- INTEGRATIONS -->
+      <section id="integrations">
+        <div class="eyebrow">Outside world</div>
+        <h2>Social media, email, chat and payments</h2>
+        <div class="grid2">
+          <div class="note"><h3>Seamless event posting</h3>
+            <p class="muted" style="font-size:.95rem">One "Publish" button fans out to every connected channel. Posts go through an <strong>outbox table</strong>, so a Facebook outage doesn't lose the post; a scheduler retries and records the result per channel.</p>
+            <ul>
+              <li><strong>Email</strong>: Brevo (free tier ~300/day) or Amazon SES; only contacts with consent; unsubscribe link built in.</li>
+              <li><strong>Facebook Page + Instagram</strong>: Meta Graph API. Each temple connects its own Page once via "Connect Facebook". Instagram must be a Business account linked to that Page.</li>
+              <li><strong>X / Twitter</strong>: API v2 <code>POST /2/tweets</code>. Write access pricing changes often; keep it optional per tenant.</li>
+              <li><strong>Fallback</strong>: if a channel isn't connected, show "Copy caption + open site" so staff can post by hand.</li>
+              <li>Design a <code>SocialPublisher</code> interface so YouTube, WhatsApp Channels or Telegram can be added later as adapters.</li>
+            </ul></div>
+          <div class="note"><h3>Chat box with WhatsApp hand‑off</h3>
+            <p class="muted" style="font-size:.95rem">One <code>&lt;script&gt;</code> tag embeds the widget on the temple website and in the admin app.</p>
+            <ul>
+              <li><strong>Knowledge base</strong> per temple: timings, festival dates, seva prices, guest house rules, directions, FAQs, plus uploaded PDFs. Chunks are embedded into pgvector.</li>
+              <li><strong>Answer</strong>: retrieve the best matching chunks, have Claude Haiku answer only from them, show the source.</li>
+              <li><strong>Hand‑off</strong>: low confidence, a personal request, or the user taps "Talk to a person" → a WhatsApp button opening <code>wa.me/&lt;number&gt;?text=…</code> with the question pre‑filled. Free, no WhatsApp Business API needed.</li>
+              <li>Unanswered questions are logged so staff can add them to the FAQ.</li>
+              <li>Cost guard: per‑tenant monthly message cap; a free tier that uses Postgres full‑text search only, without the LLM.</li>
+            </ul></div>
+          <div class="note"><h3>Online payments</h3><ul>
+            <li>Razorpay (India: UPI, cards, netbanking) and Stripe (US/UK/EU) behind one <code>PaymentGateway</code> interface.</li>
+            <li>Each temple uses its own merchant account, so money never flows through you.</li>
+            <li>Webhook → <code>DonationRecorded</code> event → receipt + dashboard update in seconds.</li>
+            <li>You never store card numbers; the gateway's hosted checkout handles them.</li></ul></div>
+          <div class="note"><h3>Real‑time reports</h3><ul>
+            <li>Every donation or expense publishes an event; the reporting module updates running totals and pushes them over SSE to open dashboards.</li>
+            <li>Totals by day, fund, payment mode, event; donations vs expenses by month.</li>
+            <li>Heavier reports from PostgreSQL materialized views refreshed every few minutes.</li>
+            <li>Export to Excel/PDF; scheduled monthly summary email to trustees.</li></ul></div>
+        </div>
+      </section>
+
+      <!-- SECURITY -->
+      <section id="security">
+        <div class="eyebrow">Who can do what</div>
+        <h2>Roles and security</h2>
+        <div class="tbl"><table>
+          <thead><tr><th>Role</th><th>Can access</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Platform owner</strong> (you)</td><td>Create tenants, plans, support access (logged), never sees donor data unless granted</td></tr>
+            <tr><td><strong>Temple admin</strong></td><td>Everything for their temple, users, branding, integrations</td></tr>
+            <tr><td><strong>Treasurer / accountant</strong></td><td>Donations, receipts, expenses, finance reports</td></tr>
+            <tr><td><strong>Front desk</strong></td><td>Contacts, donation entry, seva booking, guest house check‑in</td></tr>
+            <tr><td><strong>Event coordinator</strong></td><td>Events, registrations, social publishing, volunteer shifts</td></tr>
+            <tr><td><strong>Priest</strong></td><td>Own schedule and booking details (mobile view)</td></tr>
+            <tr><td><strong>Guest house manager</strong></td><td>Rooms, stays, invoices</td></tr>
+            <tr><td><strong>Volunteer / life member</strong></td><td>Self‑service portal: profile, shifts, receipts, membership card</td></tr>
+          </tbody></table></div>
+        <ul class="tight">
+          <li>PostgreSQL row‑level security on <code>tenant_id</code> as a second wall behind the application filter.</li>
+          <li>TOTP two‑factor login for admin and treasurer roles; password hashing with Argon2/bcrypt; login rate limiting.</li>
+          <li>Audit log on every money‑related change (who, when, before/after). Donations are never hard‑deleted, only voided with a reason.</li>
+          <li>Phone numbers, ID numbers and addresses encrypted at column level; integration tokens encrypted with a key outside the database.</li>
+          <li>Data‑protection basics (India DPDP Act, GDPR): consent records, data export, delete‑on‑request for non‑financial data.</li>
+          <li>Browser support: Chrome, Edge, Safari, Firefox and mobile browsers. <strong>Internet Explorer is retired by Microsoft (2022) and Angular no longer supports it</strong>; tell clients to use Edge instead.</li>
+        </ul>
+      </section>
+
+      <!-- DEV PLAN -->
+      <section id="devplan">
+        <div class="eyebrow">Building it</div>
+        <h2>Development plan</h2>
+        <p>Weeks assume one experienced developer working full time with AI coding assistance. Part‑time (evenings and weekends) roughly doubles the calendar. The order is chosen so your own temple can start using it at <strong>week 9</strong>, with donations and the live dashboard, while you build the rest.</p>
+        <div class="tl">
+          <div class="ph"><div class="wk">Weeks 1–2</div><h3>Foundation</h3><ul>
+            <li>Mono‑repo (<code>api/</code>, <code>web/</code>, <code>infra/</code>), GitHub Actions CI, Docker Compose for local dev</li>
+            <li>Tenancy filter + RLS, branding endpoint, users and roles, login with 2FA, audit log</li>
+            <li>Angular shell: layout, theming from tenant tokens, ngx‑translate, PWA manifest</li>
+            <li>Design system: devotional palette, typography, PrimeNG preset, icon set</li></ul></div>
+          <div class="ph"><div class="wk">Weeks 3–6</div><h3>Contacts, Donors, Finance basics</h3><ul>
+            <li>Contacts and households, import from Excel (your temple's existing list)</li>
+            <li>Donation entry, funds, PDF receipts, email receipts; expense entry</li>
+            <li>Razorpay/Stripe hosted checkout + webhook for online donations</li></ul></div>
+          <div class="ph go"><div class="wk">Weeks 7–9</div><h3>Live dashboard and reports <span class="pill">Pilot go‑live at your temple</span></h3><ul>
+            <li>SSE live totals, donations vs expenses, fund‑wise and mode‑wise reports, Excel export</li>
+            <li>Deploy to production VM, weekly backups running, monitoring on</li>
+            <li>Train front desk and treasurer; collect feedback weekly</li></ul></div>
+          <div class="ph"><div class="wk">Weeks 10–13</div><h3>Events and social publishing</h3><ul>
+            <li>Events, registrations, sponsorships, calendar view</li>
+            <li>Email campaigns; Facebook/Instagram connect + publish; X adapter; outbox and retries</li>
+            <li>Start Meta app review early (it can take weeks)</li></ul></div>
+          <div class="ph"><div class="wk">Weeks 14–16</div><h3>Priest services and life members</h3><ul>
+            <li>Seva catalogue, priest calendar, slot booking, sankalpam sheet</li>
+            <li>Membership plans, instalments, QR membership cards, reminders</li></ul></div>
+          <div class="ph"><div class="wk">Weeks 17–19</div><h3>Guest house</h3><ul>
+            <li>Rooms, availability grid, booking, check‑in/out, invoices, housekeeping status</li></ul></div>
+          <div class="ph"><div class="wk">Weeks 20–21</div><h3>Volunteers</h3><ul>
+            <li>Skills, shifts, self sign‑up link, hours, certificates, reminders</li></ul></div>
+          <div class="ph"><div class="wk">Weeks 22–23</div><h3>Chat box and devotee portal</h3><ul>
+            <li>Knowledge base editor, embeddings, RAG answers, WhatsApp hand‑off, embeddable widget</li>
+            <li>Public pages: donate, book a seva, register for an event, request a room</li></ul></div>
+          <div class="ph go"><div class="wk">Weeks 24–26</div><h3>Hardening and v1.0 <span class="pill">Full release</span></h3><ul>
+            <li>Security review (OWASP top 10, dependency scan), load test for festival peaks</li>
+            <li>Accessibility pass, Safari and mobile testing, restore drill from backup</li>
+            <li>User guide and short training videos</li></ul></div>
+          <div class="ph"><div class="wk">After v1.0</div><h3>Productise for other temples</h3><ul>
+            <li>Self‑service tenant onboarding wizard (name, logo, colours, terms, funds)</li>
+            <li>Subscription billing for your own SaaS (Stripe Billing / Razorpay Subscriptions), tiered plans</li>
+            <li>Marketing site with demo tenant; pilot with 2–3 nearby temples at a founding discount</li>
+            <li>Data import service from spreadsheets and other temple software</li></ul></div>
+        </div>
+        <div class="grid2">
+          <div class="note"><h3>Definition of done for each feature</h3><ul>
+            <li>Flyway migration + RLS policy for new tables</li>
+            <li>Unit + Testcontainers integration test; Modulith boundary test passes</li>
+            <li>Works at 375px phone width and in Safari</li>
+            <li>All visible text through translation keys (no hard‑coded "Priest")</li>
+            <li>Audit entries for money‑related actions</li></ul></div>
+          <div class="note"><h3>Tooling</h3><ul>
+            <li>IntelliJ + VS Code, Maven, Node 20 LTS</li>
+            <li>GitHub (private repo), Actions CI, Dependabot, CodeQL</li>
+            <li>Playwright end‑to‑end tests for the 10 most used flows</li>
+            <li>Sentry (free tier) for front and back‑end errors</li></ul></div>
+        </div>
+      </section>
+
+      <!-- DEPLOY -->
+      <section id="deploy">
+        <div class="eyebrow">Running it</div>
+        <h2>Deployment plan</h2>
+        <div class="tbl"><table>
+          <thead><tr><th>Environment</th><th>Where</th><th>Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Local</strong></td><td>Your laptop, <code>docker compose up</code></td><td>Development with seed data for two demo temples</td></tr>
+            <tr><td><strong>Staging</strong></td><td>Same VM, separate Compose project and database (move to its own small VM once you have paying temples)</td><td>Auto‑deployed from <code>main</code>; restore drills; client demos</td></tr>
+            <tr><td><strong>Production</strong></td><td>VM with 4 vCPU / 8 GB RAM (Hetzner CX32 or similar, region close to users), Cloudflare in front</td><td>Deployed from a Git tag after manual approval</td></tr>
+          </tbody></table></div>
+        <div class="grid2">
+          <div class="note" style="min-width:0"><h3>docker-compose.yml (production, trimmed)</h3>
+<pre class="code">services:
+  caddy:
+    image: caddy:2.8
+    ports: ["80:80", "443:443"]
+    volumes: [./Caddyfile:/etc/caddy/Caddyfile, caddy_data:/data]
+  api:
+    image: ghcr.io/you/sevadesk-api:${TAG}
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=60
+      DB_URL: jdbc:postgresql://db:5432/sevadesk
+    env_file: .env.prod      # secrets, not in Git
+    depends_on: [db]
+  web:
+    image: ghcr.io/you/sevadesk-web:${TAG}  # nginx serving Angular build
+  db:
+    image: pgvector/pgvector:pg16
+    volumes: [pgdata:/var/lib/postgresql/data]
+  backup:
+    image: ghcr.io/you/sevadesk-backup:${TAG}  # pg_dump + rclone + cron
+volumes: {pgdata: {}, caddy_data: {}}</pre></div>
+          <div class="note"><h3>CI/CD pipeline (GitHub Actions)</h3><ul>
+            <li><strong>On every PR</strong>: Maven build, unit + Testcontainers tests, Angular lint/test/build, OWASP dependency check.</li>
+            <li><strong>On merge to main</strong>: build Docker images (Spring Boot layered jar on <code>eclipse-temurin:21-jre</code>), push to GitHub Container Registry, deploy to staging over SSH with <code>docker compose pull &amp;&amp; up -d</code>.</li>
+            <li><strong>On tag v*</strong>: manual approval, then the same deploy to production. Flyway migrates the schema on start.</li>
+            <li><strong>Rollback</strong>: redeploy the previous tag. Migrations are written backward‑compatible (expand, then contract) so the old version still runs.</li>
+            <li><strong>Custom domains</strong>: Caddy's on‑demand TLS asks <code>/internal/domain-allowed</code> before issuing a certificate, so only registered temple domains get one.</li></ul></div>
+          <div class="note"><h3>Monitoring</h3><ul>
+            <li>Spring Actuator + Micrometer → Grafana Cloud free tier (metrics, logs)</li>
+            <li>Uptime check every minute (Uptime Kuma or Better Stack free) with alerts to your phone</li>
+            <li>Sentry for exceptions with tenant tag</li>
+            <li>Disk, backup‑success and certificate‑expiry alerts</li></ul></div>
+          <div class="note"><h3>Scaling path</h3><ul>
+            <li><strong>1–30 temples</strong>: one VM as above.</li>
+            <li><strong>30–200</strong>: managed PostgreSQL (e.g. AWS RDS, DigitalOcean, Neon) + two app VMs behind a load balancer; ShedLock already keeps jobs safe.</li>
+            <li><strong>200+</strong>: containers on ECS/Cloud Run or Kubernetes; split out the chat or social module only if it becomes the bottleneck.</li>
+            <li>Festival peaks (Janmashtami, Diwali): scale the VM up a size for the week; it is a reboot, not a re‑architecture.</li></ul></div>
+        </div>
+      </section>
+
+      <!-- BACKUPS -->
+      <section id="backups">
+        <div class="eyebrow">Your requirement: weekly backups</div>
+        <h2>Backups and recovery</h2>
+        <p>Weekly is the requirement you gave; I recommend adding a nightly copy because a week of lost donation entries is painful to re‑key. Both are cheap.</p>
+        <div class="grid2">
+          <div class="note"><h3>Schedule</h3><ul>
+            <li><strong>Weekly full backup</strong>, Sunday 01:30 local time: <code>pg_dump -Fc</code>, encrypted with <code>age</code>, uploaded to an R2 bucket with object lock. Keep 12 weekly + 12 monthly copies.</li>
+            <li><strong>Nightly backup</strong> (recommended): same process, keep 7 days.</li>
+            <li><strong>Files</strong> (logos, photos, receipts) already live in R2 with versioning on.</li>
+            <li><strong>VM snapshot</strong> weekly from the cloud provider for fast full‑server restore.</li>
+            <li><strong>Monthly restore drill</strong>: a job restores the latest backup into staging and runs a row‑count check; failure alerts you.</li>
+            <li><strong>Per‑temple export</strong>: any temple admin can download all its data as Excel/JSON. This builds trust when you sell.</li></ul>
+            <p class="muted" style="font-size:.9rem">Targets: lose at most 24 hours of data (RPO), back online within 2 hours (RTO). Add WAL archiving with pgBackRest later for point‑in‑time recovery.</p></div>
+          <div class="note" style="min-width:0"><h3>backup.sh (runs inside the backup container)</h3>
+<pre class="code">#!/bin/sh
+set -eu
+TS=$(date +%Y-%m-%d_%H%M)
+KIND=${1:-weekly}            # weekly | nightly
+FILE=/tmp/sevadesk_${KIND}_${TS}.dump.age
+
+pg_dump -h db -U "$PGUSER" -Fc sevadesk \
+  | age -r "$BACKUP_PUBKEY" &gt; "$FILE"
+
+rclone copy "$FILE" r2:sevadesk-backups/$KIND/
+rm -f "$FILE"
+
+# retention handled by R2 lifecycle rules
+curl -fsS "$HEALTHCHECK_URL/$KIND" &gt;/dev/null
+
+# crontab
+# 30 1 * * 0  /backup.sh weekly
+# 30 2 * * 1-6 /backup.sh nightly</pre></div>
+        </div>
+      </section>
+
+      <!-- COST -->
+      <section id="cost">
+        <div class="eyebrow">Low‑cost model</div>
+        <h2>Monthly running cost</h2>
+        <p>Approximate prices in US dollars as of late 2026 for the first 1–20 temples; check current provider pricing before you commit.</p>
+        <div class="tbl"><table>
+          <thead><tr><th>Item</th><th>Service</th><th style="text-align:right">Per month</th></tr></thead>
+          <tbody>
+            <tr><td>Production VM (4 vCPU, 8 GB)</td><td>Hetzner CX32 / DigitalOcean / Lightsail</td><td class="num">$8–40</td></tr>
+            <tr><td>Weekly VM snapshot</td><td>Same provider</td><td class="num">$1–3</td></tr>
+            <tr><td>DNS, CDN, firewall, static hosting</td><td>Cloudflare free plan</td><td class="num">$0</td></tr>
+            <tr><td>Files + backups (first 10 GB free)</td><td>Cloudflare R2</td><td class="num">$0–2</td></tr>
+            <tr><td>Transactional email</td><td>Brevo free tier or Amazon SES</td><td class="num">$0–5</td></tr>
+            <tr><td>Chat AI</td><td>Claude Haiku, capped per temple</td><td class="num">$2–15</td></tr>
+            <tr><td>Monitoring, errors, uptime</td><td>Grafana Cloud, Sentry, Better Stack free tiers</td><td class="num">$0</td></tr>
+            <tr><td>Domain name</td><td>Any registrar</td><td class="num">~$1</td></tr>
+            <tr><td>WhatsApp hand‑off</td><td>Click‑to‑chat link</td><td class="num">$0</td></tr>
+            <tr><td><strong>Total</strong></td><td></td><td class="num"><strong>≈ $15–65</strong></td></tr>
+          </tbody></table></div>
+        <div class="callout">Payment gateway fees (≈2% per online donation) are paid by each temple to its own Razorpay/Stripe account, not by you. X API write access and WhatsApp Business API (automated messages) are optional paid add‑ons you can pass on in a higher plan.</div>
+      </section>
+
+      <!-- SCREENS -->
+      <section id="screens">
+        <div class="eyebrow">Look and feel</div>
+        <h2>Screens with a devotional touch</h2>
+        <p>Warm kumkum, marigold and sandalwood tones, lotus and mandala motifs, and a classical display face. Every colour, name, greeting and term below comes from the tenant record. Switch temples to see the same screens re‑branded. All figures are sample data.</p>
+        <div class="showcase">
+          <div class="controls">
+            <div class="seg" role="group" aria-label="Tenant"><span class="seg-label">Tenant</span>
+              <button type="button" id="t-radha" data-t="radha" aria-pressed="true">Radha Govinda Mandir</button>
+              <button type="button" id="t-balaji" data-t="balaji" aria-pressed="false">Venkateswara Temple</button>
+              <button type="button" id="t-gurdwara" data-t="gurdwara" aria-pressed="false">Gurdwara Sahib</button>
+              <button type="button" id="t-church" data-t="church" aria-pressed="false">Community Church</button>
+            </div>
+          </div>
+          <div class="controls">
+            <div class="seg" role="group" aria-label="Screen"><span class="seg-label">Screen</span>
+              <button type="button" id="s-dash" data-s="dash" aria-pressed="true">Dashboard</button>
+              <button type="button" id="s-login" data-s="login" aria-pressed="false">Login</button>
+              <button type="button" id="s-donate" data-s="donate" aria-pressed="false">Donation entry</button>
+              <button type="button" id="s-event" data-s="event" aria-pressed="false">Event publish</button>
+              <button type="button" id="s-seva" data-s="seva" aria-pressed="false">Seva booking</button>
+              <button type="button" id="s-guest" data-s="guest" aria-pressed="false">Guest house</button>
+              <button type="button" id="s-mobile" data-s="mobile" aria-pressed="false">Mobile + chat</button>
+            </div>
+          </div>
+
+          <div class="mock" id="mock" data-tenant="radha">
+            <div class="chrome"><i></i><i></i><i></i><span id="url">radhagovinda.sevadesk.app/dashboard</span></div>
+
+            <!-- DASHBOARD -->
+            <div class="screen" data-screen="dash">
+              <div class="app">
+                <aside class="side">
+                  <div class="brand"><div class="logo" data-l="mono">RG</div><b data-l="name">Sri Radha Govinda Mandir</b></div>
+                  <a class="on"><span class="dot"></span>Dashboard</a><a>Contacts</a><a>Donations</a><a>Events</a><a><span data-l="priest">Pujari</span>&nbsp;services</a><a>Guest house</a><a>Life members</a><a>Volunteers</a><a>Finance</a>
+                </aside>
+                <div class="content">
+                  <div class="topbar"><div class="greet"><span data-l="greeting">Hare Krishna</span>, Gopal <small>Thursday, 5 November 2026 · Kartika Shukla Panchami</small></div><div style="display:flex;gap:8px"><button class="btn ghost" type="button" tabindex="-1">+ Expense</button><button class="btn" type="button" tabindex="-1">+ Donation</button></div></div>
+                  <div class="kpis">
+                    <div class="kpi hl"><span class="l">Today's donations <span class="live">LIVE</span></span><span class="v" id="kToday">₹48,250</span><span class="d" id="kTodayN">37 donations</span></div>
+                    <div class="kpi"><span class="l">This month</span><span class="v">₹6,42,800</span><span class="d">▲ 12% vs Oct</span></div>
+                    <div class="kpi"><span class="l">Expenses this month</span><span class="v">₹2,18,400</span><span class="d" style="color:#9A5A08">Annadanam ₹96,000</span></div>
+                    <div class="kpi"><span class="l">Net surplus</span><span class="v">₹4,24,400</span><span class="d">General fund ₹3.1 L</span></div>
+                  </div>
+                  <div class="row2">
+                    <div class="card"><h4>Donations vs expenses <span class="legend"><span><i style="background:var(--t1)"></i>Donations</span><span><i style="background:var(--t2)"></i>Expenses</span></span></h4>
+                      <svg id="chart" viewBox="0 0 380 170" role="img" aria-label="Monthly donations and expenses, May to October, in lakh rupees"></svg></div>
+                    <div class="card"><h4>Live donations <span class="live">SSE</span></h4><div class="feed" id="feed">
+                      <div><span>Lakshmi Narayanan · Annadanam</span><b>₹2,501</b></div>
+                      <div><span>Online · UPI · General</span><b>₹1,001</b></div>
+                      <div><span>Hundi deposit · Main hall</span><b>₹18,640</b></div>
+                      <div><span>Priya &amp; Arjun Rao · Gau seva</span><b>₹5,000</b></div>
+                    </div></div>
+                  </div>
+                  <div class="row2">
+                    <div class="card"><h4>Upcoming</h4>
+                      <div class="ev"><div class="date">08<small>Nov</small></div><div style="flex:1"><b data-l="ev1">Govardhan Puja &amp; Annakut</b><br><span style="color:var(--m-soft)">212 registered · 18 volunteers short</span></div><span class="tag ok">Posted 4/4</span></div>
+                      <div class="ev"><div class="date">15<small>Nov</small></div><div style="flex:1"><b data-l="ev2">Kartik Deepotsav</b><br><span style="color:var(--m-soft)">96 registered</span></div><span class="tag wait">Scheduled</span></div>
+                      <div class="ev"><div class="date">22<small>Nov</small></div><div style="flex:1"><b>Youth Bhajan Evening</b><br><span style="color:var(--m-soft)">Draft</span></div><span class="tag">Draft</span></div>
+                    </div>
+                    <div class="card"><h4>Today at the temple</h4>
+                      <div class="feed">
+                        <div><span><span data-l="seva">Seva</span> bookings</span><b>14</b></div>
+                        <div><span>Guest house occupancy</span><b>9 / 12 rooms</b></div>
+                        <div><span>Volunteers on shift</span><b>23</b></div>
+                        <div><span>Life member renewals due</span><b>6</b></div>
+                      </div></div>
+                  </div>
+                  <div class="fab" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 5h16v11H8l-4 4z"/></svg></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- LOGIN -->
+            <div class="screen" data-screen="login" hidden>
+              <div class="login">
+                <div class="art"><svg class="bigmark" aria-hidden="true"><use href="#lotus"/></svg><h3 data-l="name">Sri Radha Govinda Mandir</h3><p data-l="tagline">Serving the devotee community with love and devotion since 1998.</p></div>
+                <div class="panel">
+                  <div class="logo" data-l="mono" style="width:52px;height:52px;font-size:18px">RG</div>
+                  <h3><span data-l="greeting">Hare Krishna</span>, welcome back</h3>
+                  <div class="fld"><span>Email or phone</span><div class="in">treasurer@radhagovinda.org</div></div>
+                  <div class="fld"><span>Password</span><div class="in">••••••••••</div></div>
+                  <div class="fld"><span>6‑digit code from authenticator app</span><div class="in">4 8 1 _ _ _</div></div>
+                  <button class="btn" type="button" tabindex="-1" style="padding:10px">Sign in</button>
+                  <span style="font-size:12px;color:var(--m-soft)">Forgot password? · English ▾ · हिन्दी · తెలుగు</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- DONATE -->
+            <div class="screen" data-screen="donate" hidden>
+              <div class="app">
+                <aside class="side"><div class="brand"><div class="logo" data-l="mono">RG</div><b data-l="name">Sri Radha Govinda Mandir</b></div><a>Dashboard</a><a>Contacts</a><a class="on"><span class="dot"></span>Donations</a><a>Events</a></aside>
+                <div class="content">
+                  <div class="topbar"><div class="greet">New donation<small>Receipt will be emailed and sent on WhatsApp</small></div><span class="tag">Receipt # RG/26-27/04812</span></div>
+                  <div class="row2">
+                    <div class="card"><div class="form">
+                      <div class="fld full"><span>Donor (search name, phone or member no.)</span><div class="in">Lakshmi Narayanan · +91 98450 •••21 · Life member LM‑0142</div></div>
+                      <div class="fld"><span>Amount</span><div class="in" style="font-size:18px;font-weight:600">₹ 2,501</div></div>
+                      <div class="fld"><span>Fund</span><div class="in">Annadanam ▾</div></div>
+                      <div class="fld"><span>Payment mode</span><div class="in">UPI · Ref 4419 0021 7783</div></div>
+                      <div class="fld"><span>Occasion</span><div class="in">Son's birthday · Rohini nakshatra</div></div>
+                      <div class="fld full"><span>Tax receipt</span><div class="in">80G receipt with PAN ABCPN••••K</div></div>
+                    </div>
+                    <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn ghost" type="button" tabindex="-1">Save &amp; new</button><button class="btn" type="button" tabindex="-1">Save &amp; send receipt</button></div></div>
+                    <div class="card"><h4>Donor at a glance</h4>
+                      <div class="feed"><div><span>Lifetime giving</span><b>₹1,84,300</b></div><div><span>This year</span><b>₹22,503</b></div><div><span>Last gift</span><b>12 Oct · Deepotsav</b></div><div><span>Household</span><b>4 members</b></div></div>
+                      <table class="mtable"><thead><tr><th>Date</th><th>Fund</th><th style="text-align:right">Amount</th></tr></thead><tbody>
+                        <tr><td>12 Oct</td><td>Deepotsav</td><td style="text-align:right">₹5,001</td></tr>
+                        <tr><td>16 Aug</td><td>Janmashtami</td><td style="text-align:right">₹11,000</td></tr>
+                        <tr><td>02 Jun</td><td>Gau seva</td><td style="text-align:right">₹4,001</td></tr></tbody></table></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- EVENT -->
+            <div class="screen" data-screen="event" hidden>
+              <div class="app">
+                <aside class="side"><div class="brand"><div class="logo" data-l="mono">RG</div><b data-l="name">Sri Radha Govinda Mandir</b></div><a>Dashboard</a><a>Donations</a><a class="on"><span class="dot"></span>Events</a><a>Volunteers</a></aside>
+                <div class="content">
+                  <div class="topbar"><div class="greet">Publish event<small>One post, every channel</small></div><span class="tag ok">Facebook · Instagram · X · Email connected</span></div>
+                  <div class="row2">
+                    <div class="card"><div class="form">
+                      <div class="fld full"><span>Title</span><div class="in" data-l="ev1">Govardhan Puja &amp; Annakut</div></div>
+                      <div class="fld"><span>Date &amp; time</span><div class="in">Sun 8 Nov 2026 · 10:00 AM</div></div>
+                      <div class="fld"><span>Venue</span><div class="in">Main hall</div></div>
+                      <div class="fld full"><span>Caption</span><div class="in" style="min-height:64px">Join us for Govardhan Puja with a mountain of 108 preparations, kirtan and prasadam for all. Sponsor a preparation from ₹1,001.</div></div>
+                      <div class="fld full"><span>Post to</span><div class="toggles"><span class="tg"><span class="sw"></span>Facebook Page</span><span class="tg"><span class="sw"></span>Instagram</span><span class="tg"><span class="sw"></span>X</span><span class="tg"><span class="sw"></span>Email · 3,412 devotees</span><span class="tg off"><span class="sw"></span>WhatsApp Channel</span></div></div>
+                    </div>
+                    <div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn ghost" type="button" tabindex="-1">Schedule for 6 Nov, 7:00 AM</button><button class="btn" type="button" tabindex="-1">Publish now</button></div></div>
+                    <div class="card"><h4>Preview</h4><div class="postprev"><div class="img" data-l="ev1">Govardhan Puja &amp; Annakut</div><p><b data-l="name">Sri Radha Govinda Mandir</b><br>Join us for Govardhan Puja with a mountain of 108 preparations… <span style="color:var(--t1)">Register →</span></p></div>
+                      <div class="feed"><div><span>Facebook</span><span class="tag ok">Posted 9:02</span></div><div><span>Instagram</span><span class="tag ok">Posted 9:02</span></div><div><span>X</span><span class="tag wait">Retrying (1/3)</span></div><div><span>Email</span><span class="tag ok">3,412 sent</span></div></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SEVA -->
+            <div class="screen" data-screen="seva" hidden>
+              <div class="app">
+                <aside class="side"><div class="brand"><div class="logo" data-l="mono">RG</div><b data-l="name">Sri Radha Govinda Mandir</b></div><a>Dashboard</a><a class="on"><span class="dot"></span><span data-l="priest">Pujari</span>&nbsp;services</a><a>Guest house</a></aside>
+                <div class="content">
+                  <div class="topbar"><div class="greet">Book a <span data-l="seva">Seva</span><small>Choose a service, a <span data-l="priestLower">pujari</span> and a time</small></div></div>
+                  <div class="sevas">
+                    <div class="seva"><b>Archana</b><span style="color:var(--m-soft)">In temple · 15 min</span><span>₹151</span></div>
+                    <div class="seva sel"><b>Satyanarayan Puja</b><span style="color:var(--m-soft)">At home · 2 hr</span><span>₹5,001 + travel</span></div>
+                    <div class="seva"><b>Griha Pravesh</b><span style="color:var(--m-soft)">At home · 3 hr</span><span>₹11,000</span></div>
+                    <div class="seva"><b>Abhishekam</b><span style="color:var(--m-soft)">In temple · 45 min</span><span>₹1,116</span></div>
+                    <div class="seva"><b>Namakaranam</b><span style="color:var(--m-soft)">In temple · 1 hr</span><span>₹2,101</span></div>
+                    <div class="seva"><b>Vivaha (wedding)</b><span style="color:var(--m-soft)">Hall · full day</span><span>On request</span></div>
+                  </div>
+                  <div class="row2">
+                    <div class="card"><h4><span data-l="priest">Pujari</span> · Saturday 14 Nov</h4>
+                      <div class="feed"><div><span>Pt. Madhava Sharma</span><span class="tag ok">Available</span></div><div><span>Pt. Gopinath Acharya</span><span class="tag wait">Busy till 1 PM</span></div></div>
+                      <div class="slots"><span class="slot x">7:00</span><span class="slot">8:30</span><span class="slot sel">10:00</span><span class="slot x">12:30</span><span class="slot">3:00</span><span class="slot">5:30</span></div></div>
+                    <div class="card"><h4>Sankalpam details</h4><div class="form">
+                      <div class="fld"><span>Name</span><div class="in">Priya Rao</div></div><div class="fld"><span>Gotra</span><div class="in">Kashyapa</div></div>
+                      <div class="fld"><span>Nakshatra</span><div class="in">Rohini</div></div><div class="fld"><span>Address</span><div class="in">Whitefield, 12 km</div></div></div>
+                      <button class="btn" type="button" tabindex="-1">Confirm &amp; collect ₹5,001</button></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- GUEST HOUSE -->
+            <div class="screen" data-screen="guest" hidden>
+              <div class="app">
+                <aside class="side"><div class="brand"><div class="logo" data-l="mono">RG</div><b data-l="name">Sri Radha Govinda Mandir</b></div><a>Dashboard</a><a>Events</a><a class="on"><span class="dot"></span>Guest house</a></aside>
+                <div class="content">
+                  <div class="topbar"><div class="greet">Guest house<small>9 of 12 rooms occupied tonight · 2 check‑ins pending</small></div><button class="btn" type="button" tabindex="-1">+ New stay</button></div>
+                  <div class="card" style="overflow-x:auto"><div class="rooms">
+                    <div class="h"></div><div class="h">Thu 5</div><div class="h">Fri 6</div><div class="h">Sat 7</div><div class="h">Sun 8</div><div class="h">Mon 9</div><div class="h">Tue 10</div><div class="h">Wed 11</div>
+                    <div class="r">101 · Double</div><div style="grid-column:span 3"><div class="bk a">Rao family · 3 guests</div></div><div style="grid-column:span 2"><div class="bk b">Festival block</div></div><div></div><div></div>
+                    <div class="r">102 · Double</div><div style="grid-column:span 2"><div class="bk c">Checked in · Iyer</div></div><div></div><div style="grid-column:span 4"><div class="bk a">Visiting kirtan group</div></div>
+                    <div class="r">103 · Family</div><div></div><div style="grid-column:span 5"><div class="bk a">Menon · 5 guests · deposit paid</div></div><div></div>
+                    <div class="r">201 · Single</div><div style="grid-column:span 7"><div class="bk c">Long stay · visiting <span data-l="priestLower">pujari</span></div></div>
+                    <div class="r">202 · Dorm</div><div></div><div></div><div style="grid-column:span 3"><div class="bk b">Festival block · volunteers</div></div><div></div><div></div>
+                  </div></div>
+                  <div class="legend"><span><i style="background:var(--t1)"></i>Booked</span><span><i style="background:#2F7A45"></i>Checked in</span><span><i style="background:var(--t2)"></i>Blocked for festival</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- MOBILE + CHAT -->
+            <div class="screen" data-screen="mobile" hidden>
+              <div class="mobilewrap">
+                <div class="phone">
+                  <div class="ptop"><div style="display:flex;align-items:center;gap:8px"><div class="logo" data-l="mono" style="width:32px;height:32px;font-size:12px">RG</div><b style="font-family:var(--f-display);font-weight:400" data-l="name">Sri Radha Govinda Mandir</b></div>
+                    <div style="font-size:12px;opacity:.85"><span data-l="greeting">Hare Krishna</span> · Today</div>
+                    <div style="font-size:26px;font-weight:600;font-variant-numeric:tabular-nums" id="kToday2">₹48,250</div><span class="live" style="color:#CFF2DA">LIVE · 37 donations</span></div>
+                  <div class="pbody">
+                    <div class="card"><h4>Quick actions</h4><div class="slots"><span class="slot sel">+ Donation</span><span class="slot">+ Expense</span><span class="slot">Book <span data-l="seva">Seva</span></span><span class="slot">Check‑in</span></div></div>
+                    <div class="card"><h4>Next event</h4><div class="ev"><div class="date">08<small>Nov</small></div><div><b data-l="ev1">Govardhan Puja &amp; Annakut</b><br><span style="color:var(--m-soft);font-size:12px">212 registered</span></div></div></div>
+                    <div class="card"><h4>Fund totals (Nov)</h4><div class="feed"><div><span>General</span><b>₹3,10,200</b></div><div><span>Annadanam</span><b>₹1,42,500</b></div><div><span>Building</span><b>₹1,90,100</b></div></div></div>
+                  </div>
+                </div>
+                <div class="phone">
+                  <div class="chat">
+                    <div class="ch"><div class="logo" data-l="mono" style="width:32px;height:32px;font-size:12px">RG</div><div><b style="font-size:13px" data-l="name">Sri Radha Govinda Mandir</b><br><span style="font-size:11px;opacity:.8">Temple assistant · replies instantly</span></div></div>
+                    <div class="msgs">
+                      <div class="b bot"><span data-l="greeting">Hare Krishna</span>! I can help with darshan timings, festivals, <span data-l="sevaLower">seva</span> bookings and the guest house.</div>
+                      <div class="b me">What time is aarti on Sunday?</div>
+                      <div class="b bot">Sunday aarti times: Mangala 4:30 AM, Shringar 7:15 AM, Raj Bhog 12:30 PM, Sandhya 7:00 PM.<span class="src">Source: Darshan &amp; aarti timings</span></div>
+                      <div class="b me">Can I book the hall for my daughter's wedding in February?</div>
+                      <div class="b bot">Hall bookings for weddings need a quick chat with our office to check dates and details.</div>
+                      <div class="wa"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2z"/></svg>Continue on WhatsApp</div>
+                    </div>
+                    <div class="inp"><div>Ask about timings, sevas, rooms…</div><button class="btn" type="button" tabindex="-1">Send</button></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="capt" id="capt">Dashboard: live totals arrive over Server‑Sent Events; the chat bubble in the corner opens the assistant.</p>
+        </div>
+      </section>
+
+      <!-- RISKS -->
+      <section id="risks">
+        <div class="eyebrow">Plan for these early</div>
+        <h2>Watch‑outs</h2>
+        <div class="grid2">
+          <div class="note"><h3>Platform approvals take time</h3><ul>
+            <li>Meta (Facebook/Instagram) needs app review and business verification before other temples can connect their Pages. Start in week 10, not week 13.</li>
+            <li>X API write access is paid above a small free quota and the terms change; keep it an optional channel.</li></ul></div>
+          <div class="note"><h3>Money and trust</h3><ul>
+            <li>Receipt numbering must be gap‑free per financial year; use a database sequence per tenant, never "max + 1".</li>
+            <li>Get one chartered accountant to review receipt formats (80G wording, trust registration numbers) before go‑live.</li></ul></div>
+          <div class="note"><h3>Selling to other temples</h3><ul>
+            <li>Write a simple terms of service and data‑processing agreement; temples will ask who owns the donor data (they do).</li>
+            <li>Keep a demo tenant with realistic sample data for sales calls.</li>
+            <li>Brand names and logos belong to each temple; upload only what they provide.</li></ul></div>
+          <div class="note"><h3>Keeping it a one‑person job</h3><ul>
+            <li>Resist per‑temple code branches. Every request becomes a setting, a custom field or a feature flag.</li>
+            <li>Upgrade Spring Boot and Angular twice a year on a fixed calendar.</li></ul></div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+  var T={
+    radha:{name:"Sri Radha Govinda Mandir",mono:"RG",greeting:"Hare Krishna",priest:"Pujari",priestLower:"pujari",seva:"Seva",sevaLower:"seva",tagline:"Serving the devotee community with love and devotion since 1998.",ev1:"Govardhan Puja & Annakut",ev2:"Kartik Deepotsav",host:"radhagovinda.sevadesk.app"},
+    balaji:{name:"Sri Venkateswara Temple",mono:"SV",greeting:"Om Namo Venkatesaya",priest:"Archaka",priestLower:"archaka",seva:"Seva",sevaLower:"seva",tagline:"A home for Balaji's devotees, with daily suprabhatam and kalyanotsavam.",ev1:"Karthika Deepam",ev2:"Kalyanotsavam",host:"admin.venkateswaratemple.org"},
+    gurdwara:{name:"Guru Nanak Gurdwara Sahib",mono:"GN",greeting:"Waheguru Ji Ka Khalsa",priest:"Granthi",priestLower:"granthi",seva:"Path",sevaLower:"path",tagline:"Langar served daily to all, in the spirit of seva and sangat.",ev1:"Gurpurab Nagar Kirtan",ev2:"Akhand Path",host:"gurunanak.sevadesk.app"},
+    church:{name:"St. Thomas Community Church",mono:"ST",greeting:"Peace be with you",priest:"Pastor",priestLower:"pastor",seva:"Service",sevaLower:"service",tagline:"Worship, fellowship and outreach for every generation.",ev1:"Harvest Thanksgiving",ev2:"Advent Carol Service",host:"stthomas.sevadesk.app"}
+  };
+  var CAPT={dash:"Dashboard: live totals arrive over Server‑Sent Events; the chat bubble in the corner opens the assistant.",
+    login:"Login: tenant artwork and greeting, two‑factor code for finance roles, language switcher.",
+    donate:"Donation entry: search donor by name, phone or member number; receipt goes out by email and WhatsApp on save.",
+    event:"Event publish: one caption, per‑channel toggles, live delivery status from the outbox.",
+    seva:"Seva booking: service catalogue, priest availability, sankalpam details captured once.",
+    guest:"Guest house: seven‑day availability grid with festival blocks and check‑in status.",
+    mobile:"Mobile web (PWA) for trustees on the move, and the devotee chat with WhatsApp hand‑off."};
+  var paths={dash:"/dashboard",login:"/login",donate:"/donations/new",event:"/events/govardhan-puja/publish",seva:"/seva/book",guest:"/guest-house",mobile:"/m"};
+  var mock=document.getElementById('mock'),url=document.getElementById('url'),capt=document.getElementById('capt');
+  var tenant="radha",screen="dash";
+  function apply(){
+    mock.setAttribute('data-tenant',tenant);
+    var t=T[tenant];
+    mock.querySelectorAll('[data-l]').forEach(function(el){var k=el.getAttribute('data-l');if(t[k]!=null)el.textContent=t[k];});
+    mock.querySelectorAll('.screen').forEach(function(s){s.hidden=s.getAttribute('data-screen')!==screen;});
+    url.textContent=t.host+paths[screen];
+    capt.textContent=CAPT[screen];
+    document.querySelectorAll('[data-t]').forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-t')===tenant)});
+    document.querySelectorAll('[data-s]').forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-s')===screen)});
+  }
+  document.querySelectorAll('[data-t]').forEach(function(b){b.addEventListener('click',function(){tenant=b.getAttribute('data-t');apply();});});
+  document.querySelectorAll('[data-s]').forEach(function(b){b.addEventListener('click',function(){screen=b.getAttribute('data-s');apply();});});
+
+  // chart, drawn to one scale (lakh ₹)
+  var data=[["May",5.1,2.4],["Jun",4.6,2.2],["Jul",5.8,2.9],["Aug",9.2,3.6],["Sep",6.0,2.5],["Oct",7.4,3.1]];
+  var svg=document.getElementById('chart'),NS="http://www.w3.org/2000/svg";
+  var top=12,base=140,max=10,ph=base-top,x0=46,step=54,bw=17;
+  function el(n,a,txt){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;svg.appendChild(e);return e;}
+  [0,2.5,5,7.5,10].forEach(function(v){var y=base-v/max*ph;el('line',{x1:x0-6,x2:372,y1:y,y2:y,stroke:"#EEDFCB","stroke-width":1});el('text',{x:x0-10,y:y+3.5,"text-anchor":"end","font-size":10,fill:"#7A6658"},v===0?"0":v+"L");});
+  data.forEach(function(d,i){var gx=x0+6+i*step;
+    var h1=d[1]/max*ph,h2=d[2]/max*ph;
+    el('rect',{x:gx,y:base-h1,width:bw,height:h1,rx:3,fill:"var(--t1)"});
+    el('rect',{x:gx+bw+3,y:base-h2,width:bw,height:h2,rx:3,fill:"var(--t2)"});
+    el('text',{x:gx+bw+1.5,y:base+15,"text-anchor":"middle","font-size":10.5,fill:"#7A6658"},d[0]);
+    if(d[0]==="Aug")el('text',{x:gx+bw/2,y:base-h1-5,"text-anchor":"middle","font-size":9.5,fill:"var(--t1)","font-weight":600},"9.2L");
+  });
+  el('text',{x:372,y:166,"text-anchor":"end","font-size":9.5,fill:"#7A6658"},"₹ lakh · sample data");
+
+  // simulated SSE feed
+  var total=48250,count=37,feed=document.getElementById('feed');
+  var samples=[["Online · UPI · Annadanam",501],["Ramesh K · Building fund",10001],["Online · Card · General",251],["Meera S · Deepotsav",1116],["Counter · Cash · Archana",151]];
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var i=0;
+  setInterval(function(){
+    var s=samples[i++%samples.length];total+=s[1];count++;
+    var f="₹"+total.toLocaleString('en-IN');
+    document.getElementById('kToday').textContent=f;document.getElementById('kToday2').textContent=f;
+    document.getElementById('kTodayN').textContent=count+" donations";
+    var row=document.createElement('div');if(!reduce)row.className='new';
+    var a=document.createElement('span');a.textContent=s[0];var b=document.createElement('b');b.textContent="₹"+s[1].toLocaleString('en-IN');
+    row.appendChild(a);row.appendChild(b);feed.insertBefore(row,feed.firstChild);
+    while(feed.children.length>4)feed.removeChild(feed.lastChild);
+  },4500);
+  apply();
+})();
+</script>

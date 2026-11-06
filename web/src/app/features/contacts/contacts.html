@@ -1,0 +1,71 @@
+<div class="sd-page-head">
+  <div>
+    <h1>Contacts</h1>
+    <p>Devotees, donors, members and volunteers in one list.</p>
+  </div>
+  <div style="display: flex; gap: 10px; flex-wrap: wrap">
+    <p-iconfield>
+      <p-inputicon styleClass="pi pi-search" />
+      <input pInputText type="search" placeholder="Search name, phone or email" aria-label="Search contacts"
+             (input)="onSearch($any($event.target).value)" />
+    </p-iconfield>
+    <p-button label="Add contact" icon="pi pi-user-plus" (onClick)="open('new')" />
+  </div>
+</div>
+
+<div class="sd-card" style="padding: 0; overflow: hidden">
+  <p-table [value]="rows()" [lazy]="true" (onLazyLoad)="load($event)" [paginator]="true" [rows]="25"
+           [totalRecords]="total()" [loading]="loading()" dataKey="id" selectionMode="single"
+           (onRowSelect)="open($any($event.data))" [tableStyle]="{ 'min-width': '640px' }">
+    <ng-template #header>
+      <tr>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>City</th>
+        <th>Gotra</th>
+        <th>Nakshatra</th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-c>
+      <tr [pSelectableRow]="c" style="cursor: pointer">
+        <td><b>{{ c.fullName }}</b></td>
+        <td class="sd-num">{{ c.phone }}</td>
+        <td>{{ c.city }}</td>
+        <td>{{ c.gotra }}</td>
+        <td>{{ c.nakshatra }}</td>
+      </tr>
+    </ng-template>
+    <ng-template #emptymessage>
+      <tr><td colspan="5" class="sd-muted">No contacts found.</td></tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<p-dialog [header]="editing() === 'new' ? 'Add contact' : 'Edit contact'" [visible]="!!editing()"
+          (visibleChange)="!$event && editing.set(null)" [modal]="true" [style]="{ width: 'min(640px, 96vw)' }">
+  <form [formGroup]="form" (ngSubmit)="save()" class="sd-form" id="contact-form">
+    <label>First name <input pInputText formControlName="firstName" fluid /></label>
+    <label>Last name <input pInputText formControlName="lastName" fluid /></label>
+    <label>Phone <input pInputText formControlName="phone" type="tel" fluid /></label>
+    <label>Email <input pInputText formControlName="email" type="email" fluid /></label>
+    <label>City <input pInputText formControlName="city" fluid /></label>
+    <label>Date of birth <input pInputText formControlName="birthDate" type="date" fluid /></label>
+    <label>Gotra <input pInputText formControlName="gotra" fluid /></label>
+    <label>Nakshatra <input pInputText formControlName="nakshatra" fluid /></label>
+    <div class="full" style="display: flex; gap: 18px; flex-wrap: wrap">
+      <label style="flex-direction: row; align-items: center; gap: 8px">
+        <p-checkbox formControlName="consentEmail" [binary]="true" /> OK to email
+      </label>
+      <label style="flex-direction: row; align-items: center; gap: 8px">
+        <p-checkbox formControlName="consentWhatsapp" [binary]="true" /> OK to message on WhatsApp
+      </label>
+    </div>
+    @if (error()) {
+      <p class="sd-error full" role="alert">{{ error() }}</p>
+    }
+  </form>
+  <ng-template #footer>
+    <p-button label="Cancel" [text]="true" severity="secondary" (onClick)="editing.set(null)" />
+    <p-button label="Save" type="submit" form="contact-form" [loading]="saving()" />
+  </ng-template>
+</p-dialog>
