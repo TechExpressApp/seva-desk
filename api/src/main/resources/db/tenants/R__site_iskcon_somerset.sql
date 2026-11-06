@@ -9,39 +9,127 @@ update tenant set site = $json$
   "welcomeTitle": "Enhancing lives through bhakti yoga",
   "welcomeText": "We share the teachings of the Bhagavad Gita and Sri Chaitanya Mahaprabhu through weekly programmes, home groups, classes and festivals. Whether you are new to bhakti or have practised for years, you are welcome to join us.",
   "initiatives": [
-    {"title": "Bhakti Vriksha home programme", "text": "Small groups that meet weekly in devotees' homes for kirtan, discussion and friendship.", "href": "/bhakti-vriksha"},
-    {"title": "Scripture study groups", "text": "Read and discuss the Bhagavad Gita together, in person or online.", "href": "/bg-inperson"},
-    {"title": "New temple project", "text": "Help build a permanent home for the community in Somerset.", "href": "/new-temple-project"}
+    {
+      "title": "Bhakti Vriksha home programme",
+      "text": "Small groups that meet weekly in devotees' homes for kirtan, discussion and friendship.",
+      "href": "/bhakti-vriksha"
+    },
+    {
+      "title": "Scripture study groups",
+      "text": "Read and discuss the Bhagavad Gita together, in person or online.",
+      "href": "/bg-inperson"
+    },
+    {
+      "title": "New temple project",
+      "text": "Help build a permanent home for the community in Somerset.",
+      "href": "/new-temple-project"
+    }
   ],
   "menu": [
-    {"label": "Home", "href": "/"},
-    {"label": "Bhakti Vriksha", "href": "/bhakti-vriksha"},
-    {"label": "Donate", "href": "/donate", "children": [
-      {"label": "Nitya Sevak", "href": "/nityasevak"},
-      {"label": "1000 Fortunate Souls", "href": "/1000fortunesouls"}
-    ]},
-    {"label": "Festivals", "href": "/events", "children": [
-      {"label": "Upcoming events", "href": "/events"},
-      {"label": "Janmastami", "href": "/janmastami"},
-      {"label": "Yogini Ekadasi", "href": "/yogini-ekadasi"},
-      {"label": "Sayana Ekadasi", "href": "/sayana-ekadasi"},
-      {"label": "Putrada Ekadasi", "href": "/putrada-ekadasi"},
-      {"label": "Pandava Nirjala Ekadasi", "href": "/pandava-nirjala-ekadasi"}
-    ]},
-    {"label": "Courses", "href": "/bg-inperson", "children": [
-      {"label": "Bhagavad Gita - In Person", "href": "/bg-inperson"},
-      {"label": "Bhagavad Gita Online", "href": "/bg-online"}
-    ]},
-    {"label": "Gift Shop", "href": "/category/all-products"},
-    {"label": "Vaishnava Songs", "href": "/vaishnav-songs", "children": [
-      {"label": "Guru Vandana", "href": "/guru-vandana"},
-      {"label": "Gaura Arati", "href": "/gaura-arati"},
-      {"label": "Narasimha Arati", "href": "/narasimha-arati"},
-      {"label": "Raj Bhog Arati", "href": "/raj-bhog-arati"},
-      {"label": "Tulasi Arati", "href": "/tulasi-arati"}
-    ]},
-    {"label": "Contact Us", "href": "/contact-us"},
-    {"label": "New Temple", "href": "/new-temple-project"}
+    {
+      "label": "Home",
+      "href": "/"
+    },
+    {
+      "label": "Bhakti Vriksha",
+      "href": "/bhakti-vriksha"
+    },
+    {
+      "label": "Donate",
+      "href": "/donate",
+      "children": [
+        {
+          "label": "Nitya Sevak",
+          "href": "/nityasevak"
+        },
+        {
+          "label": "1000 Fortunate Souls",
+          "href": "/1000fortunesouls"
+        }
+      ]
+    },
+    {
+      "label": "Festivals",
+      "href": "/events",
+      "children": [
+        {
+          "label": "Upcoming events",
+          "href": "/events"
+        },
+        {
+          "label": "Janmastami",
+          "href": "/janmastami"
+        },
+        {
+          "label": "Yogini Ekadasi",
+          "href": "/yogini-ekadasi"
+        },
+        {
+          "label": "Sayana Ekadasi",
+          "href": "/sayana-ekadasi"
+        },
+        {
+          "label": "Putrada Ekadasi",
+          "href": "/putrada-ekadasi"
+        },
+        {
+          "label": "Pandava Nirjala Ekadasi",
+          "href": "/pandava-nirjala-ekadasi"
+        }
+      ]
+    },
+    {
+      "label": "Courses",
+      "href": "/bg-inperson",
+      "children": [
+        {
+          "label": "Bhagavad Gita - In Person",
+          "href": "/bg-inperson"
+        },
+        {
+          "label": "Bhagavad Gita Online",
+          "href": "/bg-online"
+        }
+      ]
+    },
+    {
+      "label": "Gift Shop",
+      "href": "/category/all-products"
+    },
+    {
+      "label": "Vaishnava Songs",
+      "href": "/vaishnav-songs",
+      "children": [
+        {
+          "label": "Guru Vandana",
+          "href": "/guru-vandana"
+        },
+        {
+          "label": "Gaura Arati",
+          "href": "/gaura-arati"
+        },
+        {
+          "label": "Narasimha Arati",
+          "href": "/narasimha-arati"
+        },
+        {
+          "label": "Raj Bhog Arati",
+          "href": "/raj-bhog-arati"
+        },
+        {
+          "label": "Tulasi Arati",
+          "href": "/tulasi-arati"
+        }
+      ]
+    },
+    {
+      "label": "Contact Us",
+      "href": "/contact-us"
+    },
+    {
+      "label": "New Temple",
+      "href": "/new-temple-project"
+    }
   ],
   "contact": {
     "phone": "+1-201-208-8976",
@@ -59,7 +147,7 @@ update tenant set site = $json$
     },
     "donate": {
       "title": "Donate",
-      "description": "Support ISKCON Somerset: temple services, festivals, prasadam distribution and the new temple project.",
+      "description": "Donate to ISKCON Somerset by card, Zelle or check: sponsor the Sunday Feast, give monthly, or support the new temple.",
       "heading": "Support the temple",
       "body": "<p>Your gifts keep the daily worship, festivals, classes and prasadam distribution going.</p><h2>Ways to give</h2><ul><li><a href=\"/nityasevak\">Nitya Sevak</a> – a monthly pledge</li><li><a href=\"/1000fortunesouls\">1000 Fortunate Souls</a> – the new temple appeal</li><li>In person at the temple</li></ul><p>For questions about donations or tax receipts, please <a href=\"/contact-us\">contact us</a>.</p>"
     },
@@ -67,13 +155,13 @@ update tenant set site = $json$
       "title": "Nitya Sevak",
       "description": "Become a Nitya Sevak with a regular monthly offering to ISKCON Somerset.",
       "heading": "Nitya Sevak – monthly offering",
-      "body": "<p>Nitya Sevaks support the temple with a regular monthly offering, so the community can plan worship and programmes with confidence.</p><p>To set up a monthly offering, please <a href=\"/contact-us\">contact us</a>.</p>"
+      "body": "<p>Nitya Sevaks support the temple with a regular monthly offering, so the community can plan worship and programmes with confidence.</p><p><a class=\"btn\" href=\"/donate#nitya-sevak\">Become a Nitya Sevak</a></p>"
     },
     "1000fortunesouls": {
       "title": "1000 Fortunate Souls",
       "description": "The 1000 Fortunate Souls appeal for the new ISKCON Somerset temple.",
       "heading": "1000 Fortunate Souls",
-      "body": "<p>We are inviting 1000 families to each make a pledge towards building the new temple. Every pledge brings the community closer to a permanent home.</p><p><a href=\"/new-temple-project\">Read about the new temple project</a> or <a href=\"/contact-us\">contact us</a> to make a pledge.</p>"
+      "body": "<p>We are inviting 1000 families to each pledge $200 a month for 25 months towards building the new temple.</p><p><a class=\"btn\" href=\"/donate#1000-fortunate-souls\">Pledge now</a> <a href=\"/new-temple-project\">Read about the new temple project</a></p>"
     },
     "janmastami": {
       "title": "Janmastami",
@@ -171,6 +259,71 @@ update tenant set site = $json$
       "heading": "New temple project",
       "body": "<p>The community is working towards a permanent temple in Somerset with space for worship, classes, festivals and prasadam.</p><h2>How you can help</h2><ul><li>Pledge through <a href=\"/1000fortunesouls\">1000 Fortunate Souls</a></li><li>Become a <a href=\"/nityasevak\">Nitya Sevak</a></li><li>Volunteer your skills: <a href=\"/contact-us\">contact us</a></li></ul>"
     }
+  },
+  "donate": {
+    "heading": "Give from the heart",
+    "intro": "<p>Your gifts become seva: they keep the Sunday Love Feast and its prasadam going, bring our festivals to the whole community, and support Vedic classes for children and adults.</p><p>Sponsor a feast in honor of a loved one, or choose a weekly, monthly or yearly gift with the <b>Frequency</b> option. Every offering, large or small, helps build a spiritual home for everyone.</p>",
+    "offline": [
+      {
+        "label": "Zelle",
+        "detail": "201-208-8976 / donate@iskconsomerset.org"
+      },
+      {
+        "label": "Check",
+        "detail": "Payable to \"ISKCON Somerset\""
+      }
+    ],
+    "frequencies": [
+      "ONE_TIME",
+      "WEEKLY",
+      "MONTHLY",
+      "YEARLY"
+    ],
+    "options": [
+      {
+        "label": "Sunday Feast Flower Sponsor",
+        "amount": 108,
+        "fund": "Sunday Feast"
+      },
+      {
+        "label": "Sunday Feast Prasadam Sponsor",
+        "amount": 151,
+        "fund": "Sunday Feast"
+      },
+      {
+        "label": "Sunday Feast Co-sponsor",
+        "amount": 251,
+        "fund": "Sunday Feast"
+      },
+      {
+        "label": "Full Sunday Feast Sponsor",
+        "amount": 551,
+        "fund": "Sunday Feast"
+      }
+    ],
+    "defaultFund": "General",
+    "allowOther": true,
+    "coverFees": true,
+    "campaigns": [
+      {
+        "key": "1000-fortunate-souls",
+        "title": "1000 Fortunate Souls",
+        "text": "Be part of the new temple construction by pledging $200 a month for 25 months.",
+        "fund": "New Temple",
+        "amount": 200,
+        "frequency": "MONTHLY",
+        "installments": 25,
+        "button": "Pledge $200 a month"
+      },
+      {
+        "key": "nitya-sevak",
+        "title": "Nitya Sevak",
+        "text": "Sudama Seva: support the temple's monthly running costs as a regular monthly donor. Choose any amount.",
+        "fund": "Nitya Sevak",
+        "frequency": "MONTHLY",
+        "button": "Become a Nitya Sevak"
+      }
+    ]
   }
 }
 $json$::jsonb

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{site/layout :: head('Thank you', 'Thank you for supporting ' + ${temple.name} + '.')}"></head>
+<body>
+<header th:replace="~{site/layout :: header}"></header>
+<main class="wrap section narrow center">
+  <img src="/site/lotus.svg" alt="" width="72" height="72">
+  <h1><span th:text="${temple.greeting}">Hare Krishna</span>! Thank you.</h1>
+  <p class="lead">Your gift has been received. A receipt is on its way to your email.</p>
+  <p class="muted">For a tax receipt or any question about your donation, please <a href="/contact-us">contact us</a>.</p>
+  <p class="actions" style="justify-content: center"><a class="btn" href="/events">See upcoming events</a> <a class="btn ghost" href="/">Home</a></p>
+</main>
+<footer th:replace="~{site/layout :: footer}"></footer>
+</body>
+</html>

@@ -130,3 +130,43 @@ h3 { font-size: 1.2rem; }
 .foot a { color: #f3e6d5; }
 .foot .muted { color: #cdb9a5; }
 .foot .legal { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding-block: 16px 28px; border-top: 1px solid rgba(255,255,255,.12); font-size: .85rem; color: #cdb9a5; }
+
+/* donate */
+.h3 { font-size: 1.25rem; margin-top: 1.6em; }
+.donate-grid { display: grid; grid-template-columns: 1fr 1.05fr; gap: 36px; align-items: start; }
+@media (max-width: 900px) { .donate-grid { grid-template-columns: 1fr; } }
+.donate-quote { margin: 0 0 18px; padding: 16px 20px; border-left: 3px solid var(--accent); background: var(--soft); border-radius: 0 10px 10px 0; font-family: var(--display); font-size: 1.15rem; }
+.ways { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.ways li { display: flex; flex-direction: column; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; }
+.way-label { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-soft); font-weight: 600; }
+.give h2 { margin-bottom: 14px; }
+.give-form { display: flex; flex-direction: column; gap: 16px; }
+.give-form fieldset { border: 0; padding: 0; margin: 0; }
+.give-form legend { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-soft); font-weight: 600; margin-bottom: 8px; }
+.seg { display: flex; flex-wrap: wrap; gap: 8px; }
+.seg legend { width: 100%; }
+.seg label { position: relative; }
+.seg input { position: absolute; opacity: 0; }
+.seg span { display: inline-block; padding: 8px 16px; border: 1px solid var(--line); border-radius: 999px; cursor: pointer; font-weight: 500; font-size: .9rem; }
+.seg input:checked + span { background: var(--brand); border-color: var(--brand); color: #fff; }
+.seg input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+.amounts { display: flex; flex-direction: column; gap: 8px; }
+.amount { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer; }
+.amount:has(input:checked) { border-color: var(--brand); background: var(--soft); }
+.amount input { accent-color: var(--brand); width: 18px; height: 18px; }
+.amount-label { flex: 1; }
+.amount b { font-size: 1.05rem; }
+.other-input { display: flex; align-items: center; gap: 4px; font-weight: 600; }
+.other-input input { width: 110px; font: inherit; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; }
+.field { display: flex; flex-direction: column; gap: 4px; font-size: .85rem; color: var(--ink-soft); }
+.field input { font: inherit; font-size: 1rem; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); }
+.field small { align-self: flex-end; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: .92rem; }
+.check input { accent-color: var(--brand); width: 18px; height: 18px; margin-top: 2px; }
+.btn.big { padding: 14px 24px; font-size: 1.05rem; align-self: stretch; text-align: center; }
+.secure { margin: -6px 0 0; text-align: center; }
+.test-note { background: #eef4ff; color: #1f3a93; padding: 10px 12px; border-radius: 8px; font-size: .88rem; }
+.campaigns { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; margin-top: 40px; }
+.campaign h2 { font-size: 1.4rem; }
+.campaign-form { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.campaign-form .field { align-self: stretch; }

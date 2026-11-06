@@ -3,11 +3,9 @@ package com.sevadesk.website;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sevadesk.contacts.Contact;
 import com.sevadesk.contacts.ContactRepository;
-import com.sevadesk.events.Event;
 import com.sevadesk.events.EventService;
 import com.sevadesk.platform.Tenant;
 import com.sevadesk.platform.TenantContext;
-import com.sevadesk.platform.TenantRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
@@ -17,16 +15,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.Year;
-import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -41,53 +34,14 @@ class WebsiteController {
 
     private static final Logger log = LoggerFactory.getLogger(WebsiteController.class);
 
-    private final TenantRepository tenants;
     private final EventService events;
     private final ContactRepository contacts;
     private final ObjectMapper json;
 
-    WebsiteController(TenantRepository tenants, EventService events, ContactRepository contacts, ObjectMapper json) {
-        this.tenants = tenants;
+    WebsiteController(EventService events, ContactRepository contacts, ObjectMapper json) {
         this.events = events;
         this.contacts = contacts;
         this.json = json;
-    }
-
-    // ---- shared model ---------------------------------------------------------------------------------------
-
-    @ModelAttribute("temple")
-    Tenant temple() {
-        return tenants.findById(TenantContext.require().id()).orElseThrow();
-    }
-
-    @ModelAttribute("site")
-    SiteSettings site(@ModelAttribute("temple") Tenant temple) {
-        return json.convertValue(temple.getSite() == null ? Map.of() : temple.getSite(), SiteSettings.class);
-    }
-
-    /** Brand colours for the page CSS; anything that isn't a plain hex colour falls back to the default. */
-    @ModelAttribute("colors")
-    Colors colors(@ModelAttribute("temple") Tenant temple) {
-        return new Colors(hex(temple.getPrimaryColor(), "#B5462B"), hex(temple.getAccentColor(), "#E8890C"),
-                hex(temple.getSoftColor(), "#FFF4E3"));
-    }
-
-    record Colors(String brand, String accent, String soft) {}
-
-    private static String hex(String value, String fallback) {
-        return value != null && value.matches("#[0-9A-Fa-f]{3,8}") ? value : fallback;
-    }
-
-    @ModelAttribute("fmt")
-    EventFormat fmt() {
-        return new EventFormat(TenantContext.require().zone());
-    }
-
-    @ModelAttribute
-    void common(Model model, HttpServletRequest request) {
-        model.addAttribute("year", Year.now().getValue());
-        model.addAttribute("path", request.getRequestURI());
-        model.addAttribute("baseUrl", ServletUriComponentsBuilder.fromCurrentContextPath().toUriString());
     }
 
     // ---- pages ----------------------------------------------------------------------------------------------
@@ -122,7 +76,7 @@ class WebsiteController {
         var e = event.get();
         model.addAttribute("event", e);
         // schema.org Event: lets Google show the event with its date in search results.
-        var fmt = fmt();
+        var fmt = (WebsiteModel.EventFormat) model.getAttribute("fmt");
         Map<String, Object> ld = new LinkedHashMap<>();
         ld.put("@context", "https://schema.org");
         ld.put("@type", "Event");
@@ -199,27 +153,6 @@ class WebsiteController {
 
     private static String blankToNull(String s) {
         return s == null || s.isBlank() ? null : s.trim();
-    }
-
-    /** Date formatting in the temple's own time zone, for templates. */
-    record EventFormat(java.time.ZoneId zone) {
-        private static final DateTimeFormatter DAY = DateTimeFormatter.ofPattern("d", Locale.ENGLISH);
-        private static final DateTimeFormatter MONTH = DateTimeFormatter.ofPattern("MMM", Locale.ENGLISH);
-        private static final DateTimeFormatter LONG = DateTimeFormatter.ofPattern("EEEE, d MMMM yyyy", Locale.ENGLISH);
-        private static final DateTimeFormatter TIME = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH);
-
-        public String day(Instant i) { return DAY.format(i.atZone(zone)); }
-        public String month(Instant i) { return MONTH.format(i.atZone(zone)); }
-        public String date(Instant i) { return LONG.format(i.atZone(zone)); }
-        public String time(Instant i) { return TIME.format(i.atZone(zone)); }
-        public String iso(Instant i) { return i.atZone(zone).toOffsetDateTime().toString(); }
-
-        public String when(Event e) {
-            String s = date(e.getStartsAt()) + " · " + time(e.getStartsAt());
-            if (e.getEndsAt() == null) return s;
-            boolean sameDay = e.getEndsAt().atZone(zone).toLocalDate().equals(e.getStartsAt().atZone(zone).toLocalDate());
-            return s + " – " + (sameDay ? time(e.getEndsAt()) : date(e.getEndsAt()) + " · " + time(e.getEndsAt()));
-        }
     }
 
     /** JSON for a <script type="application/ld+json"> block; "</" is escaped so text can't close the script tag. */

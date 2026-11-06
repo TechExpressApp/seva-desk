@@ -92,6 +92,30 @@ docker-compose.prod.yml   production / staging stack
 .github/workflows/ci.yml  CI/CD
 ```
 
+## Online donations (Stripe)
+
+`/donate` offers one-time, weekly, monthly and yearly card gifts, the temple's sponsorship amounts, an "in honor of"
+note, an optional fee cover, and campaign buttons (e.g. 1000 Fortunate Souls: $200/month for 25 months, which ends
+automatically after the 25th payment). Options are set in the temple's site settings (`donate` section).
+
+Donors pay on Stripe's own checkout page. Stripe then calls the webhook, and SevaDesk records each paid gift (and
+each monthly instalment) as a donation in the right fund, with a receipt number and the donor as a contact. It shows
+on the live dashboard immediately. Repeated webhooks never record a gift twice.
+
+Setup, in the temple's own Stripe account:
+1. **Developers → API keys**: copy the secret key (`sk_test_…` first; `sk_live_…` when ready) into `STRIPE_SECRET_KEY`.
+2. **Developers → Webhooks → Add endpoint**: `https://www.iskconsomerset.org/api/public/stripe/webhook`, events
+   `checkout.session.completed`, `checkout.session.async_payment_succeeded`, `invoice.paid`. Copy its signing
+   secret into `STRIPE_WEBHOOK_SECRET`.
+3. Restart. With test keys the page shows a "Test mode" note; pay with card `4242 4242 4242 4242`.
+
+Locally, run the API with `SEVADESK_STRIPE_ACCOUNTS_ISKCONSOMERSET_SECRETKEY` and
+`SEVADESK_STRIPE_ACCOUNTS_ISKCONSOMERSET_WEBHOOKSECRET` set, and forward webhooks with the Stripe CLI:
+
+```bash
+stripe listen --events checkout.session.completed,checkout.session.async_payment_succeeded,invoice.paid --forward-to localhost:8080/api/public/stripe/webhook
+```
+
 ## First admin login in production
 
 Set `BOOTSTRAP_TENANT_SLUG=iskconsomerset`, `BOOTSTRAP_ADMIN_EMAIL` and `BOOTSTRAP_ADMIN_PASSWORD` (12+ characters)

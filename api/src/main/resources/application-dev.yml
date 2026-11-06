@@ -1,5 +1,8 @@
 # Local development: `mvn spring-boot:run -Dspring-boot.run.profiles=dev`
 spring:
+  config:
+    # Your own Stripe test keys etc. for local development (not in Git). Copy local-secrets.properties.example.
+    import: optional:file:../local-secrets.properties
   flyway:
     locations: classpath:db/migration,classpath:db/tenants,classpath:db/dev
     # dev databases created before a newer V2 migration still pick it up

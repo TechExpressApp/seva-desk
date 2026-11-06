@@ -10,3 +10,8 @@ sevadesk:
     secret: test-only-secret-0123456789abcdef-0123456789
   cookie:
     secure: false
+  stripe:
+    accounts:
+      iskconsomerset:
+        secret-key: sk_test_not_a_real_key
+        webhook-secret: whsec_test_secret

@@ -24,7 +24,8 @@ public record SiteSettings(
         Contact contact,
         List<Link> social,
         String calendarUrl,
-        Map<String, Page> pages) {
+        Map<String, Page> pages,
+        Donate donate) {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record MenuItem(String label, String href, List<MenuItem> children) {
@@ -42,6 +43,34 @@ public record SiteSettings(
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Page(String title, String description, String heading, String body) {}
+
+    /** The /donate page: ways to give, card-giving options (paid through Stripe) and campaigns. */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record Donate(String heading, String intro, String quote, List<Offline> offline, List<String> frequencies,
+                         List<Option> options, String defaultFund, boolean allowOther, boolean coverFees,
+                         List<Campaign> campaigns) {
+        public Donate {
+            offline = offline == null ? List.of() : offline;
+            frequencies = frequencies == null || frequencies.isEmpty() ? List.of("ONE_TIME") : frequencies;
+            options = options == null ? List.of() : options;
+            campaigns = campaigns == null ? List.of() : campaigns;
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record Offline(String label, String detail) {}
+
+    /** A suggested amount, e.g. "Sunday Feast Prasadam Sponsor", $151, fund "Sunday Feast". */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record Option(String label, java.math.BigDecimal amount, String fund) {}
+
+    /**
+     * A named appeal with its own button, e.g. 1000 Fortunate Souls: $200 monthly for 25 months.
+     * amount null = the donor chooses; installments null = until the donor cancels.
+     */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record Campaign(String key, String title, String text, String fund, java.math.BigDecimal amount,
+                           String frequency, Integer installments, String button) {}
 
     public SiteSettings {
         initiatives = initiatives == null ? List.of() : initiatives;

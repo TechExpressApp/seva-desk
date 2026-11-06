@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{site/layout :: head(${page?.title} ?: 'Donate', ${page?.description} ?: 'Support ' + ${temple.name})}"></head>
+<body>
+<header th:replace="~{site/layout :: header}"></header>
+
+<main class="wrap section">
+  <h1 th:text="${donate?.heading} ?: 'Give from the heart'">Give from the heart</h1>
+
+  <div class="donate-grid" th:if="${donate}">
+    <section class="donate-about">
+      <blockquote class="donate-quote" th:if="${donate.quote}" th:text="${donate.quote}">Quote</blockquote>
+      <div class="prose" th:if="${donate.intro}" th:utext="${donate.intro}"></div>
+
+      <h2 class="h3" th:unless="${donate.offline.isEmpty()}">Other ways to give</h2>
+      <ul class="ways">
+        <li th:each="w : ${donate.offline}">
+          <span class="way-label" th:text="${w.label}">Zelle</span>
+          <span th:text="${w.detail}">detail</span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="card give" id="give">
+      <h2>Donate by card</h2>
+      <p class="test-note" th:if="${testMode}">Test mode: use card 4242 4242 4242 4242, any future date and any CVC. No real money moves.</p>
+      <p class="ok" th:if="${cancelled}" role="status">Your payment was cancelled. Nothing was charged; you can try again below.</p>
+      <p class="err" th:if="${error}" th:text="${error}" role="alert">Error</p>
+
+      <p class="muted" th:unless="${onlineEnabled}">Online card giving is being set up. In the meantime, please use one of the other ways to give.</p>
+
+      <form method="post" action="/donate/checkout" class="give-form" th:if="${onlineEnabled}" id="give-form">
+        <fieldset class="seg" th:if="${donate.frequencies.size() > 1}">
+          <legend>Frequency</legend>
+          <label th:each="f, i : ${donate.frequencies}">
+            <input type="radio" name="frequency" th:value="${f}" th:checked="${i.first}">
+            <span th:text="${f == 'ONE_TIME'} ? 'One time' : ${#strings.capitalize(#strings.toLowerCase(f))}">Monthly</span>
+          </label>
+        </fieldset>
+        <input type="hidden" name="frequency" value="ONE_TIME" th:if="${donate.frequencies.size() == 1}">
+
+        <fieldset class="amounts">
+          <legend>Amount</legend>
+          <label class="amount" th:each="o, i : ${donate.options}">
+            <input type="radio" name="option" th:value="${i.index}" th:attr="data-amount=${o.amount}" th:checked="${i.first}">
+            <span class="amount-label" th:text="${o.label}">Sponsor</span>
+            <b th:text="'$' + ${#numbers.formatDecimal(o.amount, 1, 'COMMA', 0, 'POINT')}">$108</b>
+          </label>
+          <label class="amount other" th:if="${donate.allowOther}">
+            <input type="radio" name="option" value="other" th:checked="${donate.options.isEmpty()}">
+            <span class="amount-label">Other amount</span>
+            <span class="other-input">$ <input name="otherAmount" inputmode="decimal" placeholder="0" aria-label="Other amount in dollars" maxlength="9"></span>
+          </label>
+        </fieldset>
+
+        <label class="field">
+          I am donating in honor of / on the occasion of (optional)
+          <input name="occasion" maxlength="100" id="occasion">
+          <small class="muted"><span id="occasion-count">0</span>/100</small>
+        </label>
+
+        <label class="field">
+          Email for your receipt (optional; you can also enter it on the payment page)
+          <input name="email" type="email" maxlength="200" autocomplete="email">
+        </label>
+
+        <label class="check" th:if="${donate.coverFees}">
+          <input type="checkbox" name="coverFees" value="true" id="cover-fees">
+          <span>I'd like to add <b id="fee-text">a little</b> to cover the card processing fee.</span>
+        </label>
+
+        <button class="btn big" type="submit" id="give-button">Donate</button>
+        <p class="muted small secure">Payments are processed securely by Stripe. Card details never reach our website.</p>
+      </form>
+    </section>
+  </div>
+
+  <section class="campaigns" th:if="${donate != null and !donate.campaigns.isEmpty()}">
+    <article class="card campaign" th:each="c : ${donate.campaigns}" th:id="${c.key}">
+      <h2 th:text="${c.title}">Campaign</h2>
+      <p th:text="${c.text}">Text</p>
+      <form method="post" action="/donate/checkout" th:if="${onlineEnabled}" class="campaign-form">
+        <input type="hidden" name="campaign" th:value="${c.key}">
+        <label class="field" th:if="${c.amount == null}">
+          Monthly amount ($)
+          <input name="campaignAmount" inputmode="decimal" required placeholder="51" maxlength="9">
+        </label>
+        <button class="btn" type="submit" th:text="${c.button} ?: 'Give'">Give</button>
+      </form>
+    </article>
+  </section>
+</main>
+
+<footer th:replace="~{site/layout :: footer}"></footer>
+
+<script th:if="${onlineEnabled}">
+  // Live total on the button, including the optional fee cover (Stripe US: 2.9% + 30¢).
+  (function () {
+    const form = document.getElementById('give-form');
+    if (!form) return;
+    const other = form.querySelector('[name=otherAmount]');
+    const cover = document.getElementById('cover-fees');
+    const button = document.getElementById('give-button');
+    const feeText = document.getElementById('fee-text');
+    const occasion = document.getElementById('occasion');
+    const count = document.getElementById('occasion-count');
+    const money = (n) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 });
+    function amount() {
+      const picked = form.querySelector('[name=option]:checked');
+      if (!picked) return 0;
+      if (picked.value === 'other') return parseFloat((other.value || '').replace(/[$,\s]/g, '')) || 0;
+      return parseFloat(picked.dataset.amount) || 0;
+    }
+    function freq() {
+      const f = form.querySelector('[name=frequency]:checked');
+      return !f || f.value === 'ONE_TIME' ? '' : ' ' + f.parentElement.textContent.trim().toLowerCase();
+    }
+    function update() {
+      const a = amount();
+      const fee = a > 0 ? Math.round(((a + 0.30) / (1 - 0.029) - a) * 100) / 100 : 0;
+      if (feeText) feeText.textContent = fee ? money(fee) : 'a little';
+      const total = a + (cover && cover.checked ? fee : 0);
+      button.textContent = total > 0 ? 'Donate ' + money(Math.round(total * 100) / 100) + freq() : 'Donate';
+      if (count) count.textContent = occasion.value.length;
+    }
+    form.addEventListener('input', update);
+    form.addEventListener('change', update);
+    other.addEventListener('focus', () => { form.querySelector('[name=option][value=other]').checked = true; update(); });
+    update();
+  })();
+</script>
+</body>
+</html>
