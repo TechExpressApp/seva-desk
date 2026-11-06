@@ -133,10 +133,10 @@ class WebsiteController {
         c.setConsentEmail(true);
         c.setConsentWhatsapp(whatsapp != null && !whatsapp.isBlank());
         Map<String, Object> extra = new LinkedHashMap<>();
-        if (initiatedName != null && !initiatedName.isBlank()) extra.put("initiatedName", initiatedName.trim());
-        if (spiritualMaster != null && !spiritualMaster.isBlank()) extra.put("spiritualMaster", spiritualMaster.trim());
         extra.put("source", "website subscribe form");
         c.setCustomFields(extra);
+        c.setInitiatedName(trimTo(initiatedName, 100));
+        c.setSpiritualMaster(trimTo(spiritualMaster, 100));
         c.setFamily(new Family(member(spouseName, spouseBirthDate), java.util.List.of(
                 member(child1Name, child1BirthDate), member(child2Name, child2BirthDate), member(child3Name, child3BirthDate))));
         contacts.save(c);
@@ -164,6 +164,11 @@ class WebsiteController {
         String n = blankToNull(name);
         if (n != null && n.length() > 100) n = n.substring(0, 100);
         return new Family.Member(n, birthDate);
+    }
+
+    private static String trimTo(String s, int max) {
+        String v = blankToNull(s);
+        return v == null || v.length() <= max ? v : v.substring(0, max);
     }
 
     private static String blankToNull(String s) {

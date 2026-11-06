@@ -146,7 +146,7 @@ class WebsiteTests extends PostgresTestBase {
         mvc.perform(get("/api/contacts").param("q", "radhika.sharma@example.com").with(host(SITE))
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + login()))
                 .andExpect(content().string(containsString("\"consentEmail\":true")))
-                .andExpect(content().string(containsString("Radhika devi dasi")))
+                .andExpect(content().string(containsString("\"initiatedName\":\"Radhika devi dasi\"")))
                 .andExpect(content().string(containsString("\"spouse\":{\"name\":\"Madhav Sharma\",\"birthDate\":\"1984-03-21\"}")))
                 // the empty Child 2 row is dropped; Child 3 becomes the second child
                 .andExpect(content().string(containsString("\"children\":[{\"name\":\"Gopal\",\"birthDate\":\"2014-08-26\"},{\"name\":\"Tulasi\",\"birthDate\":\"2019-11-02\"}]")))
@@ -168,18 +168,30 @@ class WebsiteTests extends PostgresTestBase {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andReturn().getResponse().getContentAsString()).get("content").get(0).get("id").asText();
 
-        // the admin form sends no customFields: the initiated name must survive the update
+        // initiated name from the website shows on the contact; the admin form (no customFields) keeps
+        // other website details such as where the contact came from
+        mvc.perform(get("/api/contacts/" + id).with(host(SITE)).header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(content().string(containsString("\"initiatedName\":\"Keshava das\"")));
         mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/contacts/" + id)
                         .with(host(SITE)).header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON).content("""
-                            {"firstName":"Keshav","email":"%s","family":{
+                            {"firstName":"Keshav","email":"%s","initiatedName":"Keshava das",
+                             "spiritualMaster":"HH Radhanath Swami","devoteeStatus":"FIRST_INITIATED","family":{
                               "spouse":{"name":"Radha","birthDate":"1990-01-15"},
                               "children":[{"name":"Hari","birthDate":"2018-06-01"},{"name":"","birthDate":null}]}}
                             """.formatted(email)))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Keshava das")))
+                .andExpect(content().string(containsString("\"devoteeStatus\":\"FIRST_INITIATED\"")))
+                .andExpect(content().string(containsString("\"spiritualMaster\":\"HH Radhanath Swami\"")))
+                .andExpect(content().string(containsString("\"source\":\"website subscribe form\"")))
                 .andExpect(content().string(containsString("\"spouse\":{\"name\":\"Radha\",\"birthDate\":\"1990-01-15\"}")))
                 .andExpect(content().string(containsString("\"children\":[{\"name\":\"Hari\",\"birthDate\":\"2018-06-01\"}]")));
+
+        // only the four statuses are accepted
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/contacts/" + id)
+                        .with(host(SITE)).header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"firstName\":\"Keshav\",\"devoteeStatus\":\"GURU\"}"))
+                .andExpect(status().isBadRequest());
 
         // a fourth child is refused
         mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/contacts/" + id)

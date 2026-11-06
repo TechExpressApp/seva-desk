@@ -28,6 +28,10 @@ public class Contact extends TenantScopedEntity {
     @Column(name = "custom_fields") private Map<String, Object> customFields = new HashMap<>();
     @Column(name = "consent_email") private boolean consentEmail;
     @Column(name = "consent_whatsapp") private boolean consentWhatsapp;
+    @Column(name = "initiated_name") private String initiatedName;
+    @Column(name = "spiritual_master") private String spiritualMaster;
+    @jakarta.persistence.Enumerated(jakarta.persistence.EnumType.STRING)
+    @Column(name = "devotee_status") private DevoteeStatus devoteeStatus;
 
     protected Contact() {}
 
@@ -58,6 +62,12 @@ public class Contact extends TenantScopedEntity {
     public void setConsentEmail(boolean v) { consentEmail = v; }
     public boolean isConsentWhatsapp() { return consentWhatsapp; }
     public void setConsentWhatsapp(boolean v) { consentWhatsapp = v; }
+    public String getInitiatedName() { return initiatedName; }
+    public void setInitiatedName(String v) { initiatedName = v == null || v.isBlank() ? null : v.strip(); }
+    public String getSpiritualMaster() { return spiritualMaster; }
+    public void setSpiritualMaster(String v) { spiritualMaster = v == null || v.isBlank() ? null : v.strip(); }
+    public DevoteeStatus getDevoteeStatus() { return devoteeStatus; }
+    public void setDevoteeStatus(DevoteeStatus v) { devoteeStatus = v; }
 
     /** Spouse and children with birthdays, kept in custom_fields["family"]. */
     public Family getFamily() {

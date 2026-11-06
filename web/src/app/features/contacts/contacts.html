@@ -16,10 +16,13 @@
 <div class="sd-card" style="padding: 0; overflow: hidden">
   <p-table [value]="rows()" [lazy]="true" (onLazyLoad)="load($event)" [paginator]="true" [rows]="25"
            [totalRecords]="total()" [loading]="loading()" dataKey="id" selectionMode="single"
-           (onRowSelect)="open($any($event.data))" [tableStyle]="{ 'min-width': '640px' }">
+           (onRowSelect)="open($any($event.data))" [tableStyle]="{ 'min-width': '1080px' }">
     <ng-template #header>
       <tr>
         <th>Name</th>
+        <th>Initiated name</th>
+        <th>Spiritual master</th>
+        <th>Status</th>
         <th>Phone</th>
         <th>City</th>
         <th>Gotra</th>
@@ -29,6 +32,14 @@
     <ng-template #body let-c>
       <tr [pSelectableRow]="c" style="cursor: pointer">
         <td><b>{{ c.fullName }}</b></td>
+        <td>{{ c.initiatedName }}</td>
+        <td>{{ c.spiritualMaster }}</td>
+        <td>
+          @if (c.devoteeStatus) {
+            <p-tag [value]="statusLabel(c.devoteeStatus)"
+                   [severity]="c.devoteeStatus === 'VISITOR' ? 'secondary' : c.devoteeStatus === 'PRACTICING' ? 'info' : 'success'" />
+          }
+        </td>
         <td class="sd-num">{{ c.phone }}</td>
         <td>{{ c.city }}</td>
         <td>{{ c.gotra }}</td>
@@ -36,7 +47,7 @@
       </tr>
     </ng-template>
     <ng-template #emptymessage>
-      <tr><td colspan="5" class="sd-muted">No contacts found.</td></tr>
+      <tr><td colspan="8" class="sd-muted">No contacts found.</td></tr>
     </ng-template>
   </p-table>
 </div>
@@ -58,6 +69,13 @@
     <label>Email <input pInputText formControlName="email" type="email" fluid /></label>
     <label>City <input pInputText formControlName="city" fluid /></label>
     <label>Date of birth <input pInputText formControlName="birthDate" type="date" fluid /></label>
+    <label>Initiated name <input pInputText formControlName="initiatedName" maxlength="100" placeholder="e.g. Radhika devi dasi" fluid /></label>
+    <label>Spiritual master <input pInputText formControlName="spiritualMaster" maxlength="100" fluid /></label>
+    <label>
+      Status
+      <p-select formControlName="devoteeStatus" [options]="statuses" optionLabel="label" optionValue="value"
+                [showClear]="true" placeholder="Not set" appendTo="body" fluid />
+    </label>
     <label>Gotra <input pInputText formControlName="gotra" fluid /></label>
     <label>Nakshatra <input pInputText formControlName="nakshatra" fluid /></label>
     <fieldset class="full family">

@@ -143,6 +143,9 @@
         <div><dt>Phone / WhatsApp</dt><dd>{{ c.phone || '—' }}</dd></div>
         <div><dt>City</dt><dd>{{ c.city || '—' }}</dd></div>
         <div><dt>Date of birth</dt><dd>{{ c.birthDate ? (c.birthDate | date: 'd MMMM y') : '—' }}</dd></div>
+        <div><dt>Initiated name</dt><dd>{{ c.initiatedName || '—' }}</dd></div>
+        <div><dt>Spiritual master</dt><dd>{{ c.spiritualMaster || '—' }}</dd></div>
+        <div><dt>Status</dt><dd>{{ statusLabel(c.devoteeStatus) || '—' }}</dd></div>
         <div><dt>Gotra</dt><dd>{{ c.gotra || '—' }}</dd></div>
         <div><dt>Nakshatra</dt><dd>{{ c.nakshatra || '—' }}</dd></div>
         <div>

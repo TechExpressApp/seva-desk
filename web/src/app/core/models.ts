@@ -54,6 +54,9 @@ export interface Contact {
   nakshatra: string | null;
   birthDate: string | null;
   family: Family | null;
+  initiatedName: string | null;
+  spiritualMaster: string | null;
+  devoteeStatus: 'VISITOR' | 'PRACTICING' | 'FIRST_INITIATED' | 'SECOND_INITIATED' | null;
   /** Extra details, e.g. initiatedName, spiritualMaster and source from the website form */
   customFields?: Record<string, unknown>;
   consentEmail: boolean;

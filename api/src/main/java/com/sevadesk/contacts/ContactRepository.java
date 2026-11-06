@@ -37,6 +37,7 @@ public interface ContactRepository extends JpaRepository<Contact, UUID> {
            or lower(c.lastName)  like lower(concat('%', :q, '%'))
            or c.phone like concat('%', :q, '%')
            or lower(c.email) like lower(concat('%', :q, '%'))
+           or lower(c.initiatedName) like lower(concat('%', :q, '%'))
         """)
     Page<Contact> search(@Param("q") String q, Pageable pageable);
 }

@@ -10,6 +10,7 @@ import { Table, TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { BrandingService } from '../../core/branding.service';
 import { Contact, Donation, DonorPage, DonorTotal, Page } from '../../core/models';
 import { Router } from '@angular/router';
+import { devoteeStatusLabel } from '../../core/devotee-status';
 import { Button } from 'primeng/button';
 import { Dialog } from 'primeng/dialog';
 import { Tag } from 'primeng/tag';
@@ -43,6 +44,7 @@ export class Donors {
   protected readonly profile = signal<Contact | null>(null);
   protected readonly profileError = signal<string | null>(null);
   private readonly router = inject(Router);
+  protected readonly statusLabel = devoteeStatusLabel;
 
   private query = '';
   private lastEvent: TableLazyLoadEvent = { first: 0, rows: 25, sortField: 'total', sortOrder: -1 };

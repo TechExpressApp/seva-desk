@@ -33,14 +33,18 @@ class ContactController {
     record ContactForm(@NotBlank @Size(max = 100) String firstName, @Size(max = 100) String lastName,
                        @Email String email, @Size(max = 30) String phone, String city,
                        String gotra, String nakshatra, LocalDate birthDate, @Valid Family family,
+                       @Size(max = 100) String initiatedName, @Size(max = 100) String spiritualMaster,
+                       DevoteeStatus devoteeStatus,
                        Map<String, Object> customFields, boolean consentEmail, boolean consentWhatsapp) {}
 
     record ContactView(UUID id, String firstName, String lastName, String fullName, String email, String phone,
                        String city, String gotra, String nakshatra, LocalDate birthDate, Family family,
+                       String initiatedName, String spiritualMaster, DevoteeStatus devoteeStatus,
                        Map<String, Object> customFields, boolean consentEmail, boolean consentWhatsapp) {
         static ContactView of(Contact c) {
             return new ContactView(c.getId(), c.getFirstName(), c.getLastName(), c.getFullName(), c.getEmail(),
                     c.getPhone(), c.getCity(), c.getGotra(), c.getNakshatra(), c.getBirthDate(), c.getFamily(),
+                    c.getInitiatedName(), c.getSpiritualMaster(), c.getDevoteeStatus(),
                     c.getCustomFields(), c.isConsentEmail(), c.isConsentWhatsapp());
         }
     }
@@ -101,5 +105,8 @@ class ContactController {
         if (f.family() != null) c.setFamily(f.family());
         c.setConsentEmail(f.consentEmail());
         c.setConsentWhatsapp(f.consentWhatsapp());
+        c.setInitiatedName(f.initiatedName());
+        c.setSpiritualMaster(f.spiritualMaster());
+        c.setDevoteeStatus(f.devoteeStatus());
     }
 }

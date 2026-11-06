@@ -12,17 +12,23 @@ import { InputIcon } from 'primeng/inputicon';
 import { InputText } from 'primeng/inputtext';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { Contact, DonorTotal, Page } from '../../core/models';
+import { DEVOTEE_STATUSES, DevoteeStatus, devoteeStatusLabel } from '../../core/devotee-status';
+import { Select } from 'primeng/select';
+import { Tag } from 'primeng/tag';
 import { BrandingService } from '../../core/branding.service';
 import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'sd-contacts',
-  imports: [ReactiveFormsModule, DatePipe, TableModule, Button, Checkbox, Dialog, IconField, InputIcon, InputText],
+  imports: [ReactiveFormsModule, DatePipe, Select, Tag, TableModule, Button, Checkbox, Dialog, IconField, InputIcon, InputText],
   templateUrl: './contacts.html',
 })
 export class Contacts implements OnInit {
   private readonly http = inject(HttpClient);
   private readonly toast = inject(MessageService);
+
+  protected readonly statuses = DEVOTEE_STATUSES;
+  protected readonly statusLabel = devoteeStatusLabel;
 
   /** /contacts?edit=<id> opens that person's edit dialog (used from the Donors screen). */
   readonly edit = input<string>();
@@ -52,6 +58,9 @@ export class Contacts implements OnInit {
     birthDate: [null as string | null],
     consentEmail: [false],
     consentWhatsapp: [false],
+    initiatedName: ['', Validators.maxLength(100)],
+    spiritualMaster: ['', Validators.maxLength(100)],
+    devoteeStatus: [null as DevoteeStatus | null],
     // Family birthdays (optional): spouse and up to three children
     spouseName: ['', Validators.maxLength(100)],
     spouseBirthDate: [null as string | null],
@@ -106,11 +115,14 @@ export class Contacts implements OnInit {
       this.http.get<DonorTotal>(`/api/donors/${contact.id}`).subscribe({ next: (g) => this.giving.set(g), error: () => {} });
     }
     if (contact === 'new') {
-      this.form.reset({ consentEmail: false, consentWhatsapp: false });
+      this.form.reset({ consentEmail: false, consentWhatsapp: false, devoteeStatus: null });
     } else {
       const kids = contact.family?.children ?? [];
       this.form.reset({
         ...contact,
+        initiatedName: contact.initiatedName ?? '',
+        spiritualMaster: contact.spiritualMaster ?? '',
+        devoteeStatus: contact.devoteeStatus ?? null,
         spouseName: contact.family?.spouse?.name ?? '',
         spouseBirthDate: contact.family?.spouse?.birthDate ?? null,
         child1Name: kids[0]?.name ?? '',
@@ -137,6 +149,8 @@ export class Contacts implements OnInit {
     const member = (name: string | null, birthDate: string | null) => ({ name: name?.trim() || null, birthDate: birthDate || null });
     const body = {
       ...rest,
+      initiatedName: rest.initiatedName?.trim() || null,
+      spiritualMaster: rest.spiritualMaster?.trim() || null,
       family: {
         spouse: member(spouseName, spouseBirthDate),
         children: [member(child1Name, child1BirthDate), member(child2Name, child2BirthDate), member(child3Name, child3BirthDate)]
