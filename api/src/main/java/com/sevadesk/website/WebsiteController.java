@@ -39,20 +39,25 @@ class WebsiteController {
     private final ContactRepository contacts;
     private final ObjectMapper json;
     private final RegistrationFormModel registrationForm;
+    private final CampaignProgress campaignProgress;
+    private final com.sevadesk.payments.GiftCheckout checkout;
 
     WebsiteController(EventService events, ContactRepository contacts, ObjectMapper json,
-                      RegistrationFormModel registrationForm) {
+                      RegistrationFormModel registrationForm, CampaignProgress campaignProgress,
+                      com.sevadesk.payments.GiftCheckout checkout) {
         this.events = events;
         this.contacts = contacts;
         this.json = json;
         this.registrationForm = registrationForm;
+        this.campaignProgress = campaignProgress;
+        this.checkout = checkout;
     }
 
     // ---- pages ----------------------------------------------------------------------------------------------
 
     @GetMapping("/")
     String home(Model model) {
-        model.addAttribute("events", events.upcomingPublished(6));
+        model.addAttribute("events", events.upcomingPublished(12));
         var temple = (Tenant) model.getAttribute("temple");
         var contact = site(model).contact();
         Map<String, Object> ld = new LinkedHashMap<>();
@@ -155,13 +160,25 @@ class WebsiteController {
 
     /** Old site URLs such as /bhakti-vriksha, /donate, /guru-vandana, /category/all-products. */
     @GetMapping({"/{slug:[a-z0-9][a-z0-9-]*}", "/category/{slug:[a-z0-9][a-z0-9-]*}"})
-    String page(@PathVariable String slug, Model model, HttpServletRequest request, HttpServletResponse response) {
+    String page(@PathVariable String slug, Model model, HttpServletRequest request, HttpServletResponse response,
+                @RequestParam(required = false) String error) {
         String key = request.getRequestURI().startsWith("/category/") ? "category/" + slug : slug;
         var page = site(model).pages().get(key);
         if (page == null) return notFound(response);
         model.addAttribute("page", page);
         model.addAttribute("pageKey", key);
         if (page.registerEvent() != null) registrationForm.prepare(model, page.registerEvent());
+        var donate = site(model).donate();
+        if (page.donateCampaign() != null && donate != null) {          // an appeal with its giving form
+            donate.campaigns().stream().filter(c -> c.key().equals(page.donateCampaign())).findFirst().ifPresent(c -> {
+                model.addAttribute("campaign", c);
+                model.addAttribute("donate", donate);
+                model.addAttribute("campaignProgress", campaignProgress.of(java.util.List.of(c)));
+                model.addAttribute("onlineEnabled", checkout.enabled());
+                model.addAttribute("testMode", checkout.testMode());
+                model.addAttribute("error", error == null || error.length() > 200 ? null : error);
+            });
+        }
         return "site/page";
     }
 

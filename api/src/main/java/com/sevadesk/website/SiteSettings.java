@@ -66,9 +66,13 @@ public record SiteSettings(
                           String image, String imageAlt, String imageCredit, String imageCreditUrl,
                           String href, String button) {}
 
-    /** registerEvent: show the event registration form at the bottom, with this event chosen (optional). */
+    /**
+     * registerEvent: show the event registration form at the bottom, with this event chosen (optional).
+     * donateCampaign: show this appeal from donate.campaigns (by key) with its giving form, e.g. "new-temple".
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record Page(String title, String description, String heading, String body, String registerEvent) {}
+    public record Page(String title, String description, String heading, String body, String registerEvent,
+                       String donateCampaign) {}
 
     /** The /donate page: ways to give, card-giving options (paid through Stripe) and campaigns. */
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -92,11 +96,27 @@ public record SiteSettings(
 
     /**
      * A named appeal with its own button, e.g. 1000 Fortunate Souls: $200 monthly for 25 months.
-     * amount null = the donor chooses; installments null = until the donor cancels.
+     * amount null = the donor chooses, from the levels (e.g. "Platinum Patron" $216) or any amount they like;
+     * installments null = until the donor cancels.
+     * frequencies: let the donor choose how often (e.g. ONE_TIME, MONTHLY, YEARLY); empty = always "frequency".
+     * goal: show a progress bar. Raised = raisedBefore (given before SevaDesk, e.g. on the old site)
+     * + every recorded gift to the fund; likewise donationsBefore + the number of gifts.
      */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Campaign(String key, String title, String text, String fund, java.math.BigDecimal amount,
-                           String frequency, Integer installments, String button) {}
+                           String frequency, Integer installments, String button, List<Option> levels,
+                           List<String> frequencies, java.math.BigDecimal goal, java.math.BigDecimal raisedBefore,
+                           Integer donationsBefore) {
+        public Campaign {
+            levels = levels == null ? List.of() : levels;
+            frequencies = frequencies == null ? List.of() : frequencies;
+        }
+
+        /** "Monthly" wording applies when the gift is always monthly. */
+        public boolean alwaysMonthly() {
+            return frequencies.isEmpty() && (frequency == null || "MONTHLY".equals(frequency));
+        }
+    }
 
     public SiteSettings {
         initiatives = initiatives == null ? List.of() : initiatives;

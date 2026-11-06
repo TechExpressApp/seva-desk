@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!-- One appeal (donate.campaigns) with its giving form: on /donate and on pages with "donateCampaign" set.
+     Needs onlineEnabled and campaignProgress in the model. "from" = the page to come back to on a mistake. -->
+<body>
+<article th:fragment="card(c, from)" class="card campaign" th:id="${c.key}">
+  <h2 th:text="${c.title}">Appeal</h2>
+  <p th:text="${c.text}">Text</p>
+
+  <th:block th:with="p=${campaignProgress != null ? campaignProgress[c.key] : null}">
+  <div class="progress" th:if="${p != null}">
+    <div class="progress-figures">
+      <b th:text="'$' + ${#numbers.formatDecimal(p.raised, 1, 'COMMA', 0, 'POINT')} + ' raised'">$21,041 raised</b>
+      <span th:text="'of $' + ${#numbers.formatDecimal(p.goal, 1, 'COMMA', 0, 'POINT')} + ' goal'">of $500,000 goal</span>
+    </div>
+    <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" th:attr="aria-valuenow=${p.percent},aria-label=${c.title} + ' progress'">
+      <span th:style="'width:' + ${p.percent < 1 and p.raised.signum() > 0 ? 1 : p.percent} + '%'"></span>
+    </div>
+    <div class="progress-figures small muted">
+      <span th:text="${p.donations} + (${p.donations} == 1 ? ' donation' : ' donations')">37 donations</span>
+      <span th:text="${p.percent} + '% of goal'">4% of goal</span>
+    </div>
+  </div>
+  </th:block>
+
+  <form method="post" action="/donate/checkout" th:if="${onlineEnabled}" class="campaign-form">
+    <input type="hidden" name="campaign" th:value="${c.key}">
+    <input type="hidden" name="from" th:if="${from}" th:value="${from}">
+
+    <!-- how often, when the donor chooses -->
+    <fieldset class="seg" th:if="${!c.frequencies.isEmpty()}">
+      <legend>Frequency</legend>
+      <label th:each="f, i : ${c.frequencies}">
+        <input type="radio" name="frequency" th:value="${f}" th:checked="${i.first}">
+        <span th:text="${f == 'ONE_TIME'} ? 'One time' : ${#strings.capitalize(#strings.toLowerCase(f))}">Monthly</span>
+      </label>
+    </fieldset>
+
+    <!-- levels to choose from (e.g. One Brick $55), or any amount -->
+    <fieldset class="amounts levels" th:if="${c.amount == null and !c.levels.isEmpty()}">
+      <legend th:text="${c.alwaysMonthly()} ? 'Choose a monthly level' : 'Amount'">Amount</legend>
+      <label class="amount" th:each="l, i : ${c.levels}">
+        <input type="radio" name="campaignLevel" th:value="${i.index}" th:checked="${i.first}">
+        <span class="amount-label" th:text="${l.label}">Level</span>
+        <b><span th:text="'$' + ${#numbers.formatDecimal(l.amount, 1, 'COMMA', 0, 'POINT')}">$55</span><small
+           th:if="${c.alwaysMonthly()}">/month</small></b>
+      </label>
+      <label class="amount other">
+        <input type="radio" name="campaignLevel" value="other">
+        <span class="amount-label">Any amount you like</span>
+        <span class="other-input">$ <input name="campaignAmount" inputmode="decimal" placeholder="0" maxlength="9"
+              aria-label="Any amount in dollars" data-picks-other></span>
+      </label>
+    </fieldset>
+    <label class="field" th:if="${c.amount == null and c.levels.isEmpty()}">
+      <span th:text="${c.alwaysMonthly()} ? 'Monthly amount ($)' : 'Amount ($)'">Amount ($)</span>
+      <input name="campaignAmount" inputmode="decimal" required placeholder="51" maxlength="9">
+    </label>
+
+    <button class="btn" type="submit" th:text="${c.button} ?: 'Give'">Give</button>
+  </form>
+</article>
+</body>
+</html>

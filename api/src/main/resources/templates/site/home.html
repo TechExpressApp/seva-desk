@@ -52,10 +52,17 @@
 
   <section class="wrap section" id="events">
     <div class="section-head">
-      <h2>Upcoming Festivals</h2>
-      <a href="/events">All events →</a>
+      <h2 id="festivals-title">Upcoming Festivals</h2>
+      <div class="carousel-nav" th:if="${events.size() > 1}">
+        <button type="button" class="carousel-btn" data-carousel-prev="festivals" aria-label="Previous festivals" disabled>‹</button>
+        <button type="button" class="carousel-btn" data-carousel-next="festivals" aria-label="Next festivals">›</button>
+        <a href="/events">All events →</a>
+      </div>
+      <a href="/events" th:unless="${events.size() > 1}">All events →</a>
     </div>
-    <div class="event-grid" th:unless="${events.isEmpty()}">
+    <!-- One row that scrolls sideways: swipe, scroll or use the arrows -->
+    <div class="event-carousel" id="festivals" th:unless="${events.isEmpty()}" tabindex="0"
+         role="region" aria-roledescription="carousel" aria-labelledby="festivals-title">
       <a class="event-card" th:each="e : ${events}" th:href="@{/events/{s}(s=${e.slug})}">
         <div class="date"><b th:text="${fmt.day(e.startsAt)}">8</b><span th:text="${fmt.month(e.startsAt)}">Nov</span></div>
         <div>
@@ -120,5 +127,6 @@
 <footer th:replace="~{site/layout :: footer}"></footer>
 
 <script type="application/ld+json" th:utext="${jsonLd}"></script>
+<script src="/site/carousel.js" defer></script>
 </body>
 </html>

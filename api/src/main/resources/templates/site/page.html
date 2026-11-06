@@ -8,6 +8,25 @@
   <!-- Body is HTML from the temple's website settings (tenant.site.pages) -->
   <div class="prose" th:utext="${page.body}"></div>
 
+  <!-- Optional appeal with its giving form (e.g. the New Temple), and the other ways to give -->
+  <section class="page-give" id="give" th:if="${campaign}">
+    <p class="err" th:if="${error}" th:text="${error}" role="alert">Error</p>
+    <p class="test-note" th:if="${testMode}">Test mode: use card 4242 4242 4242 4242, any future date and any CVC. No real money moves.</p>
+    <div class="page-give-grid">
+      <article th:replace="~{site/campaign-card :: card(${campaign}, '/' + ${pageKey})}"></article>
+      <aside class="card ways-card" th:unless="${donate.offline.isEmpty()}">
+        <h2 class="h3">Other ways to give</h2>
+        <ul class="ways">
+          <li th:each="w : ${donate.offline}">
+            <span class="way-label" th:text="${w.label}">Zelle</span>
+            <span th:text="${w.detail}">detail</span>
+          </li>
+        </ul>
+        <p class="muted small" th:unless="${onlineEnabled}">Online card giving is being set up. In the meantime, please use one of these.</p>
+      </aside>
+    </div>
+  </section>
+
   <!-- Optional registration form, with the page's event chosen -->
   <section class="page-register" id="register" th:if="${page.registerEvent}" aria-labelledby="register-title">
     <p class="eyebrow register-eyebrow">Join us</p>
@@ -17,5 +36,13 @@
   </section>
 </main>
 <footer th:replace="~{site/layout :: footer}"></footer>
+<script th:if="${campaign != null and onlineEnabled}">
+  // Typing in "Any amount you like" chooses that option.
+  document.querySelectorAll('[data-picks-other]').forEach(function (input) {
+    input.addEventListener('focus', function () {
+      input.closest('fieldset').querySelector('input[type=radio][value=other]').checked = true;
+    });
+  });
+</script>
 </body>
 </html>

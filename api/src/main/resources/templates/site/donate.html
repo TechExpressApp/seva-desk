@@ -76,23 +76,20 @@
   </div>
 
   <section class="campaigns" th:if="${donate != null and !donate.campaigns.isEmpty()}">
-    <article class="card campaign" th:each="c : ${donate.campaigns}" th:id="${c.key}">
-      <h2 th:text="${c.title}">Campaign</h2>
-      <p th:text="${c.text}">Text</p>
-      <form method="post" action="/donate/checkout" th:if="${onlineEnabled}" class="campaign-form">
-        <input type="hidden" name="campaign" th:value="${c.key}">
-        <label class="field" th:if="${c.amount == null}">
-          Monthly amount ($)
-          <input name="campaignAmount" inputmode="decimal" required placeholder="51" maxlength="9">
-        </label>
-        <button class="btn" type="submit" th:text="${c.button} ?: 'Give'">Give</button>
-      </form>
-    </article>
+    <th:block th:each="c : ${donate.campaigns}"><article th:replace="~{site/campaign-card :: card(${c}, null)}"></article></th:block>
   </section>
 </main>
 
 <footer th:replace="~{site/layout :: footer}"></footer>
 
+<script th:if="${onlineEnabled}">
+  // Typing in "Any amount you like" chooses that option.
+  document.querySelectorAll('[data-picks-other]').forEach(function (input) {
+    input.addEventListener('focus', function () {
+      input.closest('fieldset').querySelector('input[type=radio][value=other]').checked = true;
+    });
+  });
+</script>
 <script th:if="${onlineEnabled}">
   // Live total on the button, including the optional fee cover (Stripe US: 2.9% + 30¢).
   (function () {

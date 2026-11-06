@@ -49,6 +49,14 @@ class DonateTests extends PostgresTestBase {
                 .andExpect(content().string(containsString("data-amount=\"151\"")))
                 .andExpect(content().string(containsString("value=\"MONTHLY\"")))
                 .andExpect(content().string(containsString("1000 Fortunate Souls")))
+                // Nitya Sevak: four patron levels, or any amount
+                .andExpect(content().string(containsString("Platinum Patron")))
+                .andExpect(content().string(containsString("Diamond Patron")))
+                .andExpect(content().string(containsString("Gold Patron")))
+                .andExpect(content().string(containsString("Silver Patron")))
+                .andExpect(content().string(containsString("$216")))
+                .andExpect(content().string(containsString("$54")))
+                .andExpect(content().string(containsString("Any amount you like")))
                 .andExpect(content().string(containsString("Zelle")))
                 .andExpect(content().string(containsString("Test mode")));
     }

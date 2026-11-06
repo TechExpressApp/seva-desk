@@ -25,9 +25,11 @@ class DonateController {
     static final BigDecimal MAX = new BigDecimal("50000");
 
     private final GiftCheckout checkout;
+    private final CampaignProgress progress;
 
-    DonateController(GiftCheckout checkout) {
+    DonateController(GiftCheckout checkout, CampaignProgress progress) {
         this.checkout = checkout;
+        this.progress = progress;
     }
 
     @GetMapping("/donate")
@@ -38,6 +40,7 @@ class DonateController {
         model.addAttribute("donate", site.donate());
         model.addAttribute("onlineEnabled", checkout.enabled());
         model.addAttribute("testMode", checkout.testMode());
+        if (site.donate() != null) model.addAttribute("campaignProgress", progress.of(site.donate().campaigns()));
         model.addAttribute("cancelled", cancelled != null);
         model.addAttribute("error", error);
         return "site/donate";
@@ -52,7 +55,11 @@ class DonateController {
                          @RequestParam(defaultValue = "false") boolean coverFees,
                          @RequestParam(required = false) String email,
                          @RequestParam(required = false) String campaign,
-                         @RequestParam(required = false) String campaignAmount) {
+                         @RequestParam(required = false) String campaignLevel,
+                         @RequestParam(required = false) String campaignAmount,
+                         @RequestParam(required = false) String from) {
+        // a giving form on another page (e.g. /new-temple-project) goes back there with any error
+        String back = from != null && from.matches("/[a-z0-9][a-z0-9-]{0,60}") && !from.equals("/donate") ? from : null;
         var site = (SiteSettings) model.getAttribute("site");
         var temple = (Tenant) model.getAttribute("temple");
         var donate = site.donate();
@@ -65,11 +72,31 @@ class DonateController {
         GiftCheckout.Gift gift;
         if (campaign != null && !campaign.isBlank()) {
             var c = donate.campaigns().stream().filter(x -> campaign.equals(x.key())).findFirst().orElse(null);
-            if (c == null) return error("Please choose a donation option.");
-            BigDecimal amount = c.amount() != null ? c.amount() : money(campaignAmount);
-            if (amount == null) return error("Please enter an amount between $1 and $50,000.");
+            if (c == null) return error(back, campaign, "Please choose a donation option.");
+            BigDecimal amount;
+            String label = c.title();
+            if (c.amount() != null) {
+                amount = c.amount();
+            } else if (!c.levels().isEmpty() && campaignLevel != null && !"other".equals(campaignLevel)) {
+                int i;                                   // a level such as "Platinum Patron – $216"
+                try {
+                    i = Integer.parseInt(campaignLevel);
+                } catch (NumberFormatException e) {
+                    return error(back, campaign, "Please choose a donation option.");
+                }
+                if (i < 0 || i >= c.levels().size()) return error(back, campaign, "Please choose a donation option.");
+                amount = c.levels().get(i).amount();
+                label = c.title() + " – " + c.levels().get(i).label();
+            } else {
+                amount = money(campaignAmount);          // any amount the donor likes
+            }
+            if (amount == null) return error(back, campaign, "Please enter an amount between $1 and $50,000.");
             Frequency f = parse(c.frequency(), Frequency.MONTHLY);
-            gift = new GiftCheckout.Gift(amount, coverFees, f, c.fund(), c.title(), note, mail, c.key(), c.installments());
+            if (!c.frequencies().isEmpty()) {                 // the donor chooses how often
+                f = parse(frequency, null);
+                if (f == null || !c.frequencies().contains(f.name())) return error(back, campaign, "Please choose how often to give.");
+            }
+            gift = new GiftCheckout.Gift(amount, coverFees, f, c.fund(), label, note, mail, c.key(), c.installments());
         } else {
             Frequency f = parse(frequency, null);
             if (f == null || !donate.frequencies().contains(f.name())) return error("Please choose how often to give.");
@@ -132,5 +159,12 @@ class DonateController {
 
     private static String error(String message) {
         return "redirect:/donate?error=" + URLEncoder.encode(message, StandardCharsets.UTF_8) + "#give";
+    }
+
+    /** Back to the page the appeal's form was on (or /donate), at the appeal, with the message. */
+    private static String error(String back, String campaign, String message) {
+        if (back == null) return error(message);
+        String anchor = campaign != null && campaign.matches("[a-z0-9-]{1,60}") ? "#" + campaign : "";
+        return "redirect:" + back + "?error=" + URLEncoder.encode(message, StandardCharsets.UTF_8) + anchor;
     }
 }

@@ -153,8 +153,8 @@ h3 { font-size: 1.2rem; }
 .way-label { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-soft); font-weight: 600; }
 .give h2 { margin-bottom: 14px; }
 .give-form { display: flex; flex-direction: column; gap: 16px; }
-.give-form fieldset { border: 0; padding: 0; margin: 0; }
-.give-form legend { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-soft); font-weight: 600; margin-bottom: 8px; }
+.give-form fieldset, .campaign-form fieldset { border: 0; padding: 0; margin: 0; }
+.give-form legend, .campaign-form legend { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-soft); font-weight: 600; margin-bottom: 8px; }
 .seg { display: flex; flex-wrap: wrap; gap: 8px; }
 .seg legend { width: 100%; }
 .seg label { position: relative; }
@@ -180,7 +180,7 @@ h3 { font-size: 1.2rem; }
 .test-note { background: #eef4ff; color: #1f3a93; padding: 10px 12px; border-radius: 8px; font-size: .88rem; }
 .campaigns { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; margin-top: 40px; }
 .campaign h2 { font-size: 1.4rem; }
-.campaign-form { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.campaign-form { display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
 .campaign-form .field { align-self: stretch; }
 
 /* family birthdays on the subscribe form */
@@ -266,3 +266,59 @@ h3 { font-size: 1.2rem; }
 .faq dd { margin: 4px 0 0; color: var(--ink-soft); }
 .page-register { margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--line); }
 .page-register h2 { margin-bottom: 8px; }
+
+/* Upcoming Festivals: one row that scrolls sideways (3 cards on wide screens, 2 on tablets, 1 + a peek on phones) */
+.event-carousel { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth;
+  overscroll-behavior-x: contain; padding: 4px 2px 14px; scrollbar-width: none; }
+.event-carousel::-webkit-scrollbar { display: none; }
+.event-carousel:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 14px; }
+.event-carousel > .event-card { flex: 0 0 calc((100% - 32px) / 3); scroll-snap-align: start; min-width: 0; }
+@media (max-width: 960px) { .event-carousel > .event-card { flex-basis: calc((100% - 16px) / 2); } }
+@media (max-width: 600px) { .event-carousel > .event-card { flex-basis: 86%; } }
+@media (prefers-reduced-motion: reduce) { .event-carousel { scroll-behavior: auto; } }
+.carousel-nav { display: flex; align-items: center; gap: 8px; }
+.carousel-nav a { margin-left: 8px; }
+.carousel-btn { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: #fff; color: var(--brand);
+  font-size: 1.4rem; line-height: 1; cursor: pointer; display: grid; place-items: center; padding: 0 0 3px; transition: background .2s, color .2s; }
+.carousel-btn:hover:not(:disabled) { background: var(--brand); color: #fff; border-color: var(--brand); }
+.carousel-btn:disabled { opacity: .35; cursor: default; }
+@media (max-width: 600px) { .carousel-btn { display: none; } }
+
+/* patron levels on an appeal card (e.g. Nitya Sevak) */
+.campaign-form .levels { align-self: stretch; margin: 0; }
+.levels b small { font-weight: 500; color: var(--ink-soft); margin-left: 2px; }
+
+/* songs (e.g. Guru Vandana): facts, then each verse with its translation */
+.song-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 18px 0 8px; }
+.song-facts div { background: var(--cream); border-radius: 10px; padding: 10px 14px; }
+.song-facts dt { font-size: .75rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-soft); }
+.song-facts dd { margin: 2px 0 0; color: var(--ink); font-weight: 600; }
+.song { list-style: none; counter-reset: verse; padding: 0; margin: 18px 0; display: grid; gap: 18px; }
+.song li { counter-increment: verse; position: relative; padding: 20px 22px 18px 64px; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+.song li::before { content: counter(verse); position: absolute; left: 18px; top: 20px; width: 32px; height: 32px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--accent); color: var(--ink); font-weight: 700; font-size: .9rem; }
+.song-verse { margin: 0 0 12px; font-family: var(--display); font-size: 1.12rem; line-height: 1.6; color: var(--brand); }
+.song-translation { margin: 0; color: var(--ink-soft); }
+@media (max-width: 520px) { .song li { padding: 56px 16px 16px; } .song li::before { top: 14px; left: 16px; } }
+
+.song-refrain { margin-top: 14px; padding: 12px 14px; border-radius: 10px; background: var(--soft); border-left: 3px solid var(--accent); }
+.song-refrain > span { display: block; font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 4px; }
+.song-refrain .song-verse { margin-bottom: 6px; font-size: 1.02rem; }
+
+.song-source { margin: 8px 0 0; font-size: .78rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft); }
+
+.verse-block .song-note { margin-top: 6px; font-size: .78rem; font-style: italic; }
+
+/* appeal progress (e.g. New Temple: $21,041 raised of $500,000) */
+.progress { margin: 4px 0 16px; }
+.progress-figures { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.progress-figures b { font-size: 1.25rem; color: var(--brand); }
+.progress-bar { height: 12px; border-radius: 999px; background: var(--soft); overflow: hidden; margin: 8px 0 6px; border: 1px solid var(--line); }
+.progress-bar span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--brand)); }
+
+/* a page with an appeal's giving form (e.g. /new-temple-project) */
+.page-give { margin-top: 40px; padding-top: 28px; border-top: 1px solid var(--line); }
+.page-give > .err, .page-give > .test-note { margin-bottom: 14px; }
+.page-give-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 800px) { .page-give-grid { grid-template-columns: 1fr; } }
+.ways-card .ways { margin: 0; }
