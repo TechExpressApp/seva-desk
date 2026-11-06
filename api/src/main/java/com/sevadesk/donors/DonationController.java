@@ -1,5 +1,8 @@
 package com.sevadesk.donors;
 
+import com.sevadesk.contacts.Contact;
+import com.sevadesk.contacts.ContactMatcher;
+import com.sevadesk.contacts.ContactRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
@@ -34,16 +37,25 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 class DonationController {
 
+    /**
+     * Either pick an existing contact (contactId) or give donor details; details are matched to an existing contact
+     * by email, phone or full name, and a new contact is created if none match. Neither = anonymous gift.
+     */
     record DonationForm(UUID contactId, @NotNull UUID fundId,
                         @NotNull @Positive @Digits(integer = 10, fraction = 2) BigDecimal amount,
                         @NotNull Donation.PaymentMode paymentMode, @Size(max = 100) String reference,
-                        Instant donatedAt, @Size(max = 500) String notes) {}
+                        Instant donatedAt, @Size(max = 500) String notes,
+                        @Size(max = 100) String donorFirstName, @Size(max = 100) String donorLastName,
+                        @Size(max = 200) String donorEmail, @Size(max = 30) String donorPhone) {}
+
+    /** How the donor was linked: EMAIL / PHONE / NAME = existing contact; CREATED = new contact. */
+    record DonorLink(UUID contactId, String name, ContactMatcher.MatchedBy matchedBy) {}
 
     record VoidForm(@NotBlank @Size(max = 300) String reason) {}
 
-    record DonationView(UUID id, String receiptNo, UUID contactId, UUID fundId, String fundName, BigDecimal amount,
-                        String currency, Donation.PaymentMode paymentMode, String reference, Instant donatedAt,
-                        Donation.Status status, String voidReason, String notes) {}
+    record DonationView(UUID id, String receiptNo, UUID contactId, String donorName, UUID fundId, String fundName,
+                        BigDecimal amount, String currency, Donation.PaymentMode paymentMode, String reference,
+                        Instant donatedAt, Donation.Status status, String voidReason, String notes, DonorLink donorLink) {}
 
     record FundView(UUID id, String name, boolean taxDeductible) {}
 
@@ -52,11 +64,16 @@ class DonationController {
     private final DonationService service;
     private final DonationRepository donations;
     private final FundRepository funds;
+    private final ContactRepository contacts;
+    private final ContactMatcher matcher;
 
-    DonationController(DonationService service, DonationRepository donations, FundRepository funds) {
+    DonationController(DonationService service, DonationRepository donations, FundRepository funds,
+                       ContactRepository contacts, ContactMatcher matcher) {
         this.service = service;
         this.donations = donations;
         this.funds = funds;
+        this.contacts = contacts;
+        this.matcher = matcher;
     }
 
     @GetMapping("/donations")
@@ -68,22 +85,35 @@ class DonationController {
         var result = contactId == null ? donations.findAllByOrderByDonatedAtDesc(pageable)
                 : donations.findByContactIdOrderByDonatedAtDesc(contactId, pageable);
         Map<UUID, String> fundNames = fundNames();
-        return result.map(d -> view(d, fundNames));
+        Map<UUID, String> donorNames = donorNames(result.getContent());
+        return result.map(d -> view(d, fundNames, donorNames, null));
     }
 
     @PostMapping("/donations")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyRole('ADMIN','TREASURER','FRONT_DESK')")
+    @Transactional
     DonationView create(@Valid @RequestBody DonationForm f) {
-        var d = service.record(new DonationService.NewDonation(f.contactId(), f.fundId(), f.amount(), f.paymentMode(),
+        UUID contactId = f.contactId();
+        DonorLink link = null;
+        if (contactId == null) {
+            var match = matcher.findOrCreate(new ContactMatcher.DonorDetails(f.donorFirstName(), f.donorLastName(),
+                    f.donorEmail(), f.donorPhone()), "donation entry");
+            if (match.isPresent()) {
+                contactId = match.get().contact().getId();
+                link = new DonorLink(contactId, match.get().contact().getFullName(), match.get().matchedBy());
+            }
+        }
+        var d = service.record(new DonationService.NewDonation(contactId, f.fundId(), f.amount(), f.paymentMode(),
                 f.reference(), f.donatedAt(), f.notes()));
-        return view(d, fundNames());
+        return view(d, fundNames(), donorNames(List.of(d)), link);
     }
 
     @PostMapping("/donations/{id}/void")
     @PreAuthorize("hasAnyRole('ADMIN','TREASURER')")
     DonationView voidDonation(@PathVariable UUID id, @Valid @RequestBody VoidForm f) {
-        return view(service.voidDonation(id, f.reason()), fundNames());
+        var d = service.voidDonation(id, f.reason());
+        return view(d, fundNames(), donorNames(List.of(d)), null);
     }
 
     @GetMapping("/funds")
@@ -108,9 +138,16 @@ class DonationController {
         return funds.findAll().stream().collect(Collectors.toMap(Fund::getId, Fund::getName, (a, b) -> a));
     }
 
-    private static DonationView view(Donation d, Map<UUID, String> fundNames) {
-        return new DonationView(d.getId(), d.getReceiptNo(), d.getContactId(), d.getFundId(), fundNames.get(d.getFundId()),
-                d.getAmount(), d.getCurrency(), d.getPaymentMode(), d.getReference(), d.getDonatedAt(),
-                d.getStatus(), d.getVoidReason(), d.getNotes());
+    private Map<UUID, String> donorNames(List<Donation> list) {
+        var ids = list.stream().map(Donation::getContactId).filter(java.util.Objects::nonNull).distinct().toList();
+        if (ids.isEmpty()) return Map.of();
+        return contacts.findAllById(ids).stream().collect(Collectors.toMap(Contact::getId, Contact::getFullName));
+    }
+
+    private static DonationView view(Donation d, Map<UUID, String> fundNames, Map<UUID, String> donorNames, DonorLink link) {
+        String donor = d.getContactId() == null ? "Anonymous" : donorNames.getOrDefault(d.getContactId(), "—");
+        return new DonationView(d.getId(), d.getReceiptNo(), d.getContactId(), donor, d.getFundId(),
+                fundNames.get(d.getFundId()), d.getAmount(), d.getCurrency(), d.getPaymentMode(), d.getReference(),
+                d.getDonatedAt(), d.getStatus(), d.getVoidReason(), d.getNotes(), link);
     }
 }

@@ -26,7 +26,7 @@
       <tr>
         <td class="sd-num">{{ d.receiptNo }}</td>
         <td>{{ d.donatedAt | date: 'd MMM y, h:mm a' }}</td>
-        <td>{{ contactName(d.contactId) }}</td>
+        <td>{{ d.donorName }}</td>
         <td>{{ d.fundName }}</td>
         <td>{{ modeLabel(d.paymentMode) }}</td>
         <td class="sd-num" style="text-align: right; font-weight: 600">
@@ -53,10 +53,25 @@
           [style]="{ width: 'min(640px, 96vw)' }">
   <form [formGroup]="form" (ngSubmit)="save()" class="sd-form" id="donation-form">
     <label class="full">
-      Donor
+      Existing donor
       <p-select formControlName="contactId" [options]="contacts()" optionLabel="fullName" optionValue="id"
-                [filter]="true" filterBy="fullName,phone" [showClear]="true" placeholder="Anonymous" appendTo="body" fluid />
+                [filter]="true" filterBy="fullName,phone,email" [showClear]="true" placeholder="Search contacts…" appendTo="body" fluid />
     </label>
+    @if (!form.controls.contactId.value) {
+      <fieldset class="full family">
+        <legend>Or enter donor details</legend>
+        <div class="sd-form">
+          <label>First name <input pInputText formControlName="donorFirstName" maxlength="100" fluid /></label>
+          <label>Last name <input pInputText formControlName="donorLastName" maxlength="100" fluid /></label>
+          <label>Email <input pInputText formControlName="donorEmail" type="email" maxlength="200" fluid /></label>
+          <label>Phone <input pInputText formControlName="donorPhone" type="tel" maxlength="30" fluid /></label>
+        </div>
+        <p class="sd-muted" style="margin: 10px 0 0; font-size: 0.82rem">
+          We link the gift to an existing contact with the same email, phone or name, or create a new contact.
+          Leave everything empty for an anonymous gift.
+        </p>
+      </fieldset>
+    }
     <label>
       Amount ({{ branding.branding()?.currency }})
       <p-inputnumber formControlName="amount" [min]="1" [maxFractionDigits]="2" inputId="amount" fluid />

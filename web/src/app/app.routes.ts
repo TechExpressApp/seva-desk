@@ -12,6 +12,7 @@ export const routes: Routes = [
       { path: 'dashboard', loadComponent: () => import('./features/dashboard/dashboard').then((m) => m.Dashboard) },
       { path: 'contacts', loadComponent: () => import('./features/contacts/contacts').then((m) => m.Contacts) },
       { path: 'events', loadComponent: () => import('./features/events/events').then((m) => m.Events) },
+      { path: 'donors', loadComponent: () => import('./features/donors/donors').then((m) => m.Donors) },
       { path: 'donations', loadComponent: () => import('./features/donations/donations').then((m) => m.Donations) },
       {
         path: 'soon/:module',

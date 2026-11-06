@@ -1,7 +1,6 @@
 package com.sevadesk.donors;
 
-import com.sevadesk.contacts.Contact;
-import com.sevadesk.contacts.ContactRepository;
+import com.sevadesk.contacts.ContactMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -9,8 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -24,18 +21,18 @@ public class OnlineGifts {
 
     /** A completed payment. {@code reference} is the provider's payment or invoice id. */
     public record PaidGift(String reference, BigDecimal amount, String fundName, String email, String donorName,
-                           Instant paidAt, String note) {}
+                           String phone, Instant paidAt, String note) {}
 
     private final DonationRepository donations;
     private final FundRepository funds;
-    private final ContactRepository contacts;
+    private final ContactMatcher matcher;
     private final DonationService donationService;
 
-    OnlineGifts(DonationRepository donations, FundRepository funds, ContactRepository contacts,
+    OnlineGifts(DonationRepository donations, FundRepository funds, ContactMatcher matcher,
                 DonationService donationService) {
         this.donations = donations;
         this.funds = funds;
-        this.contacts = contacts;
+        this.matcher = matcher;
         this.donationService = donationService;
     }
 
@@ -49,10 +46,11 @@ public class OnlineGifts {
         String fundName = gift.fundName() == null || gift.fundName().isBlank() ? "General" : gift.fundName().trim();
         Fund fund = funds.findByName(fundName).orElseGet(() -> funds.save(new Fund(fundName, true)));
 
-        var contactId = gift.email() == null || gift.email().isBlank() ? null
-                : contacts.findFirstByEmailIgnoreCase(gift.email().trim())
-                    .orElseGet(() -> contacts.save(newContact(gift)))
-                    .getId();
+        // Same person by email, phone or name -> same contact, so their giving adds up; otherwise a new contact.
+        var contactId = matcher.findOrCreate(
+                        ContactMatcher.DonorDetails.fromFullName(gift.donorName(), gift.email(), gift.phone()),
+                        "online donation")
+                .map(m -> m.contact().getId()).orElse(null);
 
         String note = gift.note() == null ? "Online (Stripe)" : ("Online (Stripe) · " + gift.note());
         if (note.length() > 500) note = note.substring(0, 500);
@@ -61,14 +59,5 @@ public class OnlineGifts {
                 Donation.PaymentMode.ONLINE, gift.reference(), gift.paidAt(), note));
         log.info("Recorded online gift {} as receipt {}", gift.reference(), donation.getReceiptNo());
         return Optional.of(donation);
-    }
-
-    private static Contact newContact(PaidGift gift) {
-        String name = gift.donorName() == null || gift.donorName().isBlank() ? gift.email() : gift.donorName().trim();
-        int space = name.indexOf(' ');
-        var c = new Contact(space > 0 ? name.substring(0, space) : name, space > 0 ? name.substring(space + 1) : null);
-        c.setEmail(gift.email().trim().toLowerCase(Locale.ROOT));
-        c.setCustomFields(Map.of("source", "online donation"));
-        return c;
     }
 }

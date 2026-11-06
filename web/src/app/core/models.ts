@@ -55,10 +55,14 @@ export interface Contact {
 
 export type PaymentMode = 'CASH' | 'CHEQUE' | 'UPI' | 'CARD' | 'BANK_TRANSFER' | 'ONLINE' | 'IN_KIND';
 
+export type MatchedBy = 'EMAIL' | 'PHONE' | 'NAME' | 'CREATED';
+
 export interface Donation {
   id: string;
   receiptNo: string;
   contactId: string | null;
+  donorName: string;
+  donorLink: { contactId: string; name: string; matchedBy: MatchedBy } | null;
   fundId: string;
   fundName: string;
   amount: number;
@@ -111,4 +115,22 @@ export interface TempleEvent {
   registrationUrl: string | null;
   status: EventStatus;
   publicUrl: string;
+}
+
+export interface DonorTotal {
+  contactId: string;
+  name: string | null;
+  email: string | null;
+  phone: string | null;
+  gifts: number;
+  total: number;
+  thisYear: number;
+  firstGift: string | null;
+  lastGift: string | null;
+}
+
+export interface DonorPage {
+  content: DonorTotal[];
+  totalDonors: number;
+  grandTotal: number;
 }

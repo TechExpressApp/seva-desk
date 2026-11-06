@@ -102,7 +102,7 @@ class StripeWebhookController {
         JsonNode customer = session.path("customer_details");
         gifts.record(new OnlineGifts.PaidGift(reference, cents(session.path("amount_total")),
                 meta.path("fund").asText(null), text(customer.path("email")), text(customer.path("name")),
-                created, note(meta, "One-time gift")));
+                text(customer.path("phone")), created, note(meta, "One-time gift")));
     }
 
     private void onInvoicePaid(JsonNode invoice, Instant created) {
@@ -120,7 +120,7 @@ class StripeWebhookController {
         String kind = frequency.isBlank() ? "Recurring gift" : (frequency.charAt(0) + frequency.substring(1).toLowerCase() + " gift");
         gifts.record(new OnlineGifts.PaidGift(invoice.path("id").asText(), amount, meta.path("fund").asText(null),
                 text(invoice.path("customer_email")), text(invoice.path("customer_name")),
-                Instant.ofEpochSecond(paidAt), note(meta, kind)));
+                text(invoice.path("customer_phone")), Instant.ofEpochSecond(paidAt), note(meta, kind)));
     }
 
     private static String note(JsonNode meta, String kind) {

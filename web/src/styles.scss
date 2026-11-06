@@ -88,6 +88,20 @@ h1, h2, h3, .sd-display {
   legend { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--sd-ink-soft); padding: 0 6px; }
 }
 
+.giving {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: var(--sd-soft);
+  div { display: flex; flex-direction: column; }
+  span { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--sd-ink-soft); }
+  b { font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+  @media (max-width: 560px) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
 .sd-error { color: #b42318; font-size: 0.85rem; }
 
 /* PrimeNG fine-tuning so components pick up the devotional type and paper background */

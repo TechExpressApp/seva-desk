@@ -57,6 +57,11 @@ export class Donations implements OnInit {
     paymentMode: ['CASH' as PaymentMode, Validators.required],
     reference: [''],
     notes: [''],
+    // Used when no existing donor is picked: matched by email, phone or name, else a new contact.
+    donorFirstName: ['', Validators.maxLength(100)],
+    donorLastName: ['', Validators.maxLength(100)],
+    donorEmail: ['', [Validators.email, Validators.maxLength(200)]],
+    donorPhone: ['', Validators.maxLength(30)],
   });
   protected readonly voidReason = this.fb.nonNullable.control('', Validators.required);
 
@@ -100,9 +105,24 @@ export class Donations implements OnInit {
     this.saving.set(true);
     this.error.set(null);
     try {
-      const d = await firstValueFrom(this.http.post<Donation>('/api/donations', this.form.getRawValue()));
+      const v = this.form.getRawValue();
+      const blankToNull = (x: string | null) => (x && x.trim() ? x.trim() : null);
+      const body = v.contactId
+        ? { ...v, donorFirstName: null, donorLastName: null, donorEmail: null, donorPhone: null }
+        : { ...v, donorFirstName: blankToNull(v.donorFirstName), donorLastName: blankToNull(v.donorLastName),
+            donorEmail: blankToNull(v.donorEmail), donorPhone: blankToNull(v.donorPhone) };
+      const d = await firstValueFrom(this.http.post<Donation>('/api/donations', body));
       this.dialogOpen.set(false);
       this.toast.add({ severity: 'success', summary: 'Donation saved', detail: `Receipt ${d.receiptNo} · ${this.branding.money(d.amount)}` });
+      if (d.donorLink) {
+        const how: Record<string, string> = { EMAIL: 'same email', PHONE: 'same phone number', NAME: 'same name' };
+        this.toast.add({
+          severity: 'info',
+          summary: d.donorLink.matchedBy === 'CREATED' ? 'New contact created' : 'Linked to existing contact',
+          detail: d.donorLink.matchedBy === 'CREATED' ? d.donorLink.name : `${d.donorLink.name} (${how[d.donorLink.matchedBy]})`,
+        });
+        this.http.get<Page<Contact>>('/api/contacts?size=100').subscribe((p) => this.contacts.set(p.content));
+      }
       this.load();
     } catch (e) {
       this.error.set((e as HttpErrorResponse).error?.detail ?? 'Could not save the donation. Please try again.');
@@ -119,11 +139,6 @@ export class Donations implements OnInit {
     this.voiding.set(null);
     this.voidReason.reset();
     this.load();
-  }
-
-  protected contactName(id: string | null): string {
-    if (!id) return 'Anonymous';
-    return this.contacts().find((c) => c.id === id)?.fullName ?? '—';
   }
 
   protected modeLabel(mode: PaymentMode): string {

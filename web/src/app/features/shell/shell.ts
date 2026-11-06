@@ -15,6 +15,7 @@ const NAV: NavItem[] = [
   { label: 'nav.dashboard', icon: 'pi pi-home', link: '/dashboard' },
   { label: 'nav.contacts', icon: 'pi pi-users', link: '/contacts', module: 'contacts' },
   { label: 'nav.donations', icon: 'pi pi-heart', link: '/donations', module: 'donors' },
+  { label: 'nav.donors', icon: 'pi pi-star', link: '/donors', module: 'donors' },
   { label: 'nav.events', icon: 'pi pi-calendar', link: '/events', module: 'events' },
   { label: 'nav.seva', icon: 'pi pi-sun', link: '/soon/seva', module: 'seva' },
   { label: 'nav.guesthouse', icon: 'pi pi-building', link: '/soon/guesthouse', module: 'guesthouse' },

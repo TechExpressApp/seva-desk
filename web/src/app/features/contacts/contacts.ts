@@ -11,11 +11,13 @@ import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
 import { InputText } from 'primeng/inputtext';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
-import { Contact, Page } from '../../core/models';
+import { Contact, DonorTotal, Page } from '../../core/models';
+import { BrandingService } from '../../core/branding.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'sd-contacts',
-  imports: [ReactiveFormsModule, TableModule, Button, Checkbox, Dialog, IconField, InputIcon, InputText],
+  imports: [ReactiveFormsModule, DatePipe, TableModule, Button, Checkbox, Dialog, IconField, InputIcon, InputText],
   templateUrl: './contacts.html',
 })
 export class Contacts {
@@ -28,6 +30,9 @@ export class Contacts {
   protected readonly editing = signal<Contact | 'new' | null>(null);
   protected readonly saving = signal(false);
   protected readonly error = signal<string | null>(null);
+  /** Lifetime giving of the contact being edited (all donations linked to them, voided excluded). */
+  protected readonly giving = signal<DonorTotal | null>(null);
+  protected readonly branding = inject(BrandingService);
 
   private query = '';
   private page = 0;
@@ -83,6 +88,10 @@ export class Contacts {
 
   open(contact: Contact | 'new'): void {
     this.error.set(null);
+    this.giving.set(null);
+    if (contact !== 'new') {
+      this.http.get<DonorTotal>(`/api/donors/${contact.id}`).subscribe({ next: (g) => this.giving.set(g), error: () => {} });
+    }
     if (contact === 'new') {
       this.form.reset({ consentEmail: false, consentWhatsapp: false });
     } else {

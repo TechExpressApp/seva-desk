@@ -43,6 +43,14 @@
 
 <p-dialog [header]="editing() === 'new' ? 'Add contact' : 'Edit contact'" [visible]="!!editing()"
           (visibleChange)="!$event && editing.set(null)" [modal]="true" [style]="{ width: 'min(640px, 96vw)' }">
+  @if (giving(); as g) {
+    <div class="giving">
+      <div><span>Lifetime giving</span><b>{{ branding.money(g.total) }}</b></div>
+      <div><span>Gifts</span><b>{{ g.gifts }}</b></div>
+      <div><span>This year</span><b>{{ branding.money(g.thisYear) }}</b></div>
+      <div><span>Last gift</span><b>{{ g.lastGift ? (g.lastGift | date: 'd MMM y') : '—' }}</b></div>
+    </div>
+  }
   <form [formGroup]="form" (ngSubmit)="save()" class="sd-form" id="contact-form">
     <label>First name <input pInputText formControlName="firstName" fluid /></label>
     <label>Last name <input pInputText formControlName="lastName" fluid /></label>
