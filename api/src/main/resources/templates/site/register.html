@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{site/layout :: head(${v.eventName} != null ? 'Register: ' + ${v.eventName} : 'Event Registration',
+      'Register for ' + (${v.eventName} ?: 'programs and festivals') + ' at ' + ${temple.name} + '. Everyone is welcome.')}"></head>
+<body>
+<header th:replace="~{site/layout :: header}"></header>
+<main class="wrap section narrow">
+  <p class="eyebrow register-eyebrow">Join us</p>
+  <h1 th:text="${v.eventName} != null ? ${v.eventName} : 'Event Registration'">Event Registration</h1>
+  <p class="lead-in">Please register so we can welcome you and keep you informed. Everyone is welcome, and there is no charge.</p>
+
+  <form th:replace="~{site/register-form :: form}"></form>
+</main>
+<footer th:replace="~{site/layout :: footer}"></footer>
+</body>
+</html>

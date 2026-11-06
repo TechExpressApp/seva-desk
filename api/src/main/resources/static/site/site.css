@@ -238,3 +238,31 @@ h3 { font-size: 1.2rem; }
 .founder-figure figcaption a, .founder-figure figcaption span { color: var(--ink); opacity: .75; text-decoration: none; }
 .founder-figure figcaption a:hover { text-decoration: underline; opacity: 1; }
 @media (max-width: 800px) { .founder-figure { max-width: 300px; width: 100%; justify-self: center; } }
+
+/* event registration page */
+.form select { font: inherit; font-size: 1rem; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); background: #fff; }
+.register-eyebrow { color: var(--accent); }
+.lead-in { color: var(--ink-soft); max-width: 60ch; margin: 0 0 22px; }
+.register-form { padding: 26px; max-width: 720px; }
+.register-form .age { max-width: 160px; }
+.thanks { text-align: center; }
+.thanks .lead-in { margin-inline: auto; }
+.thanks .actions { justify-content: center; }
+
+/* rich page content: intro, verses, steps, benefit cards, FAQ */
+.prose .intro { font-size: 1.12rem; color: var(--ink); }
+.verse-block { margin: 28px 0; padding: 20px 24px; border-left: 4px solid var(--accent); background: var(--cream); border-radius: 0 14px 14px 0; }
+.verse-block p { margin: 0; font-family: var(--display); font-size: 1.15rem; color: var(--brand); line-height: 1.5; }
+.verse-block cite { display: block; margin: 6px 0 8px; font-style: normal; font-size: .82rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-soft); }
+.verse-block span { display: block; color: var(--ink-soft); }
+.step-list { list-style: none; counter-reset: step; padding: 0; margin: 18px 0; display: grid; gap: 12px; }
+.step-list li { counter-increment: step; position: relative; padding: 14px 16px 14px 62px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+.step-list li::before { content: counter(step); position: absolute; left: 16px; top: 14px; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--brand); color: #fff; font-weight: 700; font-size: .9rem; }
+.step-list b, .benefit-grid b { display: block; color: var(--ink); }
+.step-list span, .benefit-grid span { display: block; color: var(--ink-soft); font-size: .95rem; }
+.benefit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin: 18px 0; }
+.benefit-grid > div { padding: 16px 18px; border-radius: 12px; background: var(--cream); border-top: 3px solid var(--accent); }
+.faq dt { font-weight: 700; color: var(--ink); margin-top: 16px; }
+.faq dd { margin: 4px 0 0; color: var(--ink-soft); }
+.page-register { margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--line); }
+.page-register h2 { margin-bottom: 8px; }

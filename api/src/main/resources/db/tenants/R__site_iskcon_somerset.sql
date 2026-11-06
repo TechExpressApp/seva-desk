@@ -18,7 +18,7 @@ update tenant set site = $json$
         "when": "Every Sunday",
         "text": "Join us for ecstatic kirtan, ārati to Their Lordships, an enlightening class from the Bhagavad-gītā or Śrīmad-Bhāgavatam, and a sumptuous feast of Krishna prasādam. Everyone is welcome; bring your family and friends!",
         "image": "/site/sunday-love-feast.jpg",
-        "href": "/events",
+        "href": "/register?event=Sunday%20Love%20Feast",
         "button": "Join us"
       },
       {
@@ -26,14 +26,14 @@ update tenant set site = $json$
         "when": "Every day",
         "text": "Each day, relish Śrīmad-Bhāgavatam, the ripened fruit of Vedic knowledge, and hear Lord Krishna's own words in Bhagavad-gītā As It Is, as presented by Srila Prabhupada. Discover who you are beyond the body and how to live a life of joyful devotion.",
         "image": "/site/scripture-classes.jpg",
-        "href": "/bg-inperson",
+        "href": "/register?event=Srimad%20Bhagavatam%20%26%20Bhagavad%20Gita%20Classes",
         "button": "Join us"
       },
       {
         "title": "Bhakti Vriksha & Families",
         "text": "Small home groups where families, youth and children share kirtan, stories and friendship, and grow in bhakti together.",
         "image": "/site/bhakti-vriksha.jpg",
-        "href": "/bhakti-vriksha",
+        "href": "/register?event=Bhakti%20Vriksha%20%26%20Families",
         "button": "Join us"
       }
     ]
@@ -155,9 +155,10 @@ update tenant set site = $json$
     },
     "bhakti-vriksha": {
       "title": "Bhakti Vriksha",
-      "description": "Bhakti Vriksha home programmes: weekly kirtan, discussion and friendship in small groups.",
-      "heading": "Bhakti Vriksha – Home Programme",
-      "body": "<p>Bhakti Vriksha (\"the tree of devotion\") is a small-group programme that meets each week in a devotee's home. An evening usually includes kirtan, a short reading, open discussion and a shared meal.</p><h2>Join a group</h2><p>Groups meet in several towns around Somerset. <a href=\"/contact-us\">Contact us</a> and we will connect you with the one nearest you.</p>"
+      "description": "Bhakti Vriksha, “the tree of devotion”: ISKCON Somerset’s weekly small groups for kirtan, Bhagavad-gītā wisdom, friendship and prasādam. Free and open to everyone.",
+      "heading": "Bhakti Vriksha: The Tree of Devotion",
+      "body": "<p class=\"intro\">In Sanskrit, <b>bhakti</b> means loving devotion to Lord Krishna and <b>vṛkṣa</b> means tree. <b>Bhakti Vriksha</b>, “the tree of devotion,” is ISKCON’s small-group program: a warm circle of friends and families who meet once a week, usually in someone’s home, to chant, learn and grow together in Krishna consciousness.</p><p>Just as a tree grows from a small seed, sends out roots and gives shade and fruit to everyone around it, devotion grows best when it is nurtured among caring friends. Each group is guided by experienced devotees, and as a group grows, new groups branch out from it, so the tree keeps spreading.</p><blockquote class=\"verse-block\"><p lang=\"sa-Latn\">mac-cittā mad-gata-prāṇā bodhayantaḥ parasparam<br>kathayantaś ca māṁ nityaṁ tuṣyanti ca ramanti ca</p><cite>Bhagavad-gītā 10.9</cite><span> Lord Krishna explains that His devotees, with their minds fixed on Him, find deep satisfaction and joy in enlightening one another and speaking about Him. That is exactly what happens in a Bhakti Vriksha gathering.</span></blockquote><h2>What happens at a gathering</h2><p>Each meeting lasts about two hours and is simple, relaxed and family-friendly:</p><ol class=\"step-list\"><li><b>Welcome and kirtan</b><span> We begin by singing the Hare Krishna mahā-mantra together, with simple melodies anyone can join.</span></li><li><b>Japa meditation</b><span> A few minutes of quiet chanting on beads, learning the practice that steadies the mind each day.</span></li><li><b>Wisdom from the scriptures</b><span> A short reading from Bhagavad-gītā As It Is or Śrīmad-Bhāgavatam, with open discussion on how it applies to work, family and everyday choices.</span></li><li><b>Sharing and caring</b><span> Friends share realizations and challenges, and support one another, like an extended spiritual family.</span></li><li><b>Kids’ corner</b><span> Children learn stories of Krishna, ślokas, drawing and drama while the adults discuss.</span></li><li><b>Prasādam</b><span> We close with a delicious vegetarian meal first offered to Krishna, shared with love.</span></li></ol><h2>How Bhakti Vriksha helps in daily life</h2><div class=\"benefit-grid\"><div><b>Peace of mind</b><span> Regular chanting and meditation calm anxiety and stress, and give a steady inner strength for life’s ups and downs.</span></div><div><b>A daily spiritual routine</b><span> Step by step you build simple habits: chanting, reading and offering your food to Krishna, at a pace that fits your life.</span></div><div><b>Practical wisdom</b><span> The Gītā’s teachings help with real questions: work-life balance, decision making, relationships and finding purpose.</span></div><div><b>Stronger families</b><span> Families who chant, pray and eat prasādam together grow closer, and children absorb good values naturally.</span></div><div><b>Real friendships</b><span> A circle of like-minded friends who care for you, celebrate festivals with you and stand by you in difficult times.</span></div><div><b>Healthy living</b><span> Learn to cook and enjoy wholesome vegetarian prasādam, and live a simpler, happier and more balanced life.</span></div><div><b>Joy of service</b><span> Discover the happiness of seva: helping at festivals, hosting a gathering, or caring for newcomers.</span></div><div><b>Steady spiritual growth</b><span> Grow from curious newcomer to sincere practitioner with friends and mentors to guide you along the way.</span></div></div><blockquote class=\"verse-block\"><p lang=\"sa-Latn\">harer nāma harer nāma harer nāmaiva kevalam<br>kalau nāsty eva nāsty eva nāsty eva gatir anyathā</p><cite>Bṛhan-nāradīya Purāṇa</cite><span> In this age, chanting the holy names of the Lord is the simplest and surest way to spiritual progress. Bhakti Vriksha makes that chanting a joyful part of everyday life, together with friends.</span></blockquote><h2>Frequently asked questions</h2><dl class=\"faq\"><dt>Who can join?</dt><dd>Everyone: individuals, couples, families, students and seniors, whatever your background. No experience is needed.</dd><dt>Is there a cost?</dt><dd>No. Bhakti Vriksha is free. Many members like to bring a dish or help with the prasādam.</dd><dt>Where and when do groups meet?</dt><dd>Groups meet weekly in devotees’ homes in several towns around Somerset, New Jersey. Register below and we will connect you with the group nearest you.</dd><dt>Can I bring my children?</dt><dd>Yes, please do! Children are at the heart of Bhakti Vriksha, and many groups have activities just for them.</dd><dt>Do I have to commit to anything?</dt><dd>Not at all. Come, experience it and go at your own pace. Most people find they look forward to it every week.</dd></dl>",
+      "registerEvent": "Bhakti Vriksha & Families"
     },
     "donate": {
       "title": "Donate",

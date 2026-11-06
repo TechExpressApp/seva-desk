@@ -38,11 +38,14 @@ class WebsiteController {
     private final EventService events;
     private final ContactRepository contacts;
     private final ObjectMapper json;
+    private final RegistrationFormModel registrationForm;
 
-    WebsiteController(EventService events, ContactRepository contacts, ObjectMapper json) {
+    WebsiteController(EventService events, ContactRepository contacts, ObjectMapper json,
+                      RegistrationFormModel registrationForm) {
         this.events = events;
         this.contacts = contacts;
         this.json = json;
+        this.registrationForm = registrationForm;
     }
 
     // ---- pages ----------------------------------------------------------------------------------------------
@@ -158,6 +161,7 @@ class WebsiteController {
         if (page == null) return notFound(response);
         model.addAttribute("page", page);
         model.addAttribute("pageKey", key);
+        if (page.registerEvent() != null) registrationForm.prepare(model, page.registerEvent());
         return "site/page";
     }
 

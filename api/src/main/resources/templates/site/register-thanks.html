@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{site/layout :: head('Thank you for registering', 'Your registration at ' + ${temple.name} + ' has been received.')}"></head>
+<body>
+<header th:replace="~{site/layout :: header}"></header>
+<main class="wrap section narrow thanks">
+  <img src="/site/lotus.svg" alt="" width="64" height="64">
+  <p class="eyebrow register-eyebrow">Hare Krishna!</p>
+  <h1 th:text="${name} != null ? 'Thank you, ' + ${name} + '!' : 'Thank you!'">Thank you!</h1>
+  <p class="lead-in" th:if="${event}">You're registered for <b th:text="${event}">the event</b>. We look forward to welcoming you.</p>
+  <p class="lead-in" th:unless="${event}">Your registration has been received. We look forward to welcoming you.</p>
+  <div class="actions">
+    <a class="btn" href="/events">See upcoming events</a>
+    <a class="btn ghost" href="/">Back to home</a>
+  </div>
+</main>
+<footer th:replace="~{site/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!-- The event registration form, used on /register and at the bottom of pages with "registerEvent" set.
+     Needs eventNames, v (the values) and error in the model; see RegistrationFormModel. -->
+<body>
+  <form th:fragment="form" class="card form register-form" method="post" action="/register" novalidate>
+    <p class="err" th:if="${error}" th:text="${error}" role="alert">Error</p>
+
+    <label>Event
+      <select name="eventName" required>
+        <option value="" th:selected="${v.eventName == null}" disabled>Choose an event</option>
+        <option th:each="n : ${eventNames}" th:value="${n}" th:text="${n}" th:selected="${n == v.eventName}">Event</option>
+      </select>
+    </label>
+    <div class="row">
+      <label>First name <input name="firstName" th:value="${v.firstName}" required maxlength="100" autocomplete="given-name"></label>
+      <label>Last name <input name="lastName" th:value="${v.lastName}" required maxlength="100" autocomplete="family-name"></label>
+    </div>
+    <div class="row">
+      <label>Email address <input name="email" type="email" th:value="${v.email}" required maxlength="254" autocomplete="email"></label>
+      <label>WhatsApp number <input name="whatsapp" type="tel" th:value="${v.whatsapp}" required maxlength="40"
+                                    autocomplete="tel" placeholder="+1 732 555 0100"></label>
+    </div>
+    <div class="row">
+      <label>City <input name="city" th:value="${v.city}" required maxlength="100" autocomplete="address-level2"></label>
+      <label>State <input name="state" th:value="${v.state}" required maxlength="100" autocomplete="address-level1"
+                          list="us-states" placeholder="e.g. New Jersey"></label>
+    </div>
+    <datalist id="us-states">
+      <option th:each="s : ${ {'Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','District of Columbia','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'} }" th:value="${s}"></option>
+    </datalist>
+    <label class="age">Age <input name="age" type="number" min="0" max="120" inputmode="numeric" th:value="${v.age}" required></label>
+
+    <!-- Spam trap: hidden from people, filled in by bots -->
+    <label class="hp" aria-hidden="true">Website <input name="website" tabindex="-1" autocomplete="off"></label>
+    <button class="btn" type="submit">Register</button>
+    <p class="muted small">We use your details only for this event and temple news. Ask us any time to remove them.</p>
+  </form>
+</body>
+</html>

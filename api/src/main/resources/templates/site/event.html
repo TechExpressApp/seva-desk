@@ -15,6 +15,7 @@
     <div class="prose" th:if="${event.description}" th:utext="${event.description}"></div>
     <p class="actions">
       <a class="btn" th:if="${event.registrationUrl}" th:href="${event.registrationUrl}" target="_blank" rel="noopener">Register</a>
+      <a class="btn" th:unless="${event.registrationUrl}" th:href="@{/register(event=${event.title})}">Register</a>
       <a class="btn ghost" href="/donate" th:if="${site.pages.containsKey('donate')}">Sponsor or donate</a>
     </p>
   </article>

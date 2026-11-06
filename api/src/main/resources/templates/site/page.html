@@ -7,6 +7,14 @@
   <h1 th:text="${page.heading} ?: ${page.title}">Page</h1>
   <!-- Body is HTML from the temple's website settings (tenant.site.pages) -->
   <div class="prose" th:utext="${page.body}"></div>
+
+  <!-- Optional registration form, with the page's event chosen -->
+  <section class="page-register" id="register" th:if="${page.registerEvent}" aria-labelledby="register-title">
+    <p class="eyebrow register-eyebrow">Join us</p>
+    <h2 id="register-title" th:text="'Register for ' + ${v.eventName}">Register</h2>
+    <p class="lead-in">Tell us a little about yourself and we'll connect you with a group near you. There is no charge.</p>
+    <form th:replace="~{site/register-form :: form}"></form>
+  </section>
 </main>
 <footer th:replace="~{site/layout :: footer}"></footer>
 </body>

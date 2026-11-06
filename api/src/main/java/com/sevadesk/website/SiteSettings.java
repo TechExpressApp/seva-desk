@@ -66,8 +66,9 @@ public record SiteSettings(
                           String image, String imageAlt, String imageCredit, String imageCreditUrl,
                           String href, String button) {}
 
+    /** registerEvent: show the event registration form at the bottom, with this event chosen (optional). */
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public record Page(String title, String description, String heading, String body) {}
+    public record Page(String title, String description, String heading, String body, String registerEvent) {}
 
     /** The /donate page: ways to give, card-giving options (paid through Stripe) and campaigns. */
     @JsonIgnoreProperties(ignoreUnknown = true)
