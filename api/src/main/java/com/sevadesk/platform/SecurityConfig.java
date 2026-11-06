@@ -26,6 +26,7 @@ import org.springframework.security.oauth2.server.resource.InvalidBearerTokenExc
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
 import org.springframework.security.oauth2.server.resource.web.DefaultBearerTokenResolver;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 
 import javax.crypto.SecretKey;
@@ -47,20 +48,23 @@ class SecurityConfig {
     static final String TOKEN_COOKIE = "SD_TOKEN";
 
     @Bean
-    SecurityFilterChain api(HttpSecurity http) throws Exception {
+    SecurityFilterChain api(HttpSecurity http, AppUserRepository users) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/public/**", "/api/docs/**", "/actuator/health/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/logout").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/logout",
+                        "/api/auth/forgot-password", "/api/auth/reset-password").permitAll()
                 .requestMatchers("/actuator/**").denyAll()
                 .requestMatchers("/api/**").authenticated()
                 // Everything else is the temple's public website.
                 .anyRequest().permitAll())
             .oauth2ResourceServer(rs -> rs
                 .bearerTokenResolver(cookieOrHeaderResolver())
-                .jwt(jwt -> jwt.jwtAuthenticationConverter(new TenantBoundJwtConverter())));
+                .jwt(jwt -> jwt.jwtAuthenticationConverter(new TenantBoundJwtConverter())))
+            // ends sessions of deactivated users / changed passwords, and enforces "change your temporary password"
+            .addFilterAfter(new SessionGuardFilter(users), BearerTokenAuthenticationFilter.class);
         return http.build();
     }
 
@@ -95,7 +99,8 @@ class SecurityConfig {
             // Public endpoints and sign-in/out ignore it too, so a stale or other-temple cookie can't block them.
             String uri = request.getRequestURI();
             if (!uri.startsWith("/api/") || uri.startsWith("/api/public/")
-                    || uri.equals("/api/auth/login") || uri.equals("/api/auth/logout")) return null;
+                    || uri.equals("/api/auth/login") || uri.equals("/api/auth/logout")
+                    || uri.equals("/api/auth/forgot-password") || uri.equals("/api/auth/reset-password")) return null;
             String fromHeader = header.resolve(request);
             if (fromHeader != null) return fromHeader;
             if (request.getCookies() == null) return null;

@@ -8,20 +8,24 @@ interface NavItem {
   label: string;
   icon: string;
   link: string;
+  /** Temple has this module switched on (tenant settings) */
   module?: string;
+  /** This person's roles open this area (see Role.java) */
+  access: string;
 }
 
 const NAV: NavItem[] = [
-  { label: 'nav.dashboard', icon: 'pi pi-home', link: '/dashboard' },
-  { label: 'nav.contacts', icon: 'pi pi-users', link: '/contacts', module: 'contacts' },
-  { label: 'nav.donations', icon: 'pi pi-heart', link: '/donations', module: 'donors' },
-  { label: 'nav.donors', icon: 'pi pi-star', link: '/donors', module: 'donors' },
-  { label: 'nav.events', icon: 'pi pi-calendar', link: '/events', module: 'events' },
-  { label: 'nav.seva', icon: 'pi pi-sun', link: '/soon/seva', module: 'seva' },
-  { label: 'nav.guesthouse', icon: 'pi pi-building', link: '/soon/guesthouse', module: 'guesthouse' },
-  { label: 'nav.members', icon: 'pi pi-id-card', link: '/soon/members', module: 'members' },
-  { label: 'nav.volunteers', icon: 'pi pi-sparkles', link: '/soon/volunteers', module: 'volunteers' },
-  { label: 'nav.finance', icon: 'pi pi-wallet', link: '/soon/finance', module: 'finance' },
+  { label: 'nav.dashboard', icon: 'pi pi-home', link: '/dashboard', access: 'dashboard' },
+  { label: 'nav.contacts', icon: 'pi pi-users', link: '/contacts', module: 'contacts', access: 'contacts' },
+  { label: 'nav.donations', icon: 'pi pi-heart', link: '/donations', module: 'donors', access: 'donations' },
+  { label: 'nav.donors', icon: 'pi pi-star', link: '/donors', module: 'donors', access: 'donors' },
+  { label: 'nav.events', icon: 'pi pi-calendar', link: '/events', module: 'events', access: 'events' },
+  { label: 'nav.seva', icon: 'pi pi-sun', link: '/soon/seva', module: 'seva', access: 'seva' },
+  { label: 'nav.guesthouse', icon: 'pi pi-building', link: '/soon/guesthouse', module: 'guesthouse', access: 'guesthouse' },
+  { label: 'nav.members', icon: 'pi pi-id-card', link: '/soon/members', module: 'members', access: 'members' },
+  { label: 'nav.volunteers', icon: 'pi pi-sparkles', link: '/soon/volunteers', module: 'volunteers', access: 'volunteers' },
+  { label: 'nav.finance', icon: 'pi pi-wallet', link: '/soon/finance', module: 'finance', access: 'finance' },
+  { label: 'nav.users', icon: 'pi pi-shield', link: '/users', access: 'users' },
 ];
 
 @Component({
@@ -35,7 +39,7 @@ export class Shell {
   protected readonly auth = inject(AuthService);
 
   protected readonly nav = computed(() =>
-    NAV.filter((item) => !item.module || this.branding.isEnabled(item.module)),
+    NAV.filter((item) => (!item.module || this.branding.isEnabled(item.module)) && this.auth.can(item.access)),
   );
 
   /** Vocabulary for "{{seva}} & {{priest}} services" */

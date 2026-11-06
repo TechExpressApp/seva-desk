@@ -35,6 +35,12 @@ sevadesk:
     base-domains: ${BASE_DOMAINS:sevadesk.app,localhost}
     # Tenant used for a bare base domain such as "localhost" (dev only). Empty = none.
     default-slug: ${DEFAULT_TENANT_SLUG:}
+  mail:
+    # Sender for password links. Email is off until SMTP is configured with the standard Spring settings
+    # (SPRING_MAIL_HOST, SPRING_MAIL_PORT, SPRING_MAIL_USERNAME, SPRING_MAIL_PASSWORD) and this address is set.
+    from: ${MAIL_FROM:}
+    # Development only: write password links to the log so they can be tested without email.
+    log-links: false
   bootstrap:
     # Creates the first admin login for a temple on startup, only if that temple has no users yet.
     tenant-slug: ${BOOTSTRAP_TENANT_SLUG:}

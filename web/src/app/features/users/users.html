@@ -1,0 +1,128 @@
+<div class="sd-page-head">
+  <div>
+    <h1>Users</h1>
+    <p>Who can sign in to SevaDesk, and which areas each person can use.</p>
+  </div>
+  <p-button label="Add user" icon="pi pi-user-plus" (onClick)="open('new')" />
+</div>
+
+<div class="sd-card" style="padding: 0; overflow: hidden">
+  <p-table [value]="users()" [loading]="loading()" dataKey="id" [tableStyle]="{ 'min-width': '760px' }">
+    <ng-template #header>
+      <tr>
+        <th>Name</th>
+        <th>Access</th>
+        <th>Status</th>
+        <th>Last sign-in</th>
+        <th></th>
+      </tr>
+    </ng-template>
+    <ng-template #body let-u>
+      <tr [class.inactive]="!u.active">
+        <td>
+          <b>{{ u.displayName }}</b> @if (isMe(u)) { <span class="sd-muted">(you)</span> }
+          <div class="sd-muted small">{{ u.email }}</div>
+        </td>
+        <td>
+          <div class="chips">
+            @for (r of u.roles; track r) {
+              <p-tag [value]="roleLabel().get(r) ?? r" [severity]="r === 'ADMIN' ? 'danger' : 'secondary'" />
+            }
+          </div>
+        </td>
+        <td>
+          @if (!u.active) {
+            <p-tag value="Deactivated" severity="secondary" />
+          } @else if (u.mustChangePassword) {
+            <p-tag value="Temporary password" severity="warn" />
+          } @else {
+            <p-tag value="Active" severity="success" />
+          }
+        </td>
+        <td style="white-space: nowrap">{{ u.lastLoginAt ? (u.lastLoginAt | date: 'd MMM y, h:mm a') : 'Never' }}</td>
+        <td style="text-align: right; white-space: nowrap">
+          <p-button icon="pi pi-key" [text]="true" severity="secondary" ariaLabel="Reset password" title="Reset password"
+                    [disabled]="!u.active" (onClick)="resetting.set(u)" />
+          <p-button icon="pi pi-pencil" [text]="true" severity="secondary" ariaLabel="Edit access" title="Edit access"
+                    (onClick)="open(u)" />
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- Add / edit -->
+<p-dialog [header]="editing() === 'new' ? 'Add user' : 'Edit user'" [visible]="!!editing()"
+          (visibleChange)="!$event && editing.set(null)" [modal]="true" [style]="{ width: 'min(680px, 96vw)' }">
+  <form [formGroup]="form" (ngSubmit)="save()" class="sd-form" id="user-form">
+    <label>Name <input pInputText formControlName="displayName" maxlength="120" fluid /></label>
+    <label>Email (used to sign in) <input pInputText formControlName="email" type="email" fluid /></label>
+
+    <fieldset class="full family">
+      <legend>What can this person use?</legend>
+      <div class="roles">
+        @for (r of roles(); track r.role) {
+          <label class="role" [class.on]="selectedRoles().includes(r.role)">
+            <p-checkbox [binary]="true" [ngModel]="selectedRoles().includes(r.role)" [ngModelOptions]="{ standalone: true }"
+                        (onChange)="toggleRole(r.role, $event.checked)" [inputId]="'role-' + r.role" />
+            <span>
+              <b>{{ r.label }}</b>
+              <small>{{ r.description }}</small>
+            </span>
+          </label>
+        }
+      </div>
+    </fieldset>
+
+    @if (editing() !== 'new') {
+      <label class="full active">
+        <p-checkbox formControlName="active" [binary]="true" inputId="user-active" />
+        <span>Can sign in (untick to deactivate: they're signed out at once, and their history is kept)</span>
+      </label>
+    }
+    @if (error()) {
+      <p class="sd-error full" role="alert">{{ error() }}</p>
+    }
+  </form>
+  @if (editing() === 'new') {
+    <p class="sd-muted small" style="margin: 12px 0 0">
+      They'll get an email link to choose a password if email is set up; otherwise you'll see a temporary password to give them.
+    </p>
+  }
+  <ng-template #footer>
+    <p-button label="Cancel" [text]="true" severity="secondary" (onClick)="editing.set(null)" />
+    <p-button [label]="editing() === 'new' ? 'Create login' : 'Save'" (onClick)="save()" [loading]="saving()" />
+  </ng-template>
+</p-dialog>
+
+<!-- Reset password -->
+<p-dialog header="Reset password" [visible]="!!resetting()" (visibleChange)="!$event && resetting.set(null)" [modal]="true"
+          [style]="{ width: 'min(460px, 96vw)' }">
+  <p>Give <b>{{ resetting()?.displayName }}</b> a new way to sign in? Their current password stops working and they're
+    signed out everywhere.</p>
+  <ng-template #footer>
+    <p-button label="Cancel" [text]="true" severity="secondary" (onClick)="resetting.set(null)" />
+    <p-button label="Reset password" severity="danger" (onClick)="confirmReset()" />
+  </ng-template>
+</p-dialog>
+
+<!-- Result: email sent, or a temporary password shown once -->
+<p-dialog [header]="issued()?.emailSent ? 'Email sent' : 'Temporary password'" [visible]="!!issued()"
+          (visibleChange)="!$event && issued.set(null)" [modal]="true" [style]="{ width: 'min(480px, 96vw)' }">
+  @if (issued(); as i) {
+    @if (i.emailSent) {
+      <p>We've emailed <b>{{ i.user.email }}</b> a link to choose a password.</p>
+    } @else {
+      <p>Give this temporary password to <b>{{ i.user.displayName }}</b> ({{ i.user.email }}).
+        They'll be asked to choose their own password when they sign in.</p>
+      <div class="temp">
+        <code>{{ i.temporaryPassword }}</code>
+        <p-button icon="pi pi-copy" label="Copy" [text]="true" (onClick)="copy(i.temporaryPassword!)" />
+      </div>
+      <p class="sd-muted small">This is shown only once. Share it in person or by phone, not in a group chat.</p>
+    }
+  }
+  <ng-template #footer>
+    <p-button label="Done" (onClick)="issued.set(null)" />
+  </ng-template>
+</p-dialog>

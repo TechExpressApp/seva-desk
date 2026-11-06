@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
+@PreAuthorize("hasAnyRole('ADMIN','TREASURER','FRONT_DESK')")
 class DonationController {
 
     /**

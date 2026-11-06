@@ -17,7 +17,9 @@
     "guesthouse": "Guest house",
     "members": "Life members",
     "volunteers": "Volunteers",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "users": "Users",
+    "changePassword": "Change password"
   },
   "login": {
     "welcome": "{{greeting}}, welcome back",

@@ -116,6 +116,30 @@ Locally, run the API with `SEVADESK_STRIPE_ACCOUNTS_ISKCONSOMERSET_SECRETKEY` an
 stripe listen --events checkout.session.completed,checkout.session.async_payment_succeeded,invoice.paid --forward-to localhost:8080/api/public/stripe/webhook
 ```
 
+## Users, access and passwords
+
+Admins manage logins in **Admin → Users**: add a person, tick what they can use, reset their password, or
+deactivate them (signed out at once; their history stays). Roles and the areas they open:
+
+| Role | Can use |
+|---|---|
+| Administrator | Everything, including Users |
+| Treasurer | Dashboard, Contacts, Donations (incl. voiding), Donors, Finance, Life members |
+| Front desk | Dashboard, Contacts, Donation entry, Donors |
+| Event coordinator | Contacts, Events |
+| Priest services / Guest house / Volunteer coordinator | Their module (when built) |
+
+The menu shows only a person's areas and the API enforces the same rules. Changing someone's roles, resetting
+their password or deactivating them ends their current sessions. The last active administrator can't be removed.
+
+**Passwords** (12+ characters):
+- **Email set up** (`SMTP_*` and `MAIL_FROM` in `.env`): new users get a "set your password" link (24 h); "Forgot
+  password?" on the login page emails a one-time reset link (1 h). Admin resets also send a link.
+- **No email**: adding a user or resetting a password shows a **temporary password** once; the person must choose
+  their own at the next sign-in. "Forgot password?" then can't send anything, so ask an admin to reset it.
+- Everyone can change their own password by clicking their email at the top right.
+- Locally (dev profile) emails are written to the API log, so links can be tested without SMTP.
+
 ## First admin login in production
 
 Set `BOOTSTRAP_TENANT_SLUG=iskconsomerset`, `BOOTSTRAP_ADMIN_EMAIL` and `BOOTSTRAP_ADMIN_PASSWORD` (12+ characters)

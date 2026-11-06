@@ -20,6 +20,9 @@ export interface Me {
   email: string;
   displayName: string;
   roles: string[];
+  /** Admin-app areas this person's roles open, e.g. "donations", "events", "users" */
+  modules: string[];
+  mustChangePassword: boolean;
 }
 
 export interface Page<T> {
@@ -133,4 +136,28 @@ export interface DonorPage {
   content: DonorTotal[];
   totalDonors: number;
   grandTotal: number;
+}
+
+export interface RoleInfo {
+  role: string;
+  label: string;
+  description: string;
+  modules: string[];
+}
+
+export interface UserAccount {
+  id: string;
+  email: string;
+  displayName: string;
+  roles: string[];
+  active: boolean;
+  mustChangePassword: boolean;
+  lastLoginAt: string | null;
+  createdAt: string;
+}
+
+export interface PasswordIssued {
+  user: UserAccount;
+  emailSent: boolean;
+  temporaryPassword: string | null;
 }

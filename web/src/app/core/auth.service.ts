@@ -37,4 +37,21 @@ export class AuthService {
   hasAnyRole(...roles: string[]): boolean {
     return this.user()?.roles.some((r) => roles.includes(r)) ?? false;
   }
+
+  /** Whether this person's roles open an admin-app area ("donations", "events", "users", ...). */
+  can(module: string): boolean {
+    return this.user()?.modules.includes(module) ?? false;
+  }
+
+  /** Where to land after signing in: the dashboard if allowed, otherwise the first area they can use. */
+  homePath(): string {
+    if (this.user()?.mustChangePassword) return '/account/password';
+    const order = ['dashboard', 'donations', 'contacts', 'events', 'donors', 'users'];
+    const first = order.find((m) => this.can(m));
+    return first ? '/' + first : '/account/password';
+  }
+
+  setUser(me: Me): void {
+    this.user.set(me);
+  }
 }

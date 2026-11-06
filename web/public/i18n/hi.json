@@ -17,7 +17,9 @@
     "guesthouse": "अतिथि गृह",
     "members": "आजीवन सदस्य",
     "volunteers": "स्वयंसेवक",
-    "signOut": "साइन आउट"
+    "signOut": "साइन आउट",
+    "users": "उपयोगकर्ता",
+    "changePassword": "पासवर्ड बदलें"
   },
   "login": {
     "welcome": "{{greeting}}, स्वागत है",

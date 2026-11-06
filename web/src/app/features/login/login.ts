@@ -1,6 +1,6 @@
 import { Component, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Button } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
@@ -11,7 +11,7 @@ import { Lotus } from '../../core/lotus';
 
 @Component({
   selector: 'sd-login',
-  imports: [ReactiveFormsModule, TranslatePipe, Button, InputText, Password, Lotus],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, Button, InputText, Password, Lotus],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
@@ -41,7 +41,8 @@ export class Login {
     try {
       const { email, password } = this.form.getRawValue();
       await this.auth.login(email, password);
-      await this.router.navigateByUrl(this.next() || '/dashboard');
+      const me = this.auth.user();
+      await this.router.navigateByUrl(me?.mustChangePassword ? '/account/password' : this.next() || this.auth.homePath());
     } catch {
       this.failed.set(true);
     } finally {

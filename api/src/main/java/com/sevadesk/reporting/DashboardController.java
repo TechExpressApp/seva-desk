@@ -5,6 +5,7 @@ import com.sevadesk.finance.ExpenseRecorded;
 import com.sevadesk.platform.TenantContext;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.event.TransactionalEventListener;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,13 +28,16 @@ class DashboardController {
         this.stream = stream;
     }
 
+    // Roles on the endpoints only: the event listeners below also run for Stripe webhooks, with no signed-in user.
     @GetMapping("/summary")
+    @PreAuthorize("hasAnyRole('ADMIN','TREASURER','FRONT_DESK')")
     DashboardService.Summary summary() {
         return dashboard.summary();
     }
 
     /** Server-Sent Events: "summary" with fresh totals, "donation" for each new gift. */
     @GetMapping(path = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @PreAuthorize("hasAnyRole('ADMIN','TREASURER','FRONT_DESK')")
     SseEmitter stream() throws IOException {
         var emitter = stream.open(TenantContext.require().id());
         emitter.send(SseEmitter.event().name("summary").data(dashboard.summary()));

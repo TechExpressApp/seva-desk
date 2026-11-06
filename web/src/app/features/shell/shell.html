@@ -32,7 +32,9 @@
         <div class="greet">{{ b?.greeting }}, {{ auth.firstName() }}</div>
         <div class="sd-muted date">{{ today }}</div>
       </div>
-      <div class="who sd-muted">{{ auth.user()?.email }}</div>
+      <a class="who" routerLink="/account/password" title="Change your password">
+        <i class="pi pi-user" aria-hidden="true"></i> {{ auth.user()?.email }}
+      </a>
     </header>
     <main class="content">
       <router-outlet />
