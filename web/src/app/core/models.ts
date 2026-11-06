@@ -27,6 +27,16 @@ export interface Page<T> {
   page: { size: number; number: number; totalElements: number; totalPages: number };
 }
 
+export interface FamilyMember {
+  name: string | null;
+  birthDate: string | null;
+}
+
+export interface Family {
+  spouse: FamilyMember | null;
+  children: FamilyMember[];
+}
+
 export interface Contact {
   id: string;
   firstName: string;
@@ -38,6 +48,7 @@ export interface Contact {
   gotra: string | null;
   nakshatra: string | null;
   birthDate: string | null;
+  family: Family | null;
   consentEmail: boolean;
   consentWhatsapp: boolean;
 }

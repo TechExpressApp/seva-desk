@@ -52,6 +52,19 @@
     <label>Date of birth <input pInputText formControlName="birthDate" type="date" fluid /></label>
     <label>Gotra <input pInputText formControlName="gotra" fluid /></label>
     <label>Nakshatra <input pInputText formControlName="nakshatra" fluid /></label>
+    <fieldset class="full family">
+      <legend>Family birthdays (optional)</legend>
+      <div class="sd-form">
+        <label>Spouse name <input pInputText formControlName="spouseName" maxlength="100" fluid /></label>
+        <label>Spouse birthday <input pInputText formControlName="spouseBirthDate" type="date" fluid /></label>
+        <label>Child 1 name <input pInputText formControlName="child1Name" maxlength="100" fluid /></label>
+        <label>Child 1 birthday <input pInputText formControlName="child1BirthDate" type="date" fluid /></label>
+        <label>Child 2 name <input pInputText formControlName="child2Name" maxlength="100" fluid /></label>
+        <label>Child 2 birthday <input pInputText formControlName="child2BirthDate" type="date" fluid /></label>
+        <label>Child 3 name <input pInputText formControlName="child3Name" maxlength="100" fluid /></label>
+        <label>Child 3 birthday <input pInputText formControlName="child3BirthDate" type="date" fluid /></label>
+      </div>
+    </fieldset>
     <div class="full" style="display: flex; gap: 18px; flex-wrap: wrap">
       <label style="flex-direction: row; align-items: center; gap: 8px">
         <p-checkbox formControlName="consentEmail" [binary]="true" /> OK to email

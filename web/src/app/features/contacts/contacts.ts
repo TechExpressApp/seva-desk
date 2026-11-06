@@ -44,6 +44,15 @@ export class Contacts {
     birthDate: [null as string | null],
     consentEmail: [false],
     consentWhatsapp: [false],
+    // Family birthdays (optional): spouse and up to three children
+    spouseName: ['', Validators.maxLength(100)],
+    spouseBirthDate: [null as string | null],
+    child1Name: ['', Validators.maxLength(100)],
+    child1BirthDate: [null as string | null],
+    child2Name: ['', Validators.maxLength(100)],
+    child2BirthDate: [null as string | null],
+    child3Name: ['', Validators.maxLength(100)],
+    child3BirthDate: [null as string | null],
   });
 
   constructor() {
@@ -77,7 +86,18 @@ export class Contacts {
     if (contact === 'new') {
       this.form.reset({ consentEmail: false, consentWhatsapp: false });
     } else {
-      this.form.reset(contact);
+      const kids = contact.family?.children ?? [];
+      this.form.reset({
+        ...contact,
+        spouseName: contact.family?.spouse?.name ?? '',
+        spouseBirthDate: contact.family?.spouse?.birthDate ?? null,
+        child1Name: kids[0]?.name ?? '',
+        child1BirthDate: kids[0]?.birthDate ?? null,
+        child2Name: kids[1]?.name ?? '',
+        child2BirthDate: kids[1]?.birthDate ?? null,
+        child3Name: kids[2]?.name ?? '',
+        child3BirthDate: kids[2]?.birthDate ?? null,
+      });
     }
     this.editing.set(contact);
   }
@@ -88,7 +108,19 @@ export class Contacts {
       return;
     }
     const target = this.editing();
-    const body = this.form.getRawValue();
+    const {
+      spouseName, spouseBirthDate, child1Name, child1BirthDate,
+      child2Name, child2BirthDate, child3Name, child3BirthDate, ...rest
+    } = this.form.getRawValue();
+    const member = (name: string | null, birthDate: string | null) => ({ name: name?.trim() || null, birthDate: birthDate || null });
+    const body = {
+      ...rest,
+      family: {
+        spouse: member(spouseName, spouseBirthDate),
+        children: [member(child1Name, child1BirthDate), member(child2Name, child2BirthDate), member(child3Name, child3BirthDate)]
+          .filter((c) => c.name || c.birthDate),
+      },
+    };
     this.saving.set(true);
     try {
       if (target === 'new') {

@@ -59,6 +59,18 @@ public class Contact extends TenantScopedEntity {
     public boolean isConsentWhatsapp() { return consentWhatsapp; }
     public void setConsentWhatsapp(boolean v) { consentWhatsapp = v; }
 
+    /** Spouse and children with birthdays, kept in custom_fields["family"]. */
+    public Family getFamily() {
+        return Family.fromMap(customFields == null ? null : customFields.get("family"));
+    }
+
+    public void setFamily(Family family) {
+        Map<String, Object> fields = new HashMap<>(customFields == null ? Map.of() : customFields);
+        if (family == null || family.isEmpty()) fields.remove("family");
+        else fields.put("family", family.toMap());
+        customFields = fields;
+    }
+
     public String getFullName() {
         return lastName == null || lastName.isBlank() ? firstName : firstName + " " + lastName;
     }

@@ -30,7 +30,25 @@
         <label>Spiritual master <input name="spiritualMaster" maxlength="100"></label>
       </div>
       <label>Your birth date <input name="birthDate" type="date"></label>
-      <label>Family members (spouse, children, birthdays) <textarea name="family" rows="3" maxlength="1000"></textarea></label>
+      <fieldset class="family">
+        <legend>Family birthdays (optional)</legend>
+        <div class="row">
+          <label>Spouse name <input name="spouseName" maxlength="100"></label>
+          <label>Spouse birthday <input name="spouseBirthDate" type="date"></label>
+        </div>
+        <div class="row">
+          <label>Child 1 name <input name="child1Name" maxlength="100"></label>
+          <label>Child 1 birthday <input name="child1BirthDate" type="date"></label>
+        </div>
+        <div class="row">
+          <label>Child 2 name <input name="child2Name" maxlength="100"></label>
+          <label>Child 2 birthday <input name="child2BirthDate" type="date"></label>
+        </div>
+        <div class="row">
+          <label>Child 3 name <input name="child3Name" maxlength="100"></label>
+          <label>Child 3 birthday <input name="child3BirthDate" type="date"></label>
+        </div>
+      </fieldset>
       <!-- Spam trap: hidden from people, filled in by bots -->
       <label class="hp" aria-hidden="true">Website <input name="website" tabindex="-1" autocomplete="off"></label>
       <button class="btn" type="submit">Subscribe</button>

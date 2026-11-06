@@ -80,6 +80,14 @@ h1, h2, h3, .sd-display {
   @media (max-width: 640px) { grid-template-columns: 1fr; }
 }
 
+.sd-form fieldset.family {
+  border: 1px solid var(--sd-line);
+  border-radius: 10px;
+  padding: 10px 14px 14px;
+  margin: 4px 0 0;
+  legend { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--sd-ink-soft); padding: 0 6px; }
+}
+
 .sd-error { color: #b42318; font-size: 0.85rem; }
 
 /* PrimeNG fine-tuning so components pick up the devotional type and paper background */

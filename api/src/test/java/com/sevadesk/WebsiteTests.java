@@ -113,17 +113,59 @@ class WebsiteTests extends PostgresTestBase {
         mvc.perform(post("/subscribe").with(host(SITE))
                         .param("firstName", "Radhika").param("lastName", "Sharma")
                         .param("email", "Radhika.Sharma@example.com").param("whatsapp", "+1 732 555 0101")
-                        .param("initiatedName", "Radhika devi dasi"))
+                        .param("initiatedName", "Radhika devi dasi")
+                        .param("spouseName", "Madhav Sharma").param("spouseBirthDate", "1984-03-21")
+                        .param("child1Name", "Gopal").param("child1BirthDate", "2014-08-26")
+                        .param("child2Name", "").param("child2BirthDate", "")
+                        .param("child3Name", "Tulasi").param("child3BirthDate", "2019-11-02"))
                 .andExpect(redirectedUrl("/contact-us?subscribed"));
 
         mvc.perform(get("/api/contacts").param("q", "radhika.sharma@example.com").with(host(SITE))
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + login()))
                 .andExpect(content().string(containsString("\"consentEmail\":true")))
-                .andExpect(content().string(containsString("Radhika devi dasi")));
+                .andExpect(content().string(containsString("Radhika devi dasi")))
+                .andExpect(content().string(containsString("\"spouse\":{\"name\":\"Madhav Sharma\",\"birthDate\":\"1984-03-21\"}")))
+                // the empty Child 2 row is dropped; Child 3 becomes the second child
+                .andExpect(content().string(containsString("\"children\":[{\"name\":\"Gopal\",\"birthDate\":\"2014-08-26\"},{\"name\":\"Tulasi\",\"birthDate\":\"2019-11-02\"}]")))
+                .andExpect(content().string(not(containsString("\"empty\""))));
 
         // bots that fill the hidden field are silently ignored
         mvc.perform(post("/subscribe").with(host(SITE)).param("firstName", "Bot").param("email", "bot@example.com")
                 .param("website", "http://spam.example")).andExpect(redirectedUrl("/contact-us?subscribed"));
+    }
+
+    @Test
+    void adminSavesFamilyBirthdaysAndKeepsDetailsFromTheWebsite() throws Exception {
+        String token = login();
+        String email = "family-" + java.util.UUID.randomUUID() + "@example.com";
+        mvc.perform(post("/subscribe").with(host(SITE)).param("firstName", "Keshav").param("email", email)
+                .param("initiatedName", "Keshava das")).andExpect(redirectedUrl("/contact-us?subscribed"));
+
+        String id = json.readTree(mvc.perform(get("/api/contacts").param("q", email).with(host(SITE))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andReturn().getResponse().getContentAsString()).get("content").get(0).get("id").asText();
+
+        // the admin form sends no customFields: the initiated name must survive the update
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/contacts/" + id)
+                        .with(host(SITE)).header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON).content("""
+                            {"firstName":"Keshav","email":"%s","family":{
+                              "spouse":{"name":"Radha","birthDate":"1990-01-15"},
+                              "children":[{"name":"Hari","birthDate":"2018-06-01"},{"name":"","birthDate":null}]}}
+                            """.formatted(email)))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Keshava das")))
+                .andExpect(content().string(containsString("\"spouse\":{\"name\":\"Radha\",\"birthDate\":\"1990-01-15\"}")))
+                .andExpect(content().string(containsString("\"children\":[{\"name\":\"Hari\",\"birthDate\":\"2018-06-01\"}]")));
+
+        // a fourth child is refused
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put("/api/contacts/" + id)
+                        .with(host(SITE)).header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON).content("""
+                            {"firstName":"Keshav","family":{"children":[{"name":"A"},{"name":"B"},{"name":"C"},{"name":"D"}]}}
+                            """))
+                .andExpect(status().isOk())
+                .andExpect(content().string(not(containsString("\"name\":\"D\""))));
     }
 
     @Test

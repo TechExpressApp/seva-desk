@@ -30,15 +30,15 @@ class ContactController {
 
     record ContactForm(@NotBlank @Size(max = 100) String firstName, @Size(max = 100) String lastName,
                        @Email String email, @Size(max = 30) String phone, String city,
-                       String gotra, String nakshatra, LocalDate birthDate,
+                       String gotra, String nakshatra, LocalDate birthDate, @Valid Family family,
                        Map<String, Object> customFields, boolean consentEmail, boolean consentWhatsapp) {}
 
     record ContactView(UUID id, String firstName, String lastName, String fullName, String email, String phone,
-                       String city, String gotra, String nakshatra, LocalDate birthDate,
+                       String city, String gotra, String nakshatra, LocalDate birthDate, Family family,
                        Map<String, Object> customFields, boolean consentEmail, boolean consentWhatsapp) {
         static ContactView of(Contact c) {
             return new ContactView(c.getId(), c.getFirstName(), c.getLastName(), c.getFullName(), c.getEmail(),
-                    c.getPhone(), c.getCity(), c.getGotra(), c.getNakshatra(), c.getBirthDate(),
+                    c.getPhone(), c.getCity(), c.getGotra(), c.getNakshatra(), c.getBirthDate(), c.getFamily(),
                     c.getCustomFields(), c.isConsentEmail(), c.isConsentWhatsapp());
         }
     }
@@ -93,7 +93,10 @@ class ContactController {
         c.setGotra(f.gotra());
         c.setNakshatra(f.nakshatra());
         c.setBirthDate(f.birthDate());
-        c.setCustomFields(f.customFields());
+        // Only replace custom fields when the caller sends them, so the admin form (which doesn't)
+        // never wipes details captured elsewhere, such as an initiated name from the website.
+        if (f.customFields() != null) c.setCustomFields(f.customFields());
+        if (f.family() != null) c.setFamily(f.family());
         c.setConsentEmail(f.consentEmail());
         c.setConsentWhatsapp(f.consentWhatsapp());
     }

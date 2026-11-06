@@ -3,6 +3,7 @@ package com.sevadesk.website;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sevadesk.contacts.Contact;
 import com.sevadesk.contacts.ContactRepository;
+import com.sevadesk.contacts.Family;
 import com.sevadesk.events.EventService;
 import com.sevadesk.platform.Tenant;
 import com.sevadesk.platform.TenantContext;
@@ -112,7 +113,14 @@ class WebsiteController {
                      @RequestParam(required = false) String initiatedName,
                      @RequestParam(required = false) String spiritualMaster,
                      @RequestParam(required = false) LocalDate birthDate,
-                     @RequestParam(required = false) String family,
+                     @RequestParam(required = false) String spouseName,
+                     @RequestParam(required = false) LocalDate spouseBirthDate,
+                     @RequestParam(required = false) String child1Name,
+                     @RequestParam(required = false) LocalDate child1BirthDate,
+                     @RequestParam(required = false) String child2Name,
+                     @RequestParam(required = false) LocalDate child2BirthDate,
+                     @RequestParam(required = false) String child3Name,
+                     @RequestParam(required = false) LocalDate child3BirthDate,
                      @RequestParam(required = false, name = "website") String honeypot) {
         if (honeypot != null && !honeypot.isBlank()) return "redirect:/contact-us?subscribed"; // bots
         if (firstName.isBlank() || !email.contains("@") || firstName.length() > 100 || email.length() > 200) {
@@ -127,9 +135,10 @@ class WebsiteController {
         Map<String, Object> extra = new LinkedHashMap<>();
         if (initiatedName != null && !initiatedName.isBlank()) extra.put("initiatedName", initiatedName.trim());
         if (spiritualMaster != null && !spiritualMaster.isBlank()) extra.put("spiritualMaster", spiritualMaster.trim());
-        if (family != null && !family.isBlank()) extra.put("family", family.trim());
         extra.put("source", "website subscribe form");
         c.setCustomFields(extra);
+        c.setFamily(new Family(member(spouseName, spouseBirthDate), java.util.List.of(
+                member(child1Name, child1BirthDate), member(child2Name, child2BirthDate), member(child3Name, child3BirthDate))));
         contacts.save(c);
         log.info("New website subscriber for {}", TenantContext.require().slug());
         return "redirect:/contact-us?subscribed";
@@ -149,6 +158,12 @@ class WebsiteController {
     private static String notFound(HttpServletResponse response) {
         response.setStatus(HttpStatus.NOT_FOUND.value());
         return "site/not-found";
+    }
+
+    private static Family.Member member(String name, LocalDate birthDate) {
+        String n = blankToNull(name);
+        if (n != null && n.length() > 100) n = n.substring(0, 100);
+        return new Family.Member(n, birthDate);
     }
 
     private static String blankToNull(String s) {
