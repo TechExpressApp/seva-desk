@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject, input, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, input, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
@@ -39,15 +39,16 @@ export class Donations implements OnInit {
   protected readonly error = signal<string | null>(null);
   protected readonly voiding = signal<Donation | null>(null);
 
-  protected readonly modes: { label: string; value: PaymentMode }[] = [
-    { label: 'Cash', value: 'CASH' },
-    { label: 'UPI', value: 'UPI' },
-    { label: 'Card', value: 'CARD' },
-    { label: 'Cheque', value: 'CHEQUE' },
-    { label: 'Bank transfer', value: 'BANK_TRANSFER' },
-    { label: 'Online', value: 'ONLINE' },
-    { label: 'In kind', value: 'IN_KIND' },
-  ];
+  /** Payment modes for this temple's country, from the branding (UPI in India, Zelle and "Check" in the US). */
+  protected readonly modes = computed(() => this.branding.branding()?.paymentModes ?? []);
+
+  /** Example references for the reference field, matching the modes offered. */
+  protected readonly referenceHint = computed(() => {
+    const values = this.modes().map((m) => m.value);
+    const transfer = values.includes('ZELLE') ? 'Zelle' : values.includes('UPI') ? 'UPI' : 'transfer';
+    const cheque = this.modes().find((m) => m.value === 'CHEQUE')?.label.toLowerCase() ?? 'cheque';
+    return `${transfer} / ${cheque} no.`;
+  });
 
   private readonly fb = inject(FormBuilder);
   protected readonly form = this.fb.group({
@@ -142,6 +143,6 @@ export class Donations implements OnInit {
   }
 
   protected modeLabel(mode: PaymentMode): string {
-    return this.modes.find((m) => m.value === mode)?.label ?? mode;
+    return this.modes().find((m) => m.value === mode)?.label ?? mode;
   }
 }

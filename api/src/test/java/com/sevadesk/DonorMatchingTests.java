@@ -124,6 +124,35 @@ class DonorMatchingTests extends PostgresTestBase {
         assertThat(total(big.get("contactId").asText())).isEqualByComparingTo("1500");
     }
 
+    @Test
+    void donorsCanBeSortedByAnyColumnInEitherDirection() throws Exception {
+        // Ann: 1 gift of 300 · Bala: 2 gifts of 50 · Chandra: 3 gifts of 10 (no email)
+        donate(300, "Ann", "Sort" + tag, "ann." + tag + "@example.com", null);
+        donate(50, "Bala", "Sort" + tag, "bala." + tag + "@example.com", null);
+        donate(50, "Bala", "Sort" + tag, null, null);
+        for (int i = 0; i < 3; i++) donate(10, "Chandra", "Sort" + tag, null, null);
+
+        assertThat(names("name", "asc")).containsExactly("Ann", "Bala", "Chandra");
+        assertThat(names("name", "desc")).containsExactly("Chandra", "Bala", "Ann");
+        assertThat(names("total", "desc")).containsExactly("Ann", "Bala", "Chandra");
+        assertThat(names("total", "asc")).containsExactly("Chandra", "Bala", "Ann");
+        assertThat(names("gifts", "desc")).containsExactly("Chandra", "Bala", "Ann");
+        assertThat(names("gifts", "asc")).containsExactly("Ann", "Bala", "Chandra");
+        assertThat(names("lastGift", "desc").get(0)).isEqualTo("Chandra"); // most recent gift
+        // no email sorts last in both directions
+        assertThat(names("email", "asc")).containsExactly("Ann", "Bala", "Chandra");
+        assertThat(names("email", "desc")).containsExactly("Bala", "Ann", "Chandra");
+        // anything unexpected falls back to total, never into the SQL
+        assertThat(names("total; drop table contact", "sideways")).containsExactly("Ann", "Bala", "Chandra");
+    }
+
+    private List<String> names(String sort, String dir) throws Exception {
+        JsonNode page = call(get("/api/donors").param("q", "sort" + tag).param("sort", sort).param("dir", dir), null);
+        List<String> out = new java.util.ArrayList<>();
+        page.get("content").forEach(n -> out.add(n.get("name").asText().split(" ")[0]));
+        return out;
+    }
+
     private JsonNode donate(int amount, String first, String last, String email, String phone) throws Exception {
         String body = json.writeValueAsString(new java.util.LinkedHashMap<String, Object>() {{
             put("fundId", fundId);

@@ -3,31 +3,33 @@
     <h1>Donors</h1>
     <p>
       Total giving per person: <b>{{ total() }}</b> donors, <b>{{ branding.money(grandTotal()) }}</b> in all.
-      Voided and anonymous gifts are not counted.
+      Voided and anonymous donations are not counted.
     </p>
   </div>
-  <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center">
-    <p-select [options]="sorts" optionLabel="label" optionValue="value" [ngModel]="sort()" (onChange)="onSort($event.value)"
-              ariaLabel="Sort donors" />
-    <p-iconfield>
-      <p-inputicon styleClass="pi pi-search" />
-      <input pInputText type="search" placeholder="Search name, email or phone" aria-label="Search donors"
-             (input)="onSearch($any($event.target).value)" />
-    </p-iconfield>
-  </div>
+  <p-iconfield>
+    <p-inputicon styleClass="pi pi-search" />
+    <input pInputText type="search" placeholder="Search name, email or phone" aria-label="Search donors"
+           (input)="onSearch($any($event.target).value)" />
+  </p-iconfield>
 </div>
 
+<p class="sd-muted sort-hint">
+  Sorted by {{ sortedBy() }}. Click a column heading to sort by it; click again to reverse.
+  <button type="button" class="link" (click)="resetSort(dt)">Reset</button>
+</p>
+
 <div class="sd-card" style="padding: 0; overflow: hidden">
-  <p-table [value]="rows()" [lazy]="true" (onLazyLoad)="load($event)" [paginator]="true" [rows]="25"
-           [totalRecords]="total()" [loading]="loading()" dataKey="contactId" [tableStyle]="{ 'min-width': '760px' }">
+  <p-table #dt [value]="rows()" [lazy]="true" (onLazyLoad)="load($event)" [paginator]="true" [rows]="25"
+           [totalRecords]="total()" [loading]="loading()" dataKey="contactId"
+           sortField="total" [sortOrder]="-1" [tableStyle]="{ 'min-width': '820px' }">
     <ng-template #header>
       <tr>
-        <th>Donor</th>
-        <th>Email / phone</th>
-        <th style="text-align: right">Gifts</th>
-        <th style="text-align: right">This year</th>
-        <th style="text-align: right">Total given</th>
-        <th>Last gift</th>
+        <th pSortableColumn="name">Donor <p-sortIcon field="name" /></th>
+        <th pSortableColumn="email">Email / phone <p-sortIcon field="email" /></th>
+        <th pSortableColumn="gifts" class="num">Donations <p-sortIcon field="gifts" /></th>
+        <th pSortableColumn="thisYear" class="num">This year <p-sortIcon field="thisYear" /></th>
+        <th pSortableColumn="total" class="num">Total given <p-sortIcon field="total" /></th>
+        <th pSortableColumn="lastGift">Last Donation <p-sortIcon field="lastGift" /></th>
       </tr>
     </ng-template>
     <ng-template #body let-d>
@@ -38,14 +40,14 @@
           @if (d.email && d.phone) { <br /> }
           {{ d.phone }}
         </td>
-        <td class="sd-num" style="text-align: right">{{ d.gifts }}</td>
-        <td class="sd-num" style="text-align: right">{{ branding.money(d.thisYear) }}</td>
-        <td class="sd-num" style="text-align: right; font-weight: 600">{{ branding.money(d.total) }}</td>
+        <td class="sd-num num">{{ d.gifts }}</td>
+        <td class="sd-num num">{{ branding.money(d.thisYear) }}</td>
+        <td class="sd-num num" style="font-weight: 600">{{ branding.money(d.total) }}</td>
         <td style="white-space: nowrap">{{ d.lastGift | date: 'd MMM y' }}</td>
       </tr>
     </ng-template>
     <ng-template #emptymessage>
-      <tr><td colspan="6" class="sd-muted">No donors found. Gifts linked to a person appear here.</td></tr>
+      <tr><td colspan="6" class="sd-muted">No donors found. Donations linked to a person appear here.</td></tr>
     </ng-template>
   </p-table>
 </div>

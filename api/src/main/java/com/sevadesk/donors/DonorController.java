@@ -55,20 +55,15 @@ class DonorController {
     DonorPage list(@RequestParam(defaultValue = "") String q,
                    @RequestParam(defaultValue = "0") int page,
                    @RequestParam(defaultValue = "25") int size,
-                   @RequestParam(defaultValue = "total") String sort) {
+                   @RequestParam(defaultValue = "total") String sort,
+                   @RequestParam(defaultValue = "desc") String dir) {
         int limit = Math.min(Math.max(size, 1), 100);
         String like = "%" + q.strip().toLowerCase(Locale.ROOT) + "%";
         String where = """
                 where (? = '%%' or lower(c.first_name || ' ' || coalesce(c.last_name, '')) like ?
                        or lower(coalesce(c.email, '')) like ? or coalesce(c.phone, '') like ?)
                 """;
-        String order = switch (sort) {
-            case "name" -> "name asc";
-            case "recent" -> "last_gift desc";
-            case "gifts" -> "gifts desc, total desc";
-            default -> "total desc";
-        };
-        var rows = jdbc.query(TOTALS + where + " group by c.id order by " + order + " limit ? offset ?",
+        var rows = jdbc.query(TOTALS + where + " group by c.id order by " + orderBy(sort, dir) + " limit ? offset ?",
                 this::row, yearStart(), like, like, like, like, limit, (long) Math.max(page, 0) * limit);
 
         var summary = jdbc.queryForMap("""
@@ -87,6 +82,26 @@ class DonorController {
         return rows.isEmpty()
                 ? new DonorTotal(contactId, null, null, null, 0, BigDecimal.ZERO, BigDecimal.ZERO, null, null)
                 : rows.get(0);
+    }
+
+    /**
+     * ORDER BY for a column of the Donors screen. Only these fixed expressions can reach the SQL, never the request
+     * text. Empty values (no email, no gift this year) sort last either way; ties go by name so pages don't shuffle.
+     */
+    static String orderBy(String sort, String dir) {
+        String direction = "asc".equalsIgnoreCase(dir) ? "asc" : "desc";
+        String column = switch (sort) {
+            case "name" -> "lower(trim(c.first_name || ' ' || coalesce(c.last_name, '')))";
+            case "email" -> "lower(nullif(c.email, ''))";
+            case "phone" -> "nullif(regexp_replace(coalesce(c.phone, ''), '[^0-9]', '', 'g'), '')";
+            case "gifts" -> "count(d.id)";
+            case "thisYear" -> "this_year";
+            case "firstGift" -> "first_gift";
+            case "lastGift", "recent" -> "last_gift";
+            default -> "total";
+        };
+        String nameTieBreak = "lower(trim(c.first_name || ' ' || coalesce(c.last_name, ''))) asc, c.id";
+        return column + " " + direction + " nulls last, " + nameTieBreak;
     }
 
     /** 1 January of the current year in the temple's time zone. */

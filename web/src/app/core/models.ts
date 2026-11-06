@@ -14,6 +14,8 @@ export interface Branding {
   terms: Record<string, string>;
   enabledModules: string[];
   whatsappNumber: string | null;
+  /** Ways donations are received, for this temple's country (UPI in India, Zelle in the US) */
+  paymentModes: { value: PaymentMode; label: string }[];
 }
 
 export interface Me {
@@ -56,7 +58,7 @@ export interface Contact {
   consentWhatsapp: boolean;
 }
 
-export type PaymentMode = 'CASH' | 'CHEQUE' | 'UPI' | 'CARD' | 'BANK_TRANSFER' | 'ONLINE' | 'IN_KIND';
+export type PaymentMode = 'CASH' | 'CHEQUE' | 'UPI' | 'ZELLE' | 'CARD' | 'BANK_TRANSFER' | 'ONLINE' | 'IN_KIND';
 
 export type MatchedBy = 'EMAIL' | 'PHONE' | 'NAME' | 'CREATED';
 

@@ -100,6 +100,29 @@ class WebsiteTests extends PostgresTestBase {
     }
 
     @Test
+    void usTemplesAreOfferedZelleAndIndianTemplesUpi() throws Exception {
+        mvc.perform(get("/api/public/branding").with(host(SITE)))
+                .andExpect(content().string(containsString("{\"value\":\"ZELLE\",\"label\":\"Zelle\"}")))
+                .andExpect(content().string(containsString("{\"value\":\"CHEQUE\",\"label\":\"Check\"}")))
+                .andExpect(content().string(not(containsString("\"UPI\""))));
+        mvc.perform(get("/api/public/branding").with(host("radhagovinda.localhost")))
+                .andExpect(content().string(containsString("{\"value\":\"UPI\",\"label\":\"UPI\"}")))
+                .andExpect(content().string(containsString("{\"value\":\"CHEQUE\",\"label\":\"Cheque\"}")))
+                .andExpect(content().string(not(containsString("ZELLE"))));
+
+        String token = login();
+        String fundId = json.readTree(mvc.perform(post("/api/funds").with(host(SITE))
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\":\"Zelle Fund %s\",\"taxDeductible\":true}".formatted(java.util.UUID.randomUUID())))
+                .andReturn().getResponse().getContentAsString()).get("id").asText();
+        mvc.perform(post("/api/donations").with(host(SITE)).header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"fundId\":\"%s\",\"amount\":108,\"paymentMode\":\"ZELLE\",\"reference\":\"ZL-2026-118\"}".formatted(fundId)))
+                .andExpect(status().isCreated())
+                .andExpect(content().string(containsString("\"paymentMode\":\"ZELLE\"")));
+    }
+
+    @Test
     void oldSiteUrlsStillWork() throws Exception {
         mvc.perform(get("/bhakti-vriksha").with(host(SITE))).andExpect(status().isOk())
                 .andExpect(content().string(containsString("<title>Bhakti Vriksha | ISKCON Somerset</title>")));

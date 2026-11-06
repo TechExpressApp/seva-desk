@@ -16,7 +16,8 @@ import java.util.UUID;
 @Table(name = "donation")
 public class Donation extends TenantScopedEntity {
 
-    public enum PaymentMode { CASH, CHEQUE, UPI, CARD, BANK_TRANSFER, ONLINE, IN_KIND }
+    /** UPI is offered to rupee (India) temples, Zelle to US-dollar temples; see BrandingController.paymentModes. */
+    public enum PaymentMode { CASH, CHEQUE, UPI, ZELLE, CARD, BANK_TRANSFER, ONLINE, IN_KIND }
     public enum Status { RECORDED, VOIDED }
 
     @Column(name = "contact_id") private UUID contactId;

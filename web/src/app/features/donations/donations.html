@@ -82,10 +82,10 @@
     </label>
     <label>
       Payment mode
-      <p-select formControlName="paymentMode" [options]="modes" optionLabel="label" optionValue="value" appendTo="body" fluid />
+      <p-select formControlName="paymentMode" [options]="modes()" optionLabel="label" optionValue="value" appendTo="body" fluid />
     </label>
     <label>
-      Reference (UPI / cheque no.)
+      Reference ({{ referenceHint() }})
       <input pInputText formControlName="reference" fluid />
     </label>
     <label class="full">

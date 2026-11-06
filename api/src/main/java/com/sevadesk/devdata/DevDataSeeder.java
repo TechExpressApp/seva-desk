@@ -88,7 +88,7 @@ class DevDataSeeder implements ApplicationRunner {
                 Instant now = Instant.now();
                 record Gift(int person, Fund fund, int amount, Donation.PaymentMode mode, long hoursAgo) {}
                 for (var g : List.of(
-                        new Gift(0, food, 2501, Donation.PaymentMode.UPI, 1),
+                        new Gift(0, food, 2501, "USD".equals(tenant.getCurrency()) ? Donation.PaymentMode.ZELLE : Donation.PaymentMode.UPI, 1),
                         new Gift(1, general, 1001, Donation.PaymentMode.CASH, 3),
                         new Gift(2, building, 11000, Donation.PaymentMode.BANK_TRANSFER, 30),
                         new Gift(3, food, 5000, Donation.PaymentMode.CARD, 50),

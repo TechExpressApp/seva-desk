@@ -102,6 +102,15 @@ h1, h2, h3, .sd-display {
   @media (max-width: 560px) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
+/* Donors: sortable column note */
+.sort-hint {
+  margin: -6px 0 10px;
+  font-size: 0.85rem;
+  .link { font: inherit; background: none; border: 0; padding: 0 0 0 6px; color: var(--sd-primary); cursor: pointer; text-decoration: underline; }
+}
+th.num, td.num { text-align: right; }
+th.num .p-sortable-column-icon { margin-left: 4px; }
+
 .sd-error { color: #b42318; font-size: 0.85rem; }
 
 /* PrimeNG fine-tuning so components pick up the devotional type and paper background */
