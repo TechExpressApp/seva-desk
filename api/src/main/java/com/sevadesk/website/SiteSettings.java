@@ -21,6 +21,7 @@ public record SiteSettings(
         String welcomeText,
         Gatherings gatherings,
         List<Card> initiatives,
+        Founder founder,
         List<MenuItem> menu,
         Contact contact,
         List<Link> social,
@@ -52,6 +53,14 @@ public record SiteSettings(
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Gathering(String title, String when, String text, String image, String href, String button) {}
+
+    /**
+     * The founder section at the bottom of the home page (Srila Prabhupada). body is HTML written by the
+     * temple's staff; image is an optional photo URL the temple has the rights to use.
+     */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record Founder(String eyebrow, String title, String verse, String verseMeaning, String body,
+                          String image, String href, String button) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Page(String title, String description, String heading, String body) {}

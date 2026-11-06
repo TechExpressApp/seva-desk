@@ -48,7 +48,7 @@
 
   <section class="wrap section" id="events">
     <div class="section-head">
-      <h2>Upcoming Events</h2>
+      <h2>Upcoming Festivals</h2>
       <a href="/events">All events →</a>
     </div>
     <div class="event-grid" th:unless="${events.isEmpty()}">
@@ -84,6 +84,25 @@
         <p th:text="${c.text}">Text</p>
         <a th:if="${c.href}" th:href="${c.href}">Learn more →</a>
       </article>
+    </div>
+  </section>
+
+  <section class="founder" th:if="${site.founder != null and site.founder.title != null}" aria-labelledby="founder-title">
+    <div class="wrap founder-inner">
+      <div class="founder-pic" th:classappend="${site.founder.image} ? 'has-image'">
+        <img th:if="${site.founder.image}" th:src="${site.founder.image}" th:alt="${site.founder.title}" loading="lazy" />
+        <img th:unless="${site.founder.image}" class="lotus" src="/site/lotus.svg" alt="" />
+      </div>
+      <div class="founder-text">
+        <p class="eyebrow" th:if="${site.founder.eyebrow}" th:text="${site.founder.eyebrow}">Founder-Acharya</p>
+        <h2 id="founder-title" th:text="${site.founder.title}">Srila Prabhupada</h2>
+        <blockquote class="verse" th:if="${site.founder.verse}">
+          <p lang="sa-Latn" th:text="'“' + ${site.founder.verse} + '”'">Verse</p>
+          <cite th:if="${site.founder.verseMeaning}" th:text="${site.founder.verseMeaning}">Meaning</cite>
+        </blockquote>
+        <div class="founder-body" th:if="${site.founder.body}" th:utext="${site.founder.body}">Body</div>
+        <a class="btn" th:if="${site.founder.href}" th:href="${site.founder.href}" th:text="${site.founder.button} ?: 'Learn more'">Learn more</a>
+      </div>
     </div>
   </section>
 </main>

@@ -6,8 +6,6 @@ update tenant set site = $json$
   "heroTitle": "Welcome to ISKCON Somerset",
   "heroText": "A home for bhakti yoga in central New Jersey: kirtan, Bhagavad Gita study, festivals and prasadam, open to everyone.",
   "mantra": "Hare Krishna Hare Krishna Krishna Krishna Hare Hare · Hare Rama Hare Rama Rama Rama Hare Hare ·",
-  "welcomeTitle": "Enhancing lives through bhakti yoga",
-  "welcomeText": "We share the teachings of the Bhagavad Gita and Sri Chaitanya Mahaprabhu through weekly programmes, home groups, classes and festivals. Whether you are new to bhakti or have practised for years, you are welcome to join us.",
   "gatherings": {
     "eyebrow": "Come together for",
     "title": "Weekly Gatherings",
@@ -32,23 +30,15 @@ update tenant set site = $json$
       }
     ]
   },
-  "initiatives": [
-    {
-      "title": "Bhakti Vriksha home programme",
-      "text": "Small groups that meet weekly in devotees' homes for kirtan, discussion and friendship.",
-      "href": "/bhakti-vriksha"
-    },
-    {
-      "title": "Scripture study groups",
-      "text": "Read and discuss the Bhagavad Gita together, in person or online.",
-      "href": "/bg-inperson"
-    },
-    {
-      "title": "New temple project",
-      "text": "Help build a permanent home for the community in Somerset.",
-      "href": "/new-temple-project"
-    }
-  ],
+  "founder": {
+    "eyebrow": "Founder-Acharya of ISKCON · His Divine Grace",
+    "title": "Srila Prabhupada",
+    "verse": "harer nāma harer nāma harer nāmaiva kevalam",
+    "verseMeaning": "The holy name, the holy name, only the holy name of the Lord",
+    "body": "<p>His Divine Grace A.C. Bhaktivedanta Swami Prabhupada arrived in New York in 1965, at the age of 69, carrying his spiritual master's instruction to share Krishna consciousness in the English-speaking world. In 1966, from a small storefront on the Lower East Side, he founded the International Society for Krishna Consciousness.</p><p>In the eleven years that followed he travelled around the world many times, opened more than a hundred temples, farms and schools, and translated <b>Bhagavad-gītā As It Is</b>, <b>Śrīmad-Bhāgavatam</b> and <b>Śrī Caitanya-caritāmṛta</b> with his own commentary. Every kirtan, class and plate of prasadam at our temple continues the work he began.</p>",
+    "href": "/srila-prabhupada",
+    "button": "Learn more"
+  },
   "menu": [
     {
       "label": "Home",
@@ -103,24 +93,6 @@ update tenant set site = $json$
       ]
     },
     {
-      "label": "Courses",
-      "href": "/bg-inperson",
-      "children": [
-        {
-          "label": "Bhagavad Gita - In Person",
-          "href": "/bg-inperson"
-        },
-        {
-          "label": "Bhagavad Gita Online",
-          "href": "/bg-online"
-        }
-      ]
-    },
-    {
-      "label": "Gift Shop",
-      "href": "/category/all-products"
-    },
-    {
       "label": "Vaishnava Songs",
       "href": "/vaishnav-songs",
       "children": [
@@ -163,6 +135,12 @@ update tenant set site = $json$
   "social": [],
   "calendarUrl": "https://1drv.ms/b/c/c1f56f15d95d5ae8/IQByoJPlg2PNT5RUURoBCqJ-AdzphP6dtkficmzRsx5_1EU?e=ObaeCx",
   "pages": {
+    "srila-prabhupada": {
+      "title": "Srila Prabhupada",
+      "description": "His Divine Grace A.C. Bhaktivedanta Swami Prabhupada, Founder-Acharya of ISKCON.",
+      "heading": "Srila Prabhupada",
+      "body": "<p>His Divine Grace A.C. Bhaktivedanta Swami Prabhupada (1896–1977) is the Founder-Acharya of the International Society for Krishna Consciousness (ISKCON).</p><h2>A life of service</h2><p>Born Abhay Charan De in Calcutta, he met his spiritual master, Srila Bhaktisiddhanta Sarasvati Thakura, in 1922 and was asked to bring the teachings of Lord Chaitanya to the English-speaking world. He took up that instruction for the rest of his life: writing, publishing and, in 1959, accepting the renounced order of sannyasa.</p><h2>Bringing bhakti to the West</h2><p>In 1965, at the age of 69, he travelled by cargo ship to New York with little more than a trunk of his books. A year later he founded ISKCON in a small storefront on the Lower East Side, and chanting the Hare Krishna maha-mantra soon spread to cities around the world.</p><h2>His books</h2><p>He translated and explained the great texts of the bhakti tradition, including <b>Bhagavad-gītā As It Is</b>, <b>Śrīmad-Bhāgavatam</b> and <b>Śrī Caitanya-caritāmṛta</b>. His books remain at the heart of every class and study group at our temple.</p><p><a href=\"/bg-inperson\">Join a Bhagavad Gita class</a> or <a href=\"/contact-us\">contact us</a> to learn more.</p>"
+    },
     "bhakti-vriksha": {
       "title": "Bhakti Vriksha",
       "description": "Bhakti Vriksha home programmes: weekly kirtan, discussion and friendship in small groups.",
