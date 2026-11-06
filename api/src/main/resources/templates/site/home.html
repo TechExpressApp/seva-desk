@@ -23,6 +23,29 @@
     </div>
   </div>
 
+  <section class="gatherings" th:if="${site.gatherings != null and !site.gatherings.items.isEmpty()}" aria-labelledby="gatherings-title">
+    <div class="gatherings-band">
+      <div class="wrap">
+        <p class="eyebrow" th:if="${site.gatherings.eyebrow}" th:text="${site.gatherings.eyebrow}">Come together for</p>
+        <h2 id="gatherings-title" th:text="${site.gatherings.title} ?: 'Weekly Gatherings'">Weekly Gatherings</h2>
+      </div>
+    </div>
+    <div class="wrap gathering-grid">
+      <article class="gathering" th:each="g : ${site.gatherings.items}">
+        <div class="gathering-pic" th:classappend="${g.image} ? 'has-image'">
+          <img th:if="${g.image}" th:src="${g.image}" th:alt="${g.title}" loading="lazy" />
+          <span class="badge" aria-hidden="true"><img src="/site/lotus.svg" alt="" /></span>
+        </div>
+        <div class="gathering-body">
+          <h3 th:text="${g.title}">Gathering</h3>
+          <p class="when" th:if="${g.when}" th:text="${g.when}">Sundays</p>
+          <p th:text="${g.text}">Text</p>
+          <a class="join" th:if="${g.href}" th:href="${g.href}"><span th:text="${g.button} ?: 'Join us'">Join us</span> →</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
   <section class="wrap section" id="events">
     <div class="section-head">
       <h2>Upcoming Events</h2>

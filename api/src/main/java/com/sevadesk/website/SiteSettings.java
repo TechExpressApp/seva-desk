@@ -19,6 +19,7 @@ public record SiteSettings(
         String quoteSource,
         String welcomeTitle,
         String welcomeText,
+        Gatherings gatherings,
         List<Card> initiatives,
         List<MenuItem> menu,
         Contact contact,
@@ -40,6 +41,17 @@ public record SiteSettings(
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Card(String title, String text, String href) {}
+
+    /** "Come together for Weekly Gatherings" at the top of the home page. image is optional (a URL). */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record Gatherings(String eyebrow, String title, List<Gathering> items) {
+        public Gatherings {
+            items = items == null ? List.of() : items;
+        }
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record Gathering(String title, String when, String text, String image, String href, String button) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Page(String title, String description, String heading, String body) {}

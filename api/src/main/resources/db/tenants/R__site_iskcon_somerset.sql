@@ -8,6 +8,30 @@ update tenant set site = $json$
   "mantra": "Hare Krishna Hare Krishna Krishna Krishna Hare Hare · Hare Rama Hare Rama Rama Rama Hare Hare ·",
   "welcomeTitle": "Enhancing lives through bhakti yoga",
   "welcomeText": "We share the teachings of the Bhagavad Gita and Sri Chaitanya Mahaprabhu through weekly programmes, home groups, classes and festivals. Whether you are new to bhakti or have practised for years, you are welcome to join us.",
+  "gatherings": {
+    "eyebrow": "Come together for",
+    "title": "Weekly Gatherings",
+    "items": [
+      {
+        "title": "Kirtan & Meditation",
+        "text": "Chant the Hare Krishna maha-mantra together in uplifting kirtan and quiet japa meditation. No experience needed; bring your friends and family.",
+        "href": "/events",
+        "button": "Join us"
+      },
+      {
+        "title": "Bhagavad Gita Classes",
+        "text": "Read and discuss the Bhagavad Gita As It Is each week, in person at the temple or online, followed by kirtan and prasadam.",
+        "href": "/bg-inperson",
+        "button": "Join us"
+      },
+      {
+        "title": "Bhakti Vriksha & Families",
+        "text": "Small home groups where families, youth and children share kirtan, stories and friendship, and grow in bhakti together.",
+        "href": "/bhakti-vriksha",
+        "button": "Join us"
+      }
+    ]
+  },
   "initiatives": [
     {
       "title": "Bhakti Vriksha home programme",
