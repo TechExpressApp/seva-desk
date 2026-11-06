@@ -57,6 +57,12 @@ class WebsiteController {
         ld.put("@type", "HinduTemple");
         ld.put("name", temple.getName());
         ld.put("url", model.getAttribute("baseUrl"));
+        String logo = site(model).logoFull() != null ? site(model).logoFull() : temple.getLogoUrl();
+        if (logo != null) {
+            String abs = logo.startsWith("http") ? logo : model.getAttribute("baseUrl") + logo;
+            ld.put("logo", abs);
+            ld.put("image", abs);
+        }
         if (contact.phone() != null) ld.put("telephone", contact.phone());
         if (contact.email() != null) ld.put("email", contact.email());
         if (contact.address() != null) ld.put("address", contact.address());

@@ -13,7 +13,9 @@
   <meta property="og:description" th:content="${description}">
   <meta property="og:url" th:href="${baseUrl} + ${path}" th:content="${baseUrl} + ${path}">
   <meta name="theme-color" th:content="${temple.primaryColor}">
+  <meta property="og:image" th:if="${site.logoFull ?: temple.logoUrl}" th:content="${baseUrl} + ${site.logoFull ?: temple.logoUrl}">
   <link rel="icon" th:href="${temple.logoUrl} ?: '/site/lotus.svg'">
+  <link rel="apple-touch-icon" th:if="${temple.logoUrl}" th:href="${temple.logoUrl}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Montserrat:wght@400;500;600;700&display=swap">
@@ -27,7 +29,7 @@
 <header th:fragment="header" class="top">
   <div class="wrap bar">
     <a class="brand" href="/">
-      <img th:if="${temple.logoUrl}" th:src="${temple.logoUrl}" alt="" width="44" height="44">
+      <img th:if="${temple.logoUrl}" th:src="${temple.logoUrl}" alt="" width="52" height="52" class="logo-mark">
       <img th:unless="${temple.logoUrl}" src="/site/lotus.svg" alt="" width="44" height="44">
       <span th:text="${temple.name}">Temple</span>
     </a>
@@ -57,8 +59,11 @@
 <footer th:fragment="footer" class="foot">
   <div class="wrap cols">
     <div>
-      <div class="brand light">
-        <img src="/site/lotus.svg" alt="" width="36" height="36">
+      <a class="foot-logo" href="/" th:if="${site.logoFull}">
+        <img th:src="${site.logoFull}" th:alt="${temple.name}" width="150" height="150" loading="lazy">
+      </a>
+      <div class="brand light" th:unless="${site.logoFull}">
+        <img th:src="${temple.logoUrl} ?: '/site/lotus.svg'" alt="" width="36" height="36">
         <span th:text="${temple.name}">Temple</span>
       </div>
       <p th:if="${temple.tagline}" th:text="${temple.tagline}" class="muted">Tagline</p>

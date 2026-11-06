@@ -48,6 +48,15 @@ public class ContactMatcher {
     /** The existing contact for these details, if any (no changes made). */
     @Transactional(readOnly = true)
     public Optional<Match> find(DonorDetails d) {
+        return find(d, false);
+    }
+
+    /**
+     * As {@link #find(DonorDetails)}; with phoneNeedsSameFirstName, a phone match counts only when the first names
+     * agree too. Use it where family members often share one number (event registrations for a whole family).
+     */
+    @Transactional(readOnly = true)
+    public Optional<Match> find(DonorDetails d, boolean phoneNeedsSameFirstName) {
         String email = normalizeEmail(d.email());
         if (email != null) {
             var byEmail = contacts.findFirstByEmailIgnoreCaseOrderByCreatedAtAsc(email);
@@ -55,7 +64,8 @@ public class ContactMatcher {
         }
         String digits = phoneKey(d.phone());
         if (digits != null) {
-            var byPhone = contacts.findFirstByPhoneDigits(digits);
+            var byPhone = contacts.findFirstByPhoneDigits(digits)
+                    .filter(c -> !phoneNeedsSameFirstName || sameFirstName(c.getFirstName(), d.firstName()));
             if (byPhone.isPresent()) return Optional.of(new Match(byPhone.get(), MatchedBy.PHONE));
         }
         String fullName = fullNameKey(d.firstName(), d.lastName());
@@ -72,8 +82,14 @@ public class ContactMatcher {
      */
     @Transactional
     public Optional<Match> findOrCreate(DonorDetails d, String source) {
+        return findOrCreate(d, source, false);
+    }
+
+    /** As {@link #findOrCreate(DonorDetails, String)}; see {@link #find(DonorDetails, boolean)} for the flag. */
+    @Transactional
+    public Optional<Match> findOrCreate(DonorDetails d, String source, boolean phoneNeedsSameFirstName) {
         if (d == null || !d.hasAny()) return Optional.empty();
-        var found = find(d);
+        var found = find(d, phoneNeedsSameFirstName);
         if (found.isPresent()) {
             enrich(found.get().contact(), d);
             return found;
@@ -124,6 +140,10 @@ public class ContactMatcher {
         if (blank(first)) return null;
         String full = (first + " " + (last == null ? "" : last)).strip().replaceAll("\\s+", " ");
         return full.toLowerCase(Locale.ROOT);
+    }
+
+    private static boolean sameFirstName(String a, String b) {
+        return !blank(a) && !blank(b) && a.strip().equalsIgnoreCase(b.strip());
     }
 
     private static boolean blank(String s) {

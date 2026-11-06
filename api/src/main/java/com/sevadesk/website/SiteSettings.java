@@ -12,8 +12,11 @@ import java.util.Map;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record SiteSettings(
+        String logoFull,
         String heroTitle,
         String heroText,
+        String heroImage,
+        String heroImageAlt,
         String mantra,
         String quote,
         String quoteSource,
@@ -60,7 +63,8 @@ public record SiteSettings(
      */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Founder(String eyebrow, String title, String verse, String verseMeaning, String body,
-                          String image, String href, String button) {}
+                          String image, String imageAlt, String imageCredit, String imageCreditUrl,
+                          String href, String button) {}
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Page(String title, String description, String heading, String body) {}

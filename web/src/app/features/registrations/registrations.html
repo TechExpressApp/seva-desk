@@ -1,0 +1,125 @@
+<div class="sd-page-head">
+  <div>
+    <h1>Event Registrations</h1>
+    <p>Who registered for which event. Each person is also saved in Contacts, and the temple is emailed.</p>
+  </div>
+  <p-button label="New registration" icon="pi pi-plus" (onClick)="open()" />
+</div>
+
+<div class="filters">
+  <p-select [options]="eventOptions()" optionLabel="name" optionValue="name" [(ngModel)]="filterEvent"
+            (onChange)="applyFilter()" [showClear]="true" [filter]="true" filterBy="name"
+            placeholder="All events" ariaLabel="Filter by event" styleClass="event-filter" />
+  <span class="sd-muted count">
+    <b>{{ total() }}</b> {{ total() === 1 ? 'registration' : 'registrations' }}{{ filterEvent ? ' for ' + filterEvent : '' }}
+  </span>
+</div>
+
+<div class="sd-card" style="padding: 0; overflow: hidden">
+  <p-table [value]="rows()" [lazy]="true" (onLazyLoad)="load($event)" [paginator]="true" [rows]="25"
+           [totalRecords]="total()" [loading]="loading()" dataKey="id" [tableStyle]="{ 'min-width': '900px' }">
+    <ng-template #header>
+      <tr>
+        <th>Registration Date</th>
+        <th>Event</th>
+        <th>Name</th>
+        <th>Email / WhatsApp</th>
+        <th>City, State</th>
+        <th class="num">Age</th>
+        @if (canDelete()) { <th></th> }
+      </tr>
+    </ng-template>
+    <ng-template #body let-r>
+      <tr>
+        <td style="white-space: nowrap">
+          {{ r.registrationDate | date: 'd MMM y' }}<br />
+          <small class="sd-muted">{{ r.registeredAt | date: 'h:mm a' }}</small>
+        </td>
+        <td><span class="event-tag">{{ r.eventName }}</span></td>
+        <td>
+          @if (r.contactId) {
+            <button type="button" class="name-link" (click)="profileOf.set(r)" title="Show contact details"
+                    [attr.aria-label]="'Contact details of ' + r.firstName + ' ' + r.lastName">{{ r.firstName }} {{ r.lastName }}</button>
+          } @else {
+            <b>{{ r.firstName }} {{ r.lastName }}</b>
+          }
+        </td>
+        <td class="sd-muted" style="font-size: 0.88rem">
+          <a [href]="'mailto:' + r.email">{{ r.email }}</a><br />
+          <a [href]="whatsappLink(r)" target="_blank" rel="noopener"
+             title="Open in WhatsApp">{{ r.whatsapp }}</a>
+        </td>
+        <td>{{ r.city }}, {{ r.state }}</td>
+        <td class="sd-num num">{{ r.age }}</td>
+        @if (canDelete()) {
+          <td style="text-align: right">
+            <p-button icon="pi pi-trash" [text]="true" severity="danger" ariaLabel="Remove registration" (onClick)="deleting.set(r)" />
+          </td>
+        }
+      </tr>
+    </ng-template>
+    <ng-template #emptymessage>
+      <tr><td [attr.colspan]="canDelete() ? 7 : 6" class="sd-muted">No registrations yet. Add one with “New registration”.</td></tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<!-- New registration -->
+<p-dialog header="New registration" [visible]="adding()" (visibleChange)="!$event && adding.set(false)" [modal]="true"
+          [style]="{ width: 'min(640px, 96vw)' }">
+  <form [formGroup]="form" (ngSubmit)="save()" class="sd-form" id="registration-form">
+    <label class="full">
+      Event name
+      <p-autocomplete formControlName="event" [suggestions]="eventSuggestions()" (completeMethod)="searchEvents($event)"
+                      optionLabel="name" [forceSelection]="false" [dropdown]="true" [minQueryLength]="0"
+                      placeholder="Choose an upcoming event or type a name" appendTo="body" inputId="event" fluid>
+        <ng-template #item let-o>
+          <div class="event-option"><b>{{ o.name }}</b>@if (o.startsAt) { <small>{{ o.startsAt | date: 'EEE d MMM y' }}</small> }</div>
+        </ng-template>
+      </p-autocomplete>
+    </label>
+    <label>First name <input pInputText formControlName="firstName" autocomplete="off" fluid /></label>
+    <label>Last name <input pInputText formControlName="lastName" autocomplete="off" fluid /></label>
+    <label>Email address <input pInputText type="email" formControlName="email" autocomplete="off" fluid /></label>
+    <label>WhatsApp number <input pInputText type="tel" formControlName="whatsapp" placeholder="+1 732 555 0100" fluid /></label>
+    <label>City <input pInputText formControlName="city" fluid /></label>
+    <label>
+      State
+      <input pInputText formControlName="state" list="us-states" placeholder="e.g. New Jersey" fluid />
+      <datalist id="us-states">
+        @for (s of states; track s) { <option [value]="s"></option> }
+      </datalist>
+    </label>
+    <label>
+      Age
+      <p-inputnumber formControlName="age" [min]="0" [max]="120" [useGrouping]="false" inputId="age" fluid />
+    </label>
+    @if (error()) {
+      <p class="sd-error full" role="alert">{{ error() }}</p>
+    }
+  </form>
+  <ng-template #footer>
+    <p-button label="Cancel" [text]="true" severity="secondary" (onClick)="adding.set(false)" />
+    <p-button label="Register" icon="pi pi-check" (onClick)="save()" [loading]="saving()" />
+  </ng-template>
+</p-dialog>
+
+<!-- Contact details -->
+<p-dialog [header]="profileOf() ? profileOf()!.firstName + ' ' + profileOf()!.lastName : ''" [visible]="!!profileOf()"
+          (visibleChange)="!$event && profileOf.set(null)" [modal]="true" [dismissableMask]="true"
+          [style]="{ width: 'min(760px, 96vw)' }">
+  @if (profileOf()?.contactId; as id) {
+    <sd-contact-details [contactId]="id" />
+  }
+</p-dialog>
+
+<!-- Remove -->
+<p-dialog header="Remove registration" [visible]="!!deleting()" (visibleChange)="!$event && deleting.set(null)"
+          [modal]="true" [style]="{ width: 'min(440px, 96vw)' }">
+  <p>Remove <b>{{ deleting()?.firstName }} {{ deleting()?.lastName }}</b>’s registration for
+    <b>{{ deleting()?.eventName }}</b>? Their contact stays in Contacts.</p>
+  <ng-template #footer>
+    <p-button label="Keep it" [text]="true" severity="secondary" (onClick)="deleting.set(null)" />
+    <p-button label="Remove registration" severity="danger" (onClick)="confirmDelete()" />
+  </ng-template>
+</p-dialog>

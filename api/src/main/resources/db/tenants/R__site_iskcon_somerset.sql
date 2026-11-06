@@ -5,26 +5,34 @@ update tenant set site = $json$
 {
   "heroTitle": "Welcome to ISKCON Somerset",
   "heroText": "A home for bhakti yoga in central New Jersey: kirtan, Bhagavad Gita study, festivals and prasadam, open to everyone.",
+  "logoFull": "/site/iskcon-somerset-logo.png",
+  "heroImage": "/site/hare-krishna-banner.webp",
+  "heroImageAlt": "Hare Krishna maha-mantra: Hare Krishna Hare Krishna Krishna Krishna Hare Hare, Hare Rama Hare Rama Rama Rama Hare Hare. Chant and be happy.",
   "mantra": "Hare Krishna Hare Krishna Krishna Krishna Hare Hare · Hare Rama Hare Rama Rama Rama Hare Hare ·",
   "gatherings": {
     "eyebrow": "Come together for",
     "title": "Weekly Gatherings",
     "items": [
       {
-        "title": "Kirtan & Meditation",
-        "text": "Chant the Hare Krishna maha-mantra together in uplifting kirtan and quiet japa meditation. No experience needed; bring your friends and family.",
+        "title": "Sunday Love Feast",
+        "when": "Every Sunday",
+        "text": "Join us for ecstatic kirtan, ārati to Their Lordships, an enlightening class from the Bhagavad-gītā or Śrīmad-Bhāgavatam, and a sumptuous feast of Krishna prasādam. Everyone is welcome; bring your family and friends!",
+        "image": "/site/sunday-love-feast.jpg",
         "href": "/events",
         "button": "Join us"
       },
       {
-        "title": "Bhagavad Gita Classes",
-        "text": "Read and discuss the Bhagavad Gita As It Is each week, in person at the temple or online, followed by kirtan and prasadam.",
+        "title": "Srimad Bhagavatam & Bhagavad Gita Classes",
+        "when": "Every day",
+        "text": "Each day, relish Śrīmad-Bhāgavatam, the ripened fruit of Vedic knowledge, and hear Lord Krishna's own words in Bhagavad-gītā As It Is, as presented by Srila Prabhupada. Discover who you are beyond the body and how to live a life of joyful devotion.",
+        "image": "/site/scripture-classes.jpg",
         "href": "/bg-inperson",
         "button": "Join us"
       },
       {
         "title": "Bhakti Vriksha & Families",
         "text": "Small home groups where families, youth and children share kirtan, stories and friendship, and grow in bhakti together.",
+        "image": "/site/bhakti-vriksha.jpg",
         "href": "/bhakti-vriksha",
         "button": "Join us"
       }
@@ -36,6 +44,10 @@ update tenant set site = $json$
     "verse": "harer nāma harer nāma harer nāmaiva kevalam",
     "verseMeaning": "The holy name, the holy name, only the holy name of the Lord",
     "body": "<p>His Divine Grace A.C. Bhaktivedanta Swami Prabhupada arrived in New York in 1965, at the age of 69, carrying his spiritual master's instruction to share Krishna consciousness in the English-speaking world. In 1966, from a small storefront on the Lower East Side, he founded the International Society for Krishna Consciousness.</p><p>In the eleven years that followed he travelled around the world many times, opened more than a hundred temples, farms and schools, and translated <b>Bhagavad-gītā As It Is</b>, <b>Śrīmad-Bhāgavatam</b> and <b>Śrī Caitanya-caritāmṛta</b> with his own commentary. Every kirtan, class and plate of prasadam at our temple continues the work he began.</p>",
+    "image": "/site/srila-prabhupada.jpg",
+    "imageAlt": "Srila Prabhupada smiling on a morning walk with devotees, Germany, 1974",
+    "imageCredit": "Photo: Christian Jansen, CC BY 3.0",
+    "imageCreditUrl": "https://commons.wikimedia.org/wiki/File:Prabhupada_on_a_morning_walk_in_Germany_1974.jpg",
     "href": "/srila-prabhupada",
     "button": "Learn more"
   },
@@ -329,4 +341,11 @@ update tenant set site = $json$
   }
 }
 $json$::jsonb
+where slug = 'iskconsomerset';
+
+-- Colours: royal blue and gold, to match the Hare Krishna banner picture. Used by the website and the admin.
+-- Logo: the lotus mark is used where space is small (menu bar, browser tab, admin); the full logo in the footer.
+update tenant set primary_color = '#1F3C88', accent_color = '#D4A72C', soft_color = '#FBF3DC',
+       logo_url = '/site/iskcon-somerset-mark.png',
+       notification_email = 'iskcon.somerset@gmail.com'  -- event registrations are emailed here
 where slug = 'iskconsomerset';

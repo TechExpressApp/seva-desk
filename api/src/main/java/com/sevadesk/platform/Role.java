@@ -8,14 +8,14 @@ import java.util.List;
  */
 public enum Role {
     ADMIN("Administrator", "Everything, including users and settings",
-            List.of("dashboard", "contacts", "donations", "donors", "events", "finance", "seva", "guesthouse",
-                    "members", "volunteers", "users")),
+            List.of("dashboard", "contacts", "donations", "donors", "events", "registrations", "finance", "seva",
+                    "guesthouse", "members", "volunteers", "users")),
     TREASURER("Treasurer", "Donations (including voiding), donors, expenses and finance reports",
             List.of("dashboard", "contacts", "donations", "donors", "finance", "members")),
-    FRONT_DESK("Front desk", "Contacts and donation entry",
-            List.of("dashboard", "contacts", "donations", "donors")),
-    EVENT_COORDINATOR("Event coordinator", "Events and the public website's event listings",
-            List.of("contacts", "events")),
+    FRONT_DESK("Front desk", "Contacts, donation entry and event registrations",
+            List.of("dashboard", "contacts", "donations", "donors", "registrations")),
+    EVENT_COORDINATOR("Event coordinator", "Events, registrations and the public website's event listings",
+            List.of("contacts", "events", "registrations")),
     PRIEST("Priest services", "Seva bookings and priest schedules", List.of("seva")),
     GUEST_HOUSE("Guest house", "Rooms, bookings and check-ins", List.of("guesthouse")),
     VOLUNTEER_COORDINATOR("Volunteer coordinator", "Volunteers and shifts", List.of("contacts", "volunteers"));

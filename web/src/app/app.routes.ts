@@ -35,6 +35,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/events/events').then((m) => m.Events),
       },
       {
+        path: 'registrations',
+        data: { module: 'registrations' },
+        loadComponent: () => import('./features/registrations/registrations').then((m) => m.Registrations),
+      },
+      {
         path: 'donors',
         data: { module: 'donors' },
         loadComponent: () => import('./features/donors/donors').then((m) => m.Donors),

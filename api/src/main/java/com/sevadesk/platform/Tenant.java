@@ -35,6 +35,8 @@ public class Tenant {
     private String softColor;
     @Column(name = "logo_url")
     private String logoUrl;
+    @Column(name = "notification_email")
+    private String notificationEmail;
     private String currency;
     private String locale;
     @Column(name = "time_zone")
@@ -72,6 +74,8 @@ public class Tenant {
     public String getAccentColor() { return accentColor; }
     public String getSoftColor() { return softColor; }
     public String getLogoUrl() { return logoUrl; }
+    /** Where staff notifications (such as event registrations) are emailed; null = none. */
+    public String getNotificationEmail() { return notificationEmail; }
     public String getCurrency() { return currency; }
     public String getLocale() { return locale; }
     public String getTimeZone() { return timeZone; }

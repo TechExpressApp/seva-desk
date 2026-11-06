@@ -206,3 +206,35 @@ export interface PayeePage {
   totalPeople: number;
   grandTotal: number;
 }
+
+/** One person's registration for an event (see EventRegistrationController). */
+export interface EventRegistration {
+  id: string;
+  eventId: string | null;
+  eventName: string;
+  contactId: string | null;
+  firstName: string;
+  lastName: string;
+  email: string;
+  whatsapp: string;
+  city: string;
+  state: string;
+  age: number;
+  /** The day it was registered, in the temple's time zone (yyyy-MM-dd) */
+  registrationDate: string;
+  /** The exact moment it was registered */
+  registeredAt: string;
+}
+
+/** A choice for the Event field: an upcoming event (with its date) or a name used before. */
+export interface EventOption {
+  name: string;
+  startsAt: string | null;
+}
+
+/** contact: CREATED (new contact), or EMAIL / PHONE / NAME (matched an existing one) */
+export interface RegistrationResult {
+  registration: EventRegistration;
+  contact: 'CREATED' | 'EMAIL' | 'PHONE' | 'NAME';
+  emailSent: boolean;
+}

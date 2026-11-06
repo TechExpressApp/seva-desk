@@ -5,8 +5,10 @@
 <header th:replace="~{site/layout :: header}"></header>
 
 <main>
-  <section class="hero">
+  <section class="hero" th:classappend="${site.heroImage} ? 'has-photo'">
+    <img class="hero-photo" th:if="${site.heroImage}" th:src="${site.heroImage}" alt="" aria-hidden="true" />
     <div class="wrap hero-inner">
+      <div class="hero-text">
       <p class="eyebrow" th:text="${temple.greeting}">Hare Krishna</p>
       <h1 th:text="${site.heroTitle} ?: ${temple.name}">Welcome</h1>
       <p class="lead" th:if="${site.heroText}" th:text="${site.heroText}">Intro</p>
@@ -14,6 +16,8 @@
         <a class="btn" href="/events">See upcoming events</a>
         <a class="btn ghost" href="/donate" th:if="${site.pages.containsKey('donate')}">Donate</a>
       </div>
+      </div>
+      <img class="hero-art" th:if="${site.heroImage}" th:src="${site.heroImage}" th:alt="${site.heroImageAlt} ?: ''" fetchpriority="high" />
     </div>
   </section>
 
@@ -33,7 +37,7 @@
     <div class="wrap gathering-grid">
       <article class="gathering" th:each="g : ${site.gatherings.items}">
         <div class="gathering-pic" th:classappend="${g.image} ? 'has-image'">
-          <img th:if="${g.image}" th:src="${g.image}" th:alt="${g.title}" loading="lazy" />
+          <img th:if="${g.image}" th:src="${g.image}" th:alt="${g.title}" />
           <span class="badge" aria-hidden="true"><img src="/site/lotus.svg" alt="" /></span>
         </div>
         <div class="gathering-body">
@@ -89,10 +93,16 @@
 
   <section class="founder" th:if="${site.founder != null and site.founder.title != null}" aria-labelledby="founder-title">
     <div class="wrap founder-inner">
-      <div class="founder-pic" th:classappend="${site.founder.image} ? 'has-image'">
-        <img th:if="${site.founder.image}" th:src="${site.founder.image}" th:alt="${site.founder.title}" loading="lazy" />
-        <img th:unless="${site.founder.image}" class="lotus" src="/site/lotus.svg" alt="" />
-      </div>
+      <figure class="founder-figure">
+        <div class="founder-pic" th:classappend="${site.founder.image} ? 'has-image'">
+          <img th:if="${site.founder.image}" th:src="${site.founder.image}" th:alt="${site.founder.imageAlt} ?: ${site.founder.title}" loading="lazy" />
+          <img th:unless="${site.founder.image}" class="lotus" src="/site/lotus.svg" alt="" />
+        </div>
+        <figcaption th:if="${site.founder.imageCredit}">
+          <a th:if="${site.founder.imageCreditUrl}" th:href="${site.founder.imageCreditUrl}" target="_blank" rel="noopener license" th:text="${site.founder.imageCredit}">Credit</a>
+          <span th:unless="${site.founder.imageCreditUrl}" th:text="${site.founder.imageCredit}">Credit</span>
+        </figcaption>
+      </figure>
       <div class="founder-text">
         <p class="eyebrow" th:if="${site.founder.eyebrow}" th:text="${site.founder.eyebrow}">Founder-Acharya</p>
         <h2 id="founder-title" th:text="${site.founder.title}">Srila Prabhupada</h2>

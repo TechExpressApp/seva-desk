@@ -17,6 +17,9 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
 
     boolean existsBySlug(String slug);
 
+    /** The most recent event with this title (ignoring case), to link a registration to it. */
+    Optional<Event> findFirstByTitleIgnoreCaseOrderByStartsAtDesc(String title);
+
     Optional<Event> findBySlugAndStatus(String slug, Event.Status status);
 
     /** Published events still running or yet to start, soonest first. */
