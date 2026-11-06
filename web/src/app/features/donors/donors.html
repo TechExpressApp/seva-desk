@@ -34,13 +34,21 @@
     </ng-template>
     <ng-template #body let-d>
       <tr>
-        <td><b>{{ d.name }}</b></td>
+        <td>
+          <button type="button" class="name-link" (click)="openProfile(d)" [attr.aria-label]="'Contact details of ' + d.name"
+                  title="Show contact details">{{ d.name }}</button>
+        </td>
         <td class="sd-muted" style="font-size: 0.88rem">
           {{ d.email }}
           @if (d.email && d.phone) { <br /> }
           {{ d.phone }}
         </td>
-        <td class="sd-num num">{{ d.gifts }}</td>
+        <td class="sd-num num">
+          <button type="button" class="count-link" (click)="openDonations(d)"
+                  [attr.aria-label]="'Show ' + d.gifts + ' donations of ' + d.name" title="Show these donations">
+            {{ d.gifts }}
+          </button>
+        </td>
         <td class="sd-num num">{{ branding.money(d.thisYear) }}</td>
         <td class="sd-num num" style="font-weight: 600">{{ branding.money(d.total) }}</td>
         <td style="white-space: nowrap">{{ d.lastGift | date: 'd MMM y' }}</td>
@@ -51,3 +59,130 @@
     </ng-template>
   </p-table>
 </div>
+
+<!-- One donor's donations -->
+<p-dialog [header]="'Donations – ' + (selected()?.name ?? '')" [visible]="!!selected()"
+          (visibleChange)="!$event && selected.set(null)" [modal]="true" [dismissableMask]="true"
+          [style]="{ width: 'min(1100px, 96vw)' }">
+  @if (selected(); as d) {
+    <div class="giving">
+      <div><span>Total given</span><b>{{ branding.money(d.total) }}</b></div>
+      <div><span>Donations</span><b>{{ d.gifts }}</b></div>
+      <div><span>This year</span><b>{{ branding.money(d.thisYear) }}</b></div>
+      <div><span>First – last donation</span><b>{{ d.firstGift | date: 'd MMM y' }} – {{ d.lastGift | date: 'd MMM y' }}</b></div>
+    </div>
+    @if (d.email || d.phone) {
+      <p class="sd-muted contact-line">{{ d.email }}@if (d.email && d.phone) { · }{{ d.phone }}</p>
+    }
+
+    <p-table [value]="donations()" [lazy]="true" (onLazyLoad)="loadDonations($event)" [paginator]="donationsTotal() > 10"
+             [rows]="10" [totalRecords]="donationsTotal()" [loading]="donationsLoading()" dataKey="id"
+             [tableStyle]="{ 'min-width': '900px' }">
+      <ng-template #header>
+        <tr>
+          <th>Receipt</th>
+          <th>Date</th>
+          <th>Fund</th>
+          <th>Mode</th>
+          <th>Reference</th>
+          <th>Notes</th>
+          <th class="num">Amount</th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-g>
+        <tr [class.voided]="g.status === 'VOIDED'">
+          <td class="sd-num" style="white-space: nowrap">{{ g.receiptNo }}</td>
+          <td style="white-space: nowrap">{{ g.donatedAt | date: 'd MMM y, h:mm a' }}</td>
+          <td>{{ g.fundName }}</td>
+          <td>{{ modeLabel(g.paymentMode) }}</td>
+          <td class="sd-num">{{ g.reference || '—' }}</td>
+          <td class="notes">
+            {{ g.notes || '' }}
+            @if (g.status === 'VOIDED') {
+              <div class="void-reason">Voided: {{ g.voidReason }}</div>
+            }
+          </td>
+          <td class="sd-num num" style="white-space: nowrap; font-weight: 600">
+            @if (g.status === 'VOIDED') {
+              <p-tag value="Voided" severity="secondary" /> <s class="sd-muted">{{ branding.money(g.amount) }}</s>
+            } @else {
+              {{ branding.money(g.amount) }}
+            }
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template #emptymessage>
+        <tr><td colspan="7" class="sd-muted">No donations found.</td></tr>
+      </ng-template>
+    </p-table>
+    <p class="sd-muted small-note">Voided donations are listed for the record but not counted in the totals.</p>
+  }
+</p-dialog>
+
+<!-- Donor's contact details -->
+<p-dialog [header]="profileOf()?.name ?? ''" [visible]="!!profileOf()" (visibleChange)="!$event && profileOf.set(null)"
+          [modal]="true" [dismissableMask]="true" [style]="{ width: 'min(760px, 96vw)' }">
+  @if (profileOf(); as d) {
+    <div class="giving">
+      <div><span>Total given</span><b>{{ branding.money(d.total) }}</b></div>
+      <div><span>Donations</span><b>{{ d.gifts }}</b></div>
+      <div><span>This year</span><b>{{ branding.money(d.thisYear) }}</b></div>
+      <div><span>Last donation</span><b>{{ d.lastGift ? (d.lastGift | date: 'd MMM y') : '—' }}</b></div>
+    </div>
+
+    @if (profileError()) {
+      <p class="sd-error">{{ profileError() }}</p>
+    } @else if (!profile()) {
+      <p class="sd-muted">Loading…</p>
+    } @else {
+      @let c = profile()!;
+      <h3 class="pf-h">Contact</h3>
+      <dl class="pf">
+        <div><dt>Name</dt><dd>{{ c.fullName }}</dd></div>
+        <div><dt>Email</dt><dd>{{ c.email || '—' }}</dd></div>
+        <div><dt>Phone / WhatsApp</dt><dd>{{ c.phone || '—' }}</dd></div>
+        <div><dt>City</dt><dd>{{ c.city || '—' }}</dd></div>
+        <div><dt>Date of birth</dt><dd>{{ c.birthDate ? (c.birthDate | date: 'd MMMM y') : '—' }}</dd></div>
+        <div><dt>Gotra</dt><dd>{{ c.gotra || '—' }}</dd></div>
+        <div><dt>Nakshatra</dt><dd>{{ c.nakshatra || '—' }}</dd></div>
+        <div>
+          <dt>May contact by</dt>
+          <dd>
+            @if (c.consentEmail || c.consentWhatsapp) {
+              @if (c.consentEmail) { <p-tag value="Email" severity="success" /> }
+              @if (c.consentWhatsapp) { <p-tag value="WhatsApp" severity="success" /> }
+            } @else {
+              <span class="sd-muted">No consent recorded</span>
+            }
+          </dd>
+        </div>
+        @for (x of extraDetails(c); track x.label) {
+          <div><dt>{{ x.label }}</dt><dd>{{ x.value }}</dd></div>
+        }
+      </dl>
+
+      <h3 class="pf-h">Family birthdays</h3>
+      @if (c.family?.spouse || c.family?.children?.length) {
+        <table class="pf-family">
+          <tbody>
+            @if (c.family?.spouse; as s) {
+              <tr><th>Spouse</th><td>{{ s.name || '—' }}</td><td>{{ s.birthDate ? (s.birthDate | date: 'd MMMM y') : '—' }}</td></tr>
+            }
+            @for (k of c.family?.children ?? []; track $index) {
+              <tr><th>Child {{ $index + 1 }}</th><td>{{ k.name || '—' }}</td><td>{{ k.birthDate ? (k.birthDate | date: 'd MMMM y') : '—' }}</td></tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <p class="sd-muted">None recorded.</p>
+      }
+    }
+  }
+  <ng-template #footer>
+    @if (profileOf(); as d) {
+      <p-button label="Edit contact" icon="pi pi-pencil" [text]="true" (onClick)="editContact(d)" />
+      <p-button [label]="'View ' + d.gifts + (d.gifts === 1 ? ' donation' : ' donations')" icon="pi pi-list"
+                (onClick)="showDonationsOf(d)" />
+    }
+  </ng-template>
+</p-dialog>

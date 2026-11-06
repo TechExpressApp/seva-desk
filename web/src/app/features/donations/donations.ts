@@ -40,7 +40,23 @@ export class Donations implements OnInit {
   protected readonly voiding = signal<Donation | null>(null);
 
   /** Payment modes for this temple's country, from the branding (UPI in India, Zelle and "Check" in the US). */
-  protected readonly modes = computed(() => this.branding.branding()?.paymentModes ?? []);
+  protected readonly modes = computed<{ value: PaymentMode; label: string }[]>(() => {
+    const b = this.branding.branding();
+    if (b?.paymentModes?.length) return b.paymentModes;
+    // Fallback if the branding came from an older server or a cached copy: never show an empty list.
+    const usa = b?.currency === 'USD';
+    const india = b?.currency === 'INR';
+    return [
+      { value: 'CASH', label: 'Cash' },
+      ...(india ? [{ value: 'UPI' as PaymentMode, label: 'UPI' }] : []),
+      ...(usa ? [{ value: 'ZELLE' as PaymentMode, label: 'Zelle' }] : []),
+      { value: 'CARD', label: 'Card' },
+      { value: 'CHEQUE', label: usa ? 'Check' : 'Cheque' },
+      { value: 'BANK_TRANSFER', label: 'Bank transfer' },
+      { value: 'ONLINE', label: 'Online' },
+      { value: 'IN_KIND', label: 'In kind' },
+    ];
+  });
 
   /** Example references for the reference field, matching the modes offered. */
   protected readonly referenceHint = computed(() => {

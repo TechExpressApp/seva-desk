@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +55,7 @@ class BrandingController {
                 t.getPrimaryColor(), t.getAccentColor(), t.getSoftColor(), t.getLogoUrl(),
                 t.getCurrency(), t.getLocale(), t.getTimeZone(),
                 t.getTerms(), t.getEnabledModules(), t.getWhatsappNumber(), paymentModes(t.getCurrency()));
-        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(Duration.ofMinutes(5))).body(body);
+        // Always fresh: a cached copy kept showing old settings (e.g. payment modes) after an update.
+        return ResponseEntity.ok().cacheControl(CacheControl.noCache()).body(body);
     }
 }

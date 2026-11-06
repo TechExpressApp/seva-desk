@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Subject, debounceTime, firstValueFrom } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -20,9 +20,12 @@ import { DatePipe } from '@angular/common';
   imports: [ReactiveFormsModule, DatePipe, TableModule, Button, Checkbox, Dialog, IconField, InputIcon, InputText],
   templateUrl: './contacts.html',
 })
-export class Contacts {
+export class Contacts implements OnInit {
   private readonly http = inject(HttpClient);
   private readonly toast = inject(MessageService);
+
+  /** /contacts?edit=<id> opens that person's edit dialog (used from the Donors screen). */
+  readonly edit = input<string>();
 
   protected readonly rows = signal<Contact[]>([]);
   protected readonly total = signal(0);
@@ -66,6 +69,16 @@ export class Contacts {
       this.page = 0;
       this.load();
     });
+  }
+
+  ngOnInit(): void {
+    const id = this.edit();
+    if (id) {
+      this.http.get<Contact>(`/api/contacts/${id}`).subscribe({
+        next: (c) => this.open(c),
+        error: () => this.toast.add({ severity: 'warn', summary: 'Contact not found' }),
+      });
+    }
   }
 
   onSearch(value: string): void {
