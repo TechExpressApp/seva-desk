@@ -1,7 +1,10 @@
 # Production (and staging) on one VM:  TAG=v0.1.0 docker compose -f docker-compose.prod.yml --env-file .env up -d
+# Or build the images on the server itself (no registry needed):  docker compose -f docker-compose.prod.yml --env-file .env up -d --build
+# The backup service only runs when COMPOSE_PROFILES=backup is set in .env (after R2 is configured).
 services:
   web:
-    image: ghcr.io/${GITHUB_OWNER}/sevadesk-web:${TAG:-latest}
+    image: ghcr.io/${GITHUB_OWNER:-techexpressapp}/sevadesk-web:${TAG:-latest}
+    build: web
     restart: unless-stopped
     ports:
       - "80:80"
@@ -18,7 +21,8 @@ services:
         condition: service_healthy
 
   api:
-    image: ghcr.io/${GITHUB_OWNER}/sevadesk-api:${TAG:-latest}
+    image: ghcr.io/${GITHUB_OWNER:-techexpressapp}/sevadesk-api:${TAG:-latest}
+    build: api
     restart: unless-stopped
     # The JVM sizes its heap from this limit (65%). Raise it if the API is restarted for running out of memory.
     mem_limit: ${API_MEM_LIMIT:-512m}
@@ -70,7 +74,9 @@ services:
     # not published to the internet
 
   backup:
-    image: ghcr.io/${GITHUB_OWNER}/sevadesk-backup:${TAG:-latest}
+    image: ghcr.io/${GITHUB_OWNER:-techexpressapp}/sevadesk-backup:${TAG:-latest}
+    build: infra/backup
+    profiles: [backup]
     restart: unless-stopped
     env_file: .env
     depends_on:
