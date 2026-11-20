@@ -10,5 +10,4 @@ web/dist/
 web/.angular/
 local-secrets.properties
 local-secrets.properties.bak
-/out
 .env.production
