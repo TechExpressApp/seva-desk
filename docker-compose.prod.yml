@@ -35,6 +35,8 @@ services:
       DB_APP_PASSWORD: ${APP_DB_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
       BASE_DOMAINS: ${BASE_DOMAINS}
+      # Temple served on a bare base domain, e.g. test.iskconsomerset.org (optional)
+      DEFAULT_TENANT_SLUG: ${DEFAULT_TENANT_SLUG:-}
       TZ: ${TZ}
       # First admin login, created only while the temple has no users. Remove the password after first sign-in.
       BOOTSTRAP_TENANT_SLUG: ${BOOTSTRAP_TENANT_SLUG:-}
