@@ -22,6 +22,13 @@ sevadesk:
     admin-email: admin@demo.local
     admin-password: ChangeMe-dev-only
 
+# API docs at http://localhost:8080/api/docs (off in production)
+springdoc:
+  swagger-ui:
+    enabled: true
+  api-docs:
+    enabled: true
+
 logging:
   level:
     com.sevadesk: debug

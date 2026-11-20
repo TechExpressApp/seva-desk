@@ -20,6 +20,8 @@ services:
   api:
     image: ghcr.io/${GITHUB_OWNER}/sevadesk-api:${TAG:-latest}
     restart: unless-stopped
+    # The JVM sizes its heap from this limit (65%). Raise it if the API is restarted for running out of memory.
+    mem_limit: ${API_MEM_LIMIT:-512m}
     environment:
       SPRING_PROFILES_ACTIVE: prod
       DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
