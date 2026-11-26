@@ -324,3 +324,19 @@ h3 { font-size: 1.2rem; }
 .page-give-grid { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 20px; align-items: start; }
 @media (max-width: 800px) { .page-give-grid { grid-template-columns: 1fr; } }
 .ways-card .ways { margin: 0; }
+
+/* Course pages (e.g. /bhagavad-gita-course) */
+.prose .course-kicker { text-transform: uppercase; letter-spacing: .12em; font-size: .8rem; font-weight: 600; color: var(--accent); margin: -.4em 0 1.2em; }
+.course-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 0 0 8px; }
+.course-facts > div { background: var(--cream); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.course-facts dt { font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; color: var(--ink-soft); }
+.course-facts dd { margin: 4px 0 0; font-weight: 600; color: var(--ink); }
+.course-languages { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.course-languages li { background: var(--soft); color: var(--brand); border-radius: 999px; padding: 6px 14px; font-weight: 600; font-size: .9rem; }
+.course-steps { padding-left: 1.2em; }
+.course-steps li { margin-bottom: 8px; }
+.course-quote { margin: 1.8em 0; padding: 4px 0 4px 18px; border-left: 3px solid var(--accent); font-family: var(--display); font-size: 1.25rem; color: var(--ink); }
+.course-contact { max-width: 360px; }
+.course-contact p { margin: 0; }
+.course-contact p + p { margin-top: 6px; }
+.prose .course-motto { margin-top: 1.6em; font-family: var(--display); font-size: 1.3rem; color: var(--brand); text-align: center; }

@@ -13,7 +13,7 @@
     </div>
     <label class="age">Age <input name="age" type="number" min="1" max="120" inputmode="numeric" th:value="${cv.age}" required></label>
     <label>Address line 1 <input name="addressLine1" th:value="${cv.addressLine1}" required maxlength="200" autocomplete="address-line1"></label>
-    <label>Address line 2 <span class="muted small">(optional)</span>
+    <label>Address line 2 (optional)
       <input name="addressLine2" th:value="${cv.addressLine2}" maxlength="200" autocomplete="address-line2"></label>
     <div class="row">
       <label>City <input name="city" th:value="${cv.city}" required maxlength="100" autocomplete="address-level2"></label>

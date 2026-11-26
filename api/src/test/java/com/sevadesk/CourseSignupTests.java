@@ -54,7 +54,7 @@ class CourseSignupTests extends PostgresTestBase {
     void theCoursePageShowsTheDetailsTheFormAndIsInTheMenu() throws Exception {
         mvc.perform(get("/bhagavad-gita-course").with(host(SITE)))
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("An 18-Day Certificate Course")))
+                .andExpect(content().string(containsString("Discover the Wisdom of the Bhagavad-gita")))
                 .andExpect(content().string(containsString("Monday, November 30th")))
                 .andExpect(content().string(containsString("Read the Gita. Live the Gita. Share the Gita.")))
                 .andExpect(content().string(containsString("action=\"/course-signup#signup\"")))
