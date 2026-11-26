@@ -245,6 +245,8 @@ h3 { font-size: 1.2rem; }
 .lead-in { color: var(--ink-soft); max-width: 60ch; margin: 0 0 22px; }
 .register-form { padding: 26px; max-width: 720px; }
 .register-form .age { max-width: 160px; }
+.course-form .zip { max-width: 140px; }
+.course-form select { width: 100%; }
 .thanks { text-align: center; }
 .thanks .lead-in { margin-inline: auto; }
 .thanks .actions { justify-content: center; }

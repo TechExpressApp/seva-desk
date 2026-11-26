@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{site/layout :: head('Thank you for registering', 'Your registration for ' + ${course.course} + ' has been received.')}"></head>
+<body>
+<header th:replace="~{site/layout :: header}"></header>
+<main class="wrap section narrow thanks">
+  <img src="/site/lotus.svg" alt="" width="64" height="64">
+  <p class="eyebrow register-eyebrow">Hare Krishna!</p>
+  <h1 th:text="${name} != null ? 'Thank you, ' + ${name} + '!' : 'Thank you!'">Thank you!</h1>
+  <p class="lead-in">You're registered for <b th:text="${course.course}">the course</b>.
+    Taking you to the <b th:text="${language.name}">English</b> WhatsApp group now&hellip;</p>
+  <p class="lead-in">Please tap <b>Join group</b> in WhatsApp to receive course updates and instructions.</p>
+  <div class="actions">
+    <a class="btn" id="whatsapp-link" th:href="${language.whatsapp}" rel="noopener">Open the WhatsApp group</a>
+    <a class="btn ghost" th:href="'/' + ${pageKey}">Back to the course page</a>
+  </div>
+</main>
+<footer th:replace="~{site/layout :: footer}"></footer>
+<script>
+  // Forward to the group after a moment, so the person sees that their registration went through.
+  setTimeout(function () { window.location.href = document.getElementById('whatsapp-link').href; }, 2500);
+</script>
+</body>
+</html>

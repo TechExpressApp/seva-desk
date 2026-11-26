@@ -69,10 +69,29 @@ public record SiteSettings(
     /**
      * registerEvent: show the event registration form at the bottom, with this event chosen (optional).
      * donateCampaign: show this appeal from donate.campaigns (by key) with its giving form, e.g. "new-temple".
+     * courseSignup: show a course sign-up form that saves a contact and then sends the person to the WhatsApp group
+     * for the language they chose (optional).
      */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Page(String title, String description, String heading, String body, String registerEvent,
-                       String donateCampaign) {}
+                       String donateCampaign, CourseSignup courseSignup) {}
+
+    /** A course sign-up form: the course name (recorded as the registration's event) and one WhatsApp group per language. */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record CourseSignup(String course, String heading, String intro, List<CourseLanguage> languages) {
+        public CourseSignup {
+            languages = languages == null ? List.of() : List.copyOf(languages);
+        }
+
+        public java.util.Optional<CourseLanguage> language(String name) {
+            return name == null ? java.util.Optional.empty()
+                    : languages.stream().filter(l -> l.name().equalsIgnoreCase(name.strip())).findFirst();
+        }
+    }
+
+    /** whatsapp: the group invite link, e.g. https://chat.whatsapp.com/... */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record CourseLanguage(String name, String whatsapp) {}
 
     /** The /donate page: ways to give, card-giving options (paid through Stripe) and campaigns. */
     @JsonIgnoreProperties(ignoreUnknown = true)

@@ -34,6 +34,14 @@
     <p class="lead-in">Tell us a little about yourself and we'll connect you with a group near you. There is no charge.</p>
     <form th:replace="~{site/register-form :: form}"></form>
   </section>
+
+  <!-- Optional course sign-up form: saves a contact, then opens the WhatsApp group for the chosen language -->
+  <section class="page-register" id="signup" th:if="${page.courseSignup}" aria-labelledby="signup-title">
+    <p class="eyebrow register-eyebrow">Register</p>
+    <h2 id="signup-title" th:text="${page.courseSignup.heading} ?: 'Register for ' + ${page.courseSignup.course}">Register</h2>
+    <p class="lead-in" th:if="${page.courseSignup.intro}" th:text="${page.courseSignup.intro}">Intro</p>
+    <form th:replace="~{site/course-form :: form}"></form>
+  </section>
 </main>
 <footer th:replace="~{site/layout :: footer}"></footer>
 <script th:if="${campaign != null and onlineEnabled}">

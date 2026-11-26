@@ -88,7 +88,13 @@ export class ContactDetails {
 
   /** Extra fields with readable labels; family is shown separately. */
   protected extraDetails(c: Contact): { label: string; value: string }[] {
-    const labels: Record<string, string> = { source: 'Added from' };
+    const labels: Record<string, string> = {
+      source: 'Added from',
+      addressLine1: 'Address line 1',
+      addressLine2: 'Address line 2',
+      zip: 'ZIP',
+      preferredLanguage: 'Preferred language',
+    };
     return Object.entries(c.customFields ?? {})
       .filter(([k, v]) => k !== 'family' && v !== null && v !== '' && typeof v !== 'object')
       .map(([k, v]) => ({

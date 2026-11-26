@@ -19,7 +19,8 @@ import java.util.Locale;
 import java.util.Map;
 
 /** Data every public page needs (temple, website settings, colours, dates), shared by the website controllers. */
-@ControllerAdvice(assignableTypes = {WebsiteController.class, DonateController.class, RegisterController.class})
+@ControllerAdvice(assignableTypes = {WebsiteController.class, DonateController.class, RegisterController.class,
+        CourseSignupController.class})
 class WebsiteModel {
 
     private final TenantRepository tenants;

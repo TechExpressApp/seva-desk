@@ -168,6 +168,7 @@ class WebsiteController {
         model.addAttribute("page", page);
         model.addAttribute("pageKey", key);
         if (page.registerEvent() != null) registrationForm.prepare(model, page.registerEvent());
+        if (page.courseSignup() != null) CourseSignupController.prepare(model);
         var donate = site(model).donate();
         if (page.donateCampaign() != null && donate != null) {          // an appeal with its giving form
             donate.campaigns().stream().filter(c -> c.key().equals(page.donateCampaign())).findFirst().ifPresent(c -> {

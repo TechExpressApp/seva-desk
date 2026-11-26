@@ -62,6 +62,10 @@ update tenant set site = $json$
       "href": "/bhakti-vriksha"
     },
     {
+      "label": "Gita Course",
+      "href": "/bhagavad-gita-course"
+    },
+    {
       "label": "Donate",
       "href": "/donate"
     },
@@ -117,6 +121,43 @@ update tenant set site = $json$
       "description": "His Divine Grace A.C. Bhaktivedanta Swami Prabhupada, Founder-Acharya of ISKCON.",
       "heading": "Srila Prabhupada",
       "body": "<p>His Divine Grace A.C. Bhaktivedanta Swami Prabhupada (1896–1977) is the Founder-Acharya of the International Society for Krishna Consciousness (ISKCON).</p><h2>A life of service</h2><p>Born Abhay Charan De in Calcutta, he met his spiritual master, Srila Bhaktisiddhanta Sarasvati Thakura, in 1922 and was asked to bring the teachings of Lord Chaitanya to the English-speaking world. He took up that instruction for the rest of his life: writing, publishing and, in 1959, accepting the renounced order of sannyasa.</p><h2>Bringing bhakti to the West</h2><p>In 1965, at the age of 69, he travelled by cargo ship to New York with little more than a trunk of his books. A year later he founded ISKCON in a small storefront on the Lower East Side, and chanting the Hare Krishna maha-mantra soon spread to cities around the world.</p><h2>His books</h2><p>He translated and explained the great texts of the bhakti tradition, including <b>Bhagavad-gītā As It Is</b>, <b>Śrīmad-Bhāgavatam</b> and <b>Śrī Caitanya-caritāmṛta</b>. His books remain at the heart of every class and study group at our temple.</p><p><a href=\"/bg-inperson\">Join a Bhagavad Gita class</a> or <a href=\"/contact-us\">contact us</a> to learn more.</p>"
+    },
+    "bhagavad-gita-course": {
+      "title": "Bhagavad-gita 18-Day Certificate Course",
+      "description": "Join ISKCON Somerset’s 18-Day Bhagavad-gita Certificate Course, based on Bhagavad-gita As It Is. Classes Monday to Thursday at 7:30 PM in English, Telugu, Hindi, Tamil, Odia and Kannada.",
+      "heading": "🌸 Discover the Wisdom of Bhagavad-gita – An 18-Day Certificate Course 🌸",
+      "body": "<p>Hare Krishna Dear Devotees,</p><p>In today’s fast-paced world, we often search for happiness, peace of mind, clarity, and the true purpose of life. The Bhagavad-gita, spoken by Lord Sri Krishna Himself, offers timeless wisdom to guide us through every challenge of life.</p><p>We warmly invite you and your family to participate in a special <b>18-Day Bhagavad-gita Certificate Course</b>, conducted by <b>Experienced ISKCON Preachers</b>, based on <i>Bhagavad-gita As It Is</i> by His Divine Grace A.C. Bhaktivedanta Swami Srila Prabhupada.</p><p>Whether you are new to spirituality or wish to deepen your understanding of Krishna consciousness, this course is a wonderful opportunity to nourish your soul and progress in devotional service.</p><p>🌐 <b>Available Languages:</b> English, Telugu, Hindi, Tamil, Odia (Oriya), and Kannada.</p><h2>📚 Course Details</h2><ul><li>📅 <b>Start Date:</b> Monday, November 30th</li><li>⏰ <b>Time:</b> 7:30 PM</li><li>🗓️ <b>Class Days:</b> Monday, Tuesday, Wednesday, and Thursday</li><li>📖 <b>Duration:</b> 18 days of classes</li></ul><h2>📝 Registration Process</h2><p>To enroll in this course, please submit your details using the <a href=\"#signup\">registration form below</a>. Upon submission, you will be redirected to a WhatsApp group. Please make sure to join the group to receive course updates and further instructions.</p><p>🙏 <b>Invest 18 days in spiritual learning and discover divine wisdom that will guide you throughout your life.</b></p><p>We encourage everyone to take advantage of this wonderful opportunity and invite your family members, friends, and colleagues to participate.</p><h2>📞 For further information, please contact</h2><p>Gopi Kantha Krishna Das<br><a href=\"tel:+17327071616\">732-707-1616</a></p><p class=\"intro\"><b>Read the Gita. Live the Gita. Share the Gita.</b></p>",
+      "courseSignup": {
+        "course": "Bhagavad-gita 18-Day Certificate Course",
+        "heading": "Register for the course",
+        "intro": "Fill in your details and choose your language. You'll then be taken to that language's WhatsApp group.",
+        "languages": [
+          {
+            "name": "English",
+            "whatsapp": "https://chat.whatsapp.com/LchV71PGlT2DuwBWAR8fiz?mode=gi_t"
+          },
+          {
+            "name": "Telugu",
+            "whatsapp": "https://chat.whatsapp.com/Cd4enOezjRRLXBoTzTGl04?mode=gi_t"
+          },
+          {
+            "name": "Hindi",
+            "whatsapp": "https://chat.whatsapp.com/Ca8RdamZJdT2KGnyIgfNZX?mode=gi_t"
+          },
+          {
+            "name": "Oriya",
+            "whatsapp": "https://chat.whatsapp.com/BTsLHORElLx3PATCa0xmAh?mode=gi_t"
+          },
+          {
+            "name": "Tamil",
+            "whatsapp": "https://chat.whatsapp.com/IFgWEQT6o9dEZQEotKc5UR?mode=gi_t"
+          },
+          {
+            "name": "Kannada",
+            "whatsapp": "https://chat.whatsapp.com/L1vqPMsi1QaD07ShttODzs?mode=gi_t"
+          }
+        ]
+      }
     },
     "bhakti-vriksha": {
       "title": "Bhakti Vriksha",

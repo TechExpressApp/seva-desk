@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!-- Course sign-up form, at the bottom of pages with "courseSignup" set. Needs page, pageKey, cv (the values) and
+     courseError in the model; see CourseSignupController. -->
+<body>
+  <form th:fragment="form" class="card form register-form course-form" method="post" action="/course-signup#signup" novalidate>
+    <input type="hidden" name="page" th:value="${pageKey}">
+    <p class="err" th:if="${courseError}" th:text="${courseError}" role="alert">Error</p>
+
+    <div class="row">
+      <label>First name <input name="firstName" th:value="${cv.firstName}" required maxlength="100" autocomplete="given-name"></label>
+      <label>Last name <input name="lastName" th:value="${cv.lastName}" required maxlength="100" autocomplete="family-name"></label>
+    </div>
+    <label class="age">Age <input name="age" type="number" min="1" max="120" inputmode="numeric" th:value="${cv.age}" required></label>
+    <label>Address line 1 <input name="addressLine1" th:value="${cv.addressLine1}" required maxlength="200" autocomplete="address-line1"></label>
+    <label>Address line 2 <span class="muted small">(optional)</span>
+      <input name="addressLine2" th:value="${cv.addressLine2}" maxlength="200" autocomplete="address-line2"></label>
+    <div class="row">
+      <label>City <input name="city" th:value="${cv.city}" required maxlength="100" autocomplete="address-level2"></label>
+      <label>State <input name="state" th:value="${cv.state}" required maxlength="100" autocomplete="address-level1"
+                          list="course-states" placeholder="e.g. New Jersey"></label>
+      <label class="zip">ZIP <input name="zip" th:value="${cv.zip}" required maxlength="10" autocomplete="postal-code" inputmode="numeric"></label>
+    </div>
+    <datalist id="course-states">
+      <option th:each="s : ${ {'Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','District of Columbia','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'} }" th:value="${s}"></option>
+    </datalist>
+    <div class="row">
+      <label>WhatsApp number <input name="whatsapp" type="tel" th:value="${cv.whatsapp}" required maxlength="40"
+                                    autocomplete="tel" placeholder="+1 732 555 0100"></label>
+      <label>Email address <input name="email" type="email" th:value="${cv.email}" required maxlength="254" autocomplete="email"></label>
+    </div>
+    <label>Preferred language
+      <select name="language" required>
+        <option value="" th:selected="${cv.language == null}" disabled>Choose a language</option>
+        <option th:each="l : ${page.courseSignup.languages}" th:value="${l.name}" th:text="${l.name}"
+                th:selected="${#strings.equalsIgnoreCase(l.name, cv.language)}">English</option>
+      </select>
+    </label>
+
+    <!-- Spam trap: hidden from people, filled in by bots -->
+    <label class="hp" aria-hidden="true">Website <input name="website" tabindex="-1" autocomplete="off"></label>
+    <button class="btn" type="submit">Register and join the WhatsApp group</button>
+    <p class="muted small">After you register you'll be taken to the WhatsApp group for your language. Please join it to
+      receive course updates. We use your details only for this course and temple news.</p>
+  </form>
+</body>
+</html>
