@@ -36,7 +36,7 @@ class CourseSignupTests extends PostgresTestBase {
 
     static final String SITE = "www.iskconsomerset.org";
     static final String COURSE = "Bhagavad-gita 18-Day Certificate Course";
-    static final String TELUGU_GROUP = "https://chat.whatsapp.com/Cd4enOezjRRLXBoTzTGl04?mode=gi_t";
+    static final String TELUGU_GROUP = "https://chat.whatsapp.com/BioMZqzkxnY8ifRwxhcNuk?mode=gi_t";
 
     @Autowired MockMvc mvc;
     @Autowired TenantRepository tenants;

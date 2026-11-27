@@ -134,27 +134,27 @@ update tenant set site = $json$
         "languages": [
           {
             "name": "English",
-            "whatsapp": "https://chat.whatsapp.com/LchV71PGlT2DuwBWAR8fiz?mode=gi_t"
+            "whatsapp": "https://chat.whatsapp.com/HsVMATaeVbfLql4nUmTJZA?mode=gi_t"
           },
           {
             "name": "Telugu",
-            "whatsapp": "https://chat.whatsapp.com/Cd4enOezjRRLXBoTzTGl04?mode=gi_t"
+            "whatsapp": "https://chat.whatsapp.com/BioMZqzkxnY8ifRwxhcNuk?mode=gi_t"
           },
           {
             "name": "Hindi",
-            "whatsapp": "https://chat.whatsapp.com/Ca8RdamZJdT2KGnyIgfNZX?mode=gi_t"
+            "whatsapp": "https://chat.whatsapp.com/L2c7mdVpEJ3GSlqA3KwTqx?mode=gi_t"
           },
           {
             "name": "Oriya",
-            "whatsapp": "https://chat.whatsapp.com/BTsLHORElLx3PATCa0xmAh?mode=gi_t"
+            "whatsapp": "https://chat.whatsapp.com/GE5yQEbbTf1HvRpP4GTHSN?mode=gi_t"
           },
           {
             "name": "Tamil",
-            "whatsapp": "https://chat.whatsapp.com/IFgWEQT6o9dEZQEotKc5UR?mode=gi_t"
+            "whatsapp": "https://chat.whatsapp.com/BBiEiMsmsx53si3nhUJAod?mode=gi_t"
           },
           {
             "name": "Kannada",
-            "whatsapp": "https://chat.whatsapp.com/L1vqPMsi1QaD07ShttODzs?mode=gi_t"
+            "whatsapp": "https://chat.whatsapp.com/HE8pKZxNa03KisYXdRrxsn?mode=gi_t"
           }
         ]
       }
