@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Component;
 
 /**
@@ -30,7 +31,11 @@ public class Mailer {
     }
 
     public boolean enabled() {
-        return sender.getIfAvailable() != null && from != null && !from.isBlank();
+        var mail = sender.getIfAvailable();
+        if (mail == null || from == null || from.isBlank()) return false;
+        // Docker Compose passes SPRING_MAIL_HOST even when it is empty, which still creates a mail sender
+        // (pointing at localhost). Treat a blank host as "email not set up".
+        return !(mail instanceof JavaMailSenderImpl impl) || (impl.getHost() != null && !impl.getHost().isBlank());
     }
 
     /** @return true if the email was handed to the mail server */
